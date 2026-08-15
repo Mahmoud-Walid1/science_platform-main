@@ -1,6 +1,6 @@
 /**
- * Background Security Watermark Component for Virtual Science Labs
- * Renders an extremely subtle, background watermark behind page elements.
+ * Ultra-faint Background Security Watermark Component for Virtual Science Labs
+ * Renders an almost imperceptible, background watermark behind page elements.
  */
 document.addEventListener("DOMContentLoaded", function() {
     if (typeof window.WATERMARK_USER === "undefined") return;
@@ -23,20 +23,21 @@ document.addEventListener("DOMContentLoaded", function() {
         flex-wrap: wrap;
         justify-content: space-around;
         align-content: space-around;
-        opacity: 0.025;
+        opacity: 0.015;
         user-select: none;
+        mix-blend-mode: multiply;
     `;
 
     // Create faint, background tiled watermark tags
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
         const item = document.createElement("div");
         item.style.cssText = `
-            transform: rotate(-20deg);
+            transform: rotate(-15deg);
             font-family: 'Cairo', sans-serif;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #64748b;
-            margin: 90px 60px;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin: 120px 80px;
             white-space: nowrap;
             letter-spacing: 0.5px;
         `;
