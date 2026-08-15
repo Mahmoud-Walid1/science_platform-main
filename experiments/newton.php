@@ -1336,6 +1336,6 @@ console.log('%c🔬 مختبر نيوتن v3 — جاهز','color:#0089ae;font-w
         contact: <?=json_encode($user_contact)?>
     };
 </script>
-<script src="../js/watermark.js"></script>
+<script src="../js/watermark.js?v=<?=time()?>"></script>
 </body>
 </html>

@@ -1393,6 +1393,6 @@ redraw();
         contact: <?=json_encode($user_contact)?>
     };
 </script>
-<script src="../js/watermark.js"></script>
+<script src="../js/watermark.js?v=<?=time()?>"></script>
 </body>
 </html>
