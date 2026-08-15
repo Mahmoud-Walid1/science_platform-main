@@ -1,6 +1,6 @@
 /**
- * Dynamic Security Watermark Component for Virtual Science Labs
- * Renders an ultra-subtle, elegant watermark displaying user identity to prevent unauthorized screen recording.
+ * Background Security Watermark Component for Virtual Science Labs
+ * Renders an extremely subtle, background watermark behind page elements.
  */
 document.addEventListener("DOMContentLoaded", function() {
     if (typeof window.WATERMARK_USER === "undefined") return;
@@ -17,26 +17,26 @@ document.addEventListener("DOMContentLoaded", function() {
         width: 100vw;
         height: 100vh;
         pointer-events: none;
-        z-index: 999999;
+        z-index: 0;
         overflow: hidden;
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
         align-content: space-around;
-        opacity: 0.05;
+        opacity: 0.025;
         user-select: none;
     `;
 
-    // Create subtle, spacious tiled watermark tags
+    // Create faint, background tiled watermark tags
     for (let i = 0; i < 6; i++) {
         const item = document.createElement("div");
         item.style.cssText = `
             transform: rotate(-20deg);
             font-family: 'Cairo', sans-serif;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #475569;
-            margin: 80px 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin: 90px 60px;
             white-space: nowrap;
             letter-spacing: 0.5px;
         `;
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
         overlay.appendChild(item);
     }
 
-    document.body.appendChild(overlay);
+    document.body.insertBefore(overlay, document.body.firstChild);
 
     function escapeHtml(str) {
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
