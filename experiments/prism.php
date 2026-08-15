@@ -536,16 +536,7 @@ input:checked + .toggle-slider:before{transform:translateX(18px);}
     </div>
   </div>
 
-<footer class="lab-footer">
-  <div class="footer-content">
-    <div class="footer-code">
-      <i class="fas fa-key" style="color:#006b8a;"></i>
-      <span>كود دخول المستخدم:</span>
-      <code id="accessCodeDisplay" onclick="copyAccessCode()">DEMO-2025</code>
-      <button class="footer-copy" onclick="copyAccessCode()"><i id="copyIcon" class="fas fa-copy"></i></button>
-    </div>
-  </div>
-</footer>
+
 
 <script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js"}}</script>
 

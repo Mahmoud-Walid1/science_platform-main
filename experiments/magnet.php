@@ -369,16 +369,7 @@ if (!$exp_active) {
     </div>
 </div>
 
-<footer class="lab-footer">
-    <div class="footer-content">
-        <div class="footer-code">
-            <i class="fas fa-key" style="color:var(--teal-600);"></i>
-            <span>كود الدخول:</span>
-            <code id="accessCodeDisplay" onclick="copyAccessCode()">SCI-MAGNET-PERM-001</code>
-            <button class="footer-copy" onclick="copyAccessCode()"><i id="copyIcon" class="fas fa-copy"></i></button>
-        </div>
-    </div>
-</footer>
+
 
 <script>
 function copyAccessCode() {

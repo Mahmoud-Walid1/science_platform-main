@@ -1,6 +1,6 @@
 /**
- * Ultra-faint Minimal Security Watermark Component for Virtual Science Labs
- * Renders only 2-3 extremely faint background watermark tags across the screen.
+ * Perfectly Balanced Background Security Watermark Component for Virtual Science Labs
+ * Renders subtle background watermark tags (opacity: 0.035) behind page elements.
  */
 document.addEventListener("DOMContentLoaded", function() {
     if (typeof window.WATERMARK_USER === "undefined") return;
@@ -23,21 +23,20 @@ document.addEventListener("DOMContentLoaded", function() {
         flex-wrap: wrap;
         justify-content: space-around;
         align-content: space-around;
-        opacity: 0.008;
+        opacity: 0.035;
         user-select: none;
-        mix-blend-mode: multiply;
     `;
 
-    // 2-3 faint tags max with large spacing
-    for (let i = 0; i < 3; i++) {
+    // 4 subtle tiled watermark tags
+    for (let i = 0; i < 4; i++) {
         const item = document.createElement("div");
         item.style.cssText = `
-            transform: rotate(-12deg);
+            transform: rotate(-15deg);
             font-family: 'Cairo', sans-serif;
-            font-weight: 500;
-            font-size: 0.72rem;
-            color: #94a3b8;
-            margin: 180px 120px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: 140px 90px;
             white-space: nowrap;
             letter-spacing: 0.5px;
         `;

@@ -222,16 +222,7 @@ body{font-family:'Cairo',sans-serif;background:#f0f4f9;background-image:radial-g
   </div>
 </div>
 
-<footer class="lab-footer">
-  <div class="footer-content">
-    <div class="footer-code">
-      <i class="fas fa-key" style="color:var(--teal-600);"></i>
-      <span>كود الدخول:</span>
-      <code id="accessCodeDisplay" onclick="copyCode()">SCI-CIRCUIT-PERM-001</code>
-      <button class="footer-copy" onclick="copyCode()"><i id="copyIcon" class="fas fa-copy"></i></button>
-    </div>
-  </div>
-</footer>
+
 
 <script>
 function copyCode(){
