@@ -786,10 +786,6 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
 <section class="hero">
     <div class="hero-inner">
         <div class="hero-content">
-            <div class="hero-tag">
-                <i class="fas fa-flask"></i>
-                منصة تجارب علمية تفاعلية
-            </div>
             <h1 class="hero-title">
                 علِّم بالتجربة<br>
                 <span>لا بالحفظ</span>
