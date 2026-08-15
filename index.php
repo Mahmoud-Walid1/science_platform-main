@@ -774,7 +774,7 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
                 <span>مرحباً بك (تجاربي المتاحة)</span>
             </a>
         <?php else: ?>
-            <a href="../login" class="header-badge" style="text-decoration: none; background: var(--teal-800); color: white;">
+            <a href="https://sabir511-platform.vercel.app/auth/login" class="header-badge" style="text-decoration: none; background: var(--teal-800); color: white;">
                 <i class="fas fa-sign-in-alt"></i>
                 <span>تسجيل الدخول بالمنصة</span>
             </a>
@@ -870,7 +870,7 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
                 <?php endif; ?>
 
                 <div style="margin-top: 24px; text-align: center;">
-                    <a href="../login" class="btn-enter" style="text-decoration: none;">
+                    <a href="https://sabir511-platform.vercel.app/auth/login" class="btn-enter" style="text-decoration: none;">
                         <i class="fas fa-sign-in-alt"></i>
                         <span>تسجيل الدخول بالمنصة الرئيسية</span>
                     </a>
