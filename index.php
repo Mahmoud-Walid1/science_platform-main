@@ -13,10 +13,8 @@ $user_name = $_SESSION['user_name'] ?? $_SESSION['user']['name'] ?? 'المعل�
 $user_days_left = 0;
 
 if ($user_id) {
-    $user_sub = getUserSubscription($user_id);
-    if ($user_sub && !empty($user_sub['is_valid']) && !empty($user_sub['expires_at'])) {
-        $user_days_left = max(0, (int)ceil((strtotime($user_sub['expires_at']) - time()) / 86400));
-    }
+    header("Location: my-experiments.php");
+    exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
@@ -824,75 +822,28 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
             </button>
         </div>
 
-        <!-- RECHARGE / LOGIN CARD -->
-        <div class="login-card" id="rechargeSection">
+        <!-- LOGIN CARD FOR GUESTS -->
+        <div class="login-card" id="loginSection">
             <div class="card-logo-wrap">
                 <img src="logo2.png" alt="logo">
             </div>
 
-            <?php if ($user_id): ?>
-                <div class="card-title">كود الاشتراك</div>
-                <div class="card-sub">أدخل كود التفعيل لإضافة تمديد لمدّة رصيدك بالشهور</div>
+            <div class="card-title">تسجيل الدخول للمختبرات</div>
+            <div class="card-sub">يرجى تسجيل الدخول بحسابك في المنصة الرئيسية لتجربة المحاكاة وشحن كروت الاشتراك</div>
 
-                <?php if ($error): ?>
-                <div class="error-box">
-                    <i class="fas fa-circle-xmark"></i>
-                    <span><?php echo htmlspecialchars($error); ?></span>
-                </div>
-                <?php endif; ?>
-
-                <form method="POST" action="">
-                    <div class="field">
-                        <label class="field-label" for="codeInput">كود تفعيل الاشتراك</label>
-                        <div class="input-wrap">
-                            <input
-                                id="codeInput"
-                                class="code-input"
-                                type="text"
-                                name="code"
-                                placeholder="SCI-XXXX-XXXX"
-                                autocomplete="off"
-                                spellcheck="false"
-                                required
-                            >
-                            <span class="ico"><i class="fas fa-key"></i></span>
-                        </div>
-                        <div class="strength-wrap">
-                            <div class="strength-seg" id="s1"></div>
-                            <div class="strength-seg" id="s2"></div>
-                            <div class="strength-seg" id="s3"></div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-enter">
-                        <i class="fas fa-bolt"></i>
-                        <span>شحن وتفعيل الاشتراك</span>
-                    </button>
-                </form>
-
-                <div style="margin-top: 16px; text-align: center;">
-                    <a href="my-experiments.php" style="color: var(--teal-700); text-decoration: none; font-weight: 700; font-size: 0.9rem;">
-                        <i class="fas fa-flask"></i> الذهاب إلى لوحة تجاربي المتاحة &larr;
-                    </a>
-                </div>
-            <?php else: ?>
-                <div class="card-title">مرحباً بك في المختبرات</div>
-                <div class="card-sub">يرجى تسجيل الدخول بحسابك في المنصة الرئيسية لتنفيذ التجارب وشحن الأكواد</div>
-
-                <?php if ($error): ?>
-                <div class="error-box">
-                    <i class="fas fa-circle-xmark"></i>
-                    <span><?php echo htmlspecialchars($error); ?></span>
-                </div>
-                <?php endif; ?>
-
-                <div style="margin-top: 24px; text-align: center;">
-                    <a href="https://sabir511-platform.vercel.app/auth/login" class="btn-enter" style="text-decoration: none;">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>تسجيل الدخول بالمنصة الرئيسية</span>
-                    </a>
-                </div>
+            <?php if ($error): ?>
+            <div class="error-box">
+                <i class="fas fa-circle-xmark"></i>
+                <span><?php echo htmlspecialchars($error); ?></span>
+            </div>
             <?php endif; ?>
+
+            <div style="margin-top: 24px; text-align: center;">
+                <a href="https://sabir511-platform.vercel.app/auth/login" class="btn-enter" style="text-decoration: none;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>تسجيل الدخول بالمنصة الرئيسية</span>
+                </a>
+            </div>
 
             <div class="card-footer">
                 <div class="cfbadge"><i class="fas fa-circle"></i> كود آمن</div>
