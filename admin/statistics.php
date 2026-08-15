@@ -3,19 +3,31 @@
 require_once __DIR__ . '/auth.php';
 requireAdmin();
 
-// جلب أفضل المعلمين المترددين على المنصة
+// التأكد من وجود جدول المعلمين
+mysqli_query($conn, "CREATE TABLE IF NOT EXISTS teachers (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(100) DEFAULT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)");
+
+// جلب أفضل المعلمين المترددين على المنصة باأسمائهم
 $top_users = mysqli_query($conn, "
-    SELECT user_id, COUNT(*) AS access_count, MAX(access_time) AS last_access
-    FROM access_logs
-    WHERE user_id IS NOT NULL AND status = 'success'
-    GROUP BY user_id
+    SELECT al.user_id, t.name AS teacher_name, COUNT(*) AS access_count, MAX(al.access_time) AS last_access
+    FROM access_logs al
+    LEFT JOIN teachers t ON al.user_id = t.id
+    WHERE al.user_id IS NOT NULL AND al.status = 'success'
+    GROUP BY al.user_id, t.name
     ORDER BY access_count DESC
     LIMIT 20
 ");
 
-// سجلات الدخول الأخيرة
+// سجلات الدخول الأخيرة لربط المعلم باسمه الصريح
 $recent_logs = mysqli_query($conn, "
-    SELECT * FROM access_logs ORDER BY id DESC LIMIT 50
+    SELECT al.*, t.name AS teacher_name
+    FROM access_logs al
+    LEFT JOIN teachers t ON al.user_id = t.id
+    ORDER BY al.id DESC LIMIT 50
 ");
 ?>
 <!DOCTYPE html>
@@ -63,7 +75,7 @@ $recent_logs = mysqli_query($conn, "
             <table>
                 <thead>
                     <tr>
-                        <th>المستخدم</th>
+                        <th>المعلم</th>
                         <th>عدد مرات فتح واستخدام المنصة</th>
                         <th>آخر تواجد ودخول</th>
                     </tr>
@@ -74,7 +86,12 @@ $recent_logs = mysqli_query($conn, "
                     <?php else: ?>
                         <?php while ($u = mysqli_fetch_assoc($top_users)): ?>
                             <tr>
-                                <td><strong>المعلم #<?=$u['user_id']?></strong></td>
+                                <td>
+                                    <strong style="color: var(--dark);">
+                                        <i class="fas fa-user-tie" style="color: var(--accent); margin-left: 6px;"></i>
+                                        <?=htmlspecialchars($u['teacher_name'] ?: ('المعلم #'.$u['user_id']))?>
+                                    </strong>
+                                </td>
                                 <td><span style="font-weight:800; color:#004e66;"><?=$u['access_count']?> مرة</span></td>
                                 <td><?=date('Y-m-d H:i', strtotime($u['last_access']))?></td>
                             </tr>
@@ -91,7 +108,7 @@ $recent_logs = mysqli_query($conn, "
                     <tr>
                         <th>#</th>
                         <th>الكود / العملية</th>
-                        <th>المستخدم</th>
+                        <th>اسم المعلم</th>
                         <th>الـ IP</th>
                         <th>الحالة</th>
                         <th>التاريخ والوقت</th>
@@ -102,7 +119,11 @@ $recent_logs = mysqli_query($conn, "
                         <tr>
                             <td><?=$log['id']?></td>
                             <td style="font-family:monospace; font-weight:700;"><?=$log['code'] ?: 'عملية دخول'?></td>
-                            <td><?=$log['user_id'] ? 'المستخدم #'.$log['user_id'] : '-'?></td>
+                            <td>
+                                <strong>
+                                    <?=htmlspecialchars($log['teacher_name'] ?: ($log['user_id'] ? ('المعلم #'.$log['user_id']) : '-'))?>
+                                </strong>
+                            </td>
                             <td><?=$log['ip_address']?></td>
                             <td>
                                 <?php if ($log['status'] === 'success'): ?>

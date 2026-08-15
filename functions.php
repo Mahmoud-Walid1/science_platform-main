@@ -222,10 +222,28 @@ function logAccess($code, $user_id, $status) {
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     $code = trim($code);
     $status = trim($status);
-    $user_id_sql = ($user_id !== null && is_numeric($user_id)) ? (int)$user_id : 'NULL';
+    $user_id_num = ($user_id !== null && is_numeric($user_id)) ? (int)$user_id : null;
+
+    if ($user_id_num) {
+        $u_name = $_SESSION['user']['name'] ?? $_SESSION['user_name'] ?? ('المعلم #' . $user_id_num);
+        $u_phone = $_SESSION['user']['whatsappNumber'] ?? $_SESSION['user']['phone'] ?? '';
+        
+        $conn->query("CREATE TABLE IF NOT EXISTS teachers (
+            id INT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            phone VARCHAR(100) DEFAULT NULL,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )");
+
+        $stmt_t = $conn->prepare("INSERT INTO teachers (id, name, phone) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, phone = ?, updated_at = NOW()");
+        if ($stmt_t) {
+            $stmt_t->bind_param("issss", $user_id_num, $u_name, $u_phone, $u_name, $u_phone);
+            $stmt_t->execute();
+        }
+    }
 
     $stmt = $conn->prepare("INSERT INTO access_logs (code, user_id, ip_address, status) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("siss", $code, $user_id_sql, $ip, $status);
+    $stmt->bind_param("siss", $code, $user_id_num, $ip, $status);
     return $stmt->execute();
 }
 

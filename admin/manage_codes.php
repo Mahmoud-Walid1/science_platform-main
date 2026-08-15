@@ -38,9 +38,10 @@ $status_filter = $_GET['status'] ?? 'all';
 $search = trim($_GET['search'] ?? '');
 
 $query = "
-    SELECT ac.id, ac.code, p.name AS package_name, p.duration_months, ac.is_active, ac.is_used, ac.used_by_user_id, ac.used_at, ac.created_at
+    SELECT ac.id, ac.code, p.name AS package_name, p.duration_months, ac.is_active, ac.is_used, ac.used_by_user_id, ac.used_at, ac.created_at, t.name AS teacher_name
     FROM access_codes ac
     JOIN packages p ON ac.package_id = p.id
+    LEFT JOIN teachers t ON ac.used_by_user_id = t.id
     WHERE 1=1
 ";
 
@@ -151,7 +152,7 @@ $codes_list = mysqli_fetch_all($result, MYSQLI_ASSOC);
                                         <span class="badge badge-unused"><i class="fas fa-clock"></i> جاهز للشحن</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?=$row['used_by_user_id'] ? 'المستخدم #'.$row['used_by_user_id'] : '-'?></td>
+                                <td><?=htmlspecialchars($row['teacher_name'] ?: ($row['used_by_user_id'] ? 'المعلم #'.$row['used_by_user_id'] : '-'))?></td>
                                 <td><?=$row['used_at'] ? date('Y-m-d H:i', strtotime($row['used_at'])) : '-'?></td>
                                 <td><?=date('Y-m-d', strtotime($row['created_at']))?></td>
                             </tr>

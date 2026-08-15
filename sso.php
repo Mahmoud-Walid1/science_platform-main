@@ -41,6 +41,18 @@ $_SESSION['user'] = [
     'is_trusted' => $is_trusted
 ];
 
+// حفظ وتحديث بيانات المعلم في قاعدة البيانات باسمه الصريح للتقارير
+mysqli_query($conn, "CREATE TABLE IF NOT EXISTS teachers (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(100) DEFAULT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)");
+
+$stmt_t = $conn->prepare("INSERT INTO teachers (id, name, phone) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, phone = ?, updated_at = NOW()");
+$stmt_t->bind_param("issss", $uid, $name, $phone, $name, $phone);
+$stmt_t->execute();
+
 // إذا كان المستخدم أدمن أو معلم موثق بالمنصة، يمنح اشتراك VIP مفتوح ومفعل فوراً
 if ($role === 'ADMIN' || $is_trusted === 1) {
     $vip_expires = date('Y-m-d H:i:s', strtotime('+10 years'));
