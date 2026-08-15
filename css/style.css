@@ -1,0 +1,163 @@
+/* style.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* صفحة الدخول */
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    max-width: 500px;
+    width: 90%;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.logo-area {
+    margin-bottom: 30px;
+}
+
+.science-icon {
+    font-size: 64px;
+    background: rgba(255,255,255,0.2);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    backdrop-filter: blur(10px);
+}
+
+.logo-area h1 {
+    color: white;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.logo-area p {
+    color: rgba(255,255,255,0.8);
+    font-size: 16px;
+}
+
+.card {
+    background: white;
+    border-radius: 24px;
+    padding: 40px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.card h2 {
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 24px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 50px 15px 20px;
+    font-size: 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-family: 'Tajawal', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Tajawal', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+.alert {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.alert.error {
+    background: #fee;
+    color: #c33;
+    border-right: 4px solid #c33;
+}
+
+.info {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    font-size: 13px;
+    color: #666;
+    text-align: right;
+}
+
+footer {
+    margin-top: 30px;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+}
+
+/* متجاوب */
+@media (max-width: 600px) {
+    .card {
+        padding: 30px 20px;
+    }
+    
+    .logo-area h1 {
+        font-size: 22px;
+    }
+    
+    .input-group input {
+        font-size: 16px;
+        padding: 12px 45px 12px 15px;
+    }
+}

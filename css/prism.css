@@ -1,0 +1,487 @@
+/* prism.css - تجربة تحليل الضوء بالمنشور */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --teal-900: #002d3d;
+    --teal-800: #004e66;
+    --teal-700: #006b8a;
+    --teal-600: #0089ae;
+    --teal-500: #00a8d4;
+    --teal-400: #2ec4e8;
+    --teal-300: #7ddcf0;
+    --teal-100: #e6f7fc;
+    --teal-50: #f0fbfe;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-600: #475569;
+    --gray-800: #1e293b;
+    --primary: #2563eb;
+    --secondary: #7c3aed;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+}
+
+.lab-wrapper {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 24px;
+}
+
+/* ===== HEADER ===== */
+.lab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+    border-bottom: 2px solid var(--teal-800);
+    border-radius: 70px;
+    padding: 8px 24px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-md);
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.brand-logo {
+    height: 45px;
+    width: 45px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--teal-800);
+    line-height: 1.2;
+}
+
+.brand-sub {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+}
+
+.header-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.exp-badge {
+    background: var(--teal-100);
+    border: 1px solid var(--teal-300);
+    color: var(--teal-800);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.exp-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.exit-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 40px;
+    padding: 8px 20px;
+    color: var(--error);
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.exit-btn:hover {
+    background: #fee2e2;
+    transform: translateX(3px);
+}
+
+/* ===== MAIN LAYOUT ===== */
+.main-layout {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+/* ===== SIMULATION PANEL ===== */
+.simulation-panel {
+    flex: 2;
+    background: var(--white);
+    border-radius: 28px;
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.panel-title {
+    background: var(--gray-50);
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.live-indicator {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+}
+
+.live-indicator.active {
+    color: var(--warning);
+}
+
+.canvas-container {
+    padding: 24px;
+    background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+    display: flex;
+    justify-content: center;
+}
+
+#prismCanvas {
+    background: var(--white);
+    border-radius: 24px;
+    box-shadow: var(--shadow-md);
+}
+
+.simulation-controls {
+    padding: 16px 24px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    gap: 16px;
+}
+
+.ctrl-btn {
+    padding: 10px 24px;
+    border-radius: 40px;
+    border: none;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    background: var(--gray-200);
+    color: var(--gray-600);
+}
+
+.ctrl-btn.primary {
+    background: linear-gradient(135deg, var(--teal-700), var(--teal-600));
+    color: white;
+}
+
+.ctrl-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(0.95);
+}
+
+/* ===== CONTROLS PANEL ===== */
+.controls-panel {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.control-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 20px;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-md);
+}
+
+.card-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    color: var(--teal-800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-right: 3px solid var(--teal-600);
+    padding-right: 12px;
+}
+
+/* Color Selector */
+.color-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.color-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 40px;
+    background: var(--gray-50);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Cairo', sans-serif;
+}
+
+.color-btn.active {
+    border-color: var(--teal-600);
+    background: var(--teal-50);
+    box-shadow: 0 0 0 2px rgba(0,137,174,0.2);
+}
+
+.color-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Slider */
+.slider-group {
+    margin: 16px 0;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 10px;
+    background: var(--gray-200);
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal-600);
+    cursor: pointer;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--gray-400);
+    margin-top: 6px;
+}
+
+/* Prism Type Selector */
+.prism-selector {
+    display: flex;
+    gap: 10px;
+}
+
+.prism-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 40px;
+    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Cairo', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.prism-btn.active {
+    background: var(--teal-600);
+    color: white;
+    border-color: transparent;
+}
+
+/* Spectrum Info */
+.spectrum-info {
+    margin-top: 12px;
+}
+
+.spectrum-bar {
+    display: flex;
+    height: 40px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+}
+
+.spectrum-color {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.spectrum-wavelengths {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.6rem;
+    color: var(--gray-400);
+}
+
+/* Info Card */
+.info-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 20px;
+    border: 1px solid var(--gray-200);
+}
+
+.info-content {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--gray-600);
+}
+
+/* ===== COMPARISON SECTION ===== */
+.comparison-section {
+    background: var(--white);
+    border-radius: 28px;
+    border: 1px solid var(--gray-200);
+    margin-bottom: 24px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.section-title {
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: var(--teal-800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.85rem;
+}
+
+.comparison-table th {
+    background: var(--gray-50);
+    color: var(--teal-700);
+    font-weight: 800;
+}
+
+/* ===== CODE FOOTER ===== */
+.code-footer {
+    padding: 14px 20px;
+    background: var(--gray-50);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    border: 1px solid var(--gray-200);
+}
+
+.code-footer span {
+    color: var(--teal-700);
+    font-family: monospace;
+    background: var(--white);
+    padding: 4px 14px;
+    border-radius: 40px;
+    margin-right: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .main-layout {
+        flex-direction: column;
+    }
+    
+    .lab-header {
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 32px;
+        padding: 16px;
+    }
+    
+    .prism-selector {
+        flex-wrap: wrap;
+    }
+}
+/* نفس ملف prism.css الأصلي مع إضافة تعديلات بسيطة */
+/* أضف السطر التالي في نهاية الملف */
+
+.canvas-container {
+    position: relative;
+    width: 100%;
+    min-height: 550px;
+    background: #0a0f1a;
+    border-radius: 24px;
+    overflow: hidden;
+}
+#threeCanvas {
+    display: block;
+    width: 100%;
+    height: 550px;
+    background: radial-gradient(circle at center, #11161f, #070b12);
+}
+.extra-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+.extra-controls .slider-group {
+    flex: 1;
+    min-width: 120px;
+}
+.angle-value {
+    background: var(--teal-50);
+    padding: 4px 10px;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--teal-700);
+}

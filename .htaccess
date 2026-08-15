@@ -1,0 +1,44 @@
+# ====================================================================
+# Hostinger Performance & Security Configuration
+# Virtual Science Labs (منصة التجارب العلمية الافتراضية)
+# ====================================================================
+
+# 1. Enable UTF-8 Encoding
+AddDefaultCharset UTF-8
+
+# 2. Prevent Directory Browsing
+Options -Indexes
+
+# 3. Secure Sensitive Files
+<FilesMatch "^(config\.php|admin_config\.json|science_platform\.sql|\.env|\.git)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# 4. Leverage Browser Caching (Static Caching for High Performance)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    
+    # Images
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    
+    # CSS & JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    
+    # Fonts
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+</IfModule>
+
+# 5. Gzip / Deflate Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+</IfModule>

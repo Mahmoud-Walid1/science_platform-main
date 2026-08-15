@@ -1,0 +1,12 @@
+# configs
+admin_config.json
+config.local.php
+
+# system files
+.DS_Store
+Thumbs.db
+
+# logos
+*.log
+
+# نسخ احتياطية قديمة (زي prism_backup_before_patch.php لو حبيتي تشيليها من التتبع لاحقًا)

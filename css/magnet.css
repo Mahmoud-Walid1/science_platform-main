@@ -1,0 +1,274 @@
+/* electromagnet.css – تصميم عصري لمختبر المغناطيس الكهربائي */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --teal-800: #004e66;
+    --teal-700: #006b8a;
+    --teal-600: #0089ae;
+    --teal-100: #e6f7fc;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-200: #e2e8f0;
+    --gray-600: #475569;
+    --gray-800: #1e293b;
+    --error: #dc2626;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --radius-lg: 28px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(145deg, #f0f4f8, #e2e8f0);
+    min-height: 100vh;
+}
+
+.lab-wrapper {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 24px;
+}
+
+/* Header */
+.lab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 70px;
+    padding: 8px 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.lab-brand { display: flex; align-items: center; gap: 12px; font-weight: 800; color: var(--teal-800); }
+.lab-logo { height: 48px; width: 48px; border-radius: 14px; }
+.header-badge { display: flex; gap: 12px; align-items: center; }
+.exp-badge { background: var(--teal-100); padding: 6px 18px; border-radius: 40px; font-size: 0.75rem; font-weight: 700; color: var(--teal-800); }
+.exit-btn { background: rgba(220,38,38,0.1); padding: 8px 22px; border-radius: 40px; color: var(--error); text-decoration: none; font-weight: 600; }
+.exit-btn:hover { background: rgba(220,38,38,0.2); transform: translateX(3px); }
+
+/* Main Layout */
+.main-layout {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+.simulation-panel {
+    flex: 2;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+}
+.panel-title {
+    background: var(--gray-50);
+    padding: 16px 24px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gray-200);
+}
+.canvas-container {
+    padding: 20px;
+    background: #0a0f1a;
+}
+#electromagnetCanvas {
+    display: block;
+    width: 100%;
+    height: 500px;
+    border-radius: var(--radius-md);
+}
+.simulation-controls {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+}
+.ctrl-btn {
+    padding: 10px 20px;
+    border-radius: 40px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--gray-200);
+    transition: 0.2s;
+}
+.ctrl-btn.primary {
+    background: linear-gradient(135deg, var(--teal-700), var(--teal-600));
+    color: white;
+}
+.ctrl-btn:hover { transform: translateY(-2px); filter: brightness(0.96); }
+
+/* Controls Panel */
+.controls-panel {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.control-card, .info-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+.card-title {
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: var(--teal-800);
+    border-right: 3px solid var(--teal-600);
+    padding-right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.turns-selector, .core-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.turn-btn, .core-btn {
+    padding: 8px 16px;
+    border-radius: 40px;
+    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.turn-btn.active, .core-btn.active {
+    background: var(--teal-600);
+    color: white;
+    border-color: transparent;
+}
+.slider-group {
+    margin: 16px 0;
+}
+input[type=range] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: var(--gray-200);
+    border-radius: 10px;
+}
+input[type=range]::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal-600);
+    cursor: pointer;
+}
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    margin-top: 6px;
+}
+.readings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.reading-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    align-items: baseline;
+}
+.reading-row strong {
+    font-size: 1.1rem;
+    color: var(--teal-700);
+    margin: 0 6px;
+}
+.strength-meter {
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+    transition: width 0.2s;
+}
+.formula {
+    background: var(--teal-50);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-family: monospace;
+    font-size: 0.9rem;
+    margin: 12px 0;
+}
+.info-text {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--gray-600);
+}
+
+/* Attraction Area */
+.attraction-area {
+    margin-top: 24px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    border: 1px solid var(--gray-200);
+}
+.section-title {
+    font-weight: 800;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.metal-objects {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.metal-item {
+    background: var(--gray-50);
+    padding: 12px 20px;
+    border-radius: 60px;
+    border: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.metal-item:hover {
+    background: var(--teal-100);
+    transform: translateY(-2px);
+}
+.attraction-message {
+    margin-top: 16px;
+    padding: 10px;
+    border-radius: 40px;
+    text-align: center;
+    background: var(--gray-50);
+    font-size: 0.8rem;
+}
+.code-footer {
+    margin-top: 24px;
+    text-align: center;
+    background: var(--gray-50);
+    padding: 12px;
+    border-radius: 60px;
+    font-size: 0.7rem;
+}
+@media (max-width: 900px) {
+    .main-layout { flex-direction: column; }
+}
