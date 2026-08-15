@@ -45,6 +45,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_exp'])) {
     $message = "✅ تم تحديث التجربة بنجاح!";
 }
 
+// إضافة تجربة جديدة
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_exp'])) {
+    $title = trim($_POST['title']);
+    $code_name = trim($_POST['code_name']);
+    $page_url = trim($_POST['page_url']);
+
+    if (empty($page_url)) $page_url = 'experiments/matter.php';
+    if (empty($code_name)) $code_name = 'exp_' . time();
+
+    $image_path = null;
+    if (isset($_FILES['exp_image']) && $_FILES['exp_image']['error'] === UPLOAD_ERR_OK) {
+        $ext = strtolower(pathinfo($_FILES['exp_image']['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'svg'])) {
+            $new_name = 'exp_new_' . time() . '.' . $ext;
+            $target = $upload_dir . $new_name;
+            if (move_uploaded_file($_FILES['exp_image']['tmp_name'], $target)) {
+                $image_path = 'uploads/experiments/' . $new_name;
+            }
+        }
+    }
+
+    $stmt = $conn->prepare("INSERT INTO experiments (code_name, title, page_url, image_url, is_active) VALUES (?, ?, ?, ?, 1)");
+    $stmt->bind_param("ssss", $code_name, $title, $page_url, $image_path);
+    if ($stmt->execute()) {
+        $message = "🎉 تم إضافة التجربة الجديدة بنجاح وستظهر في منصة المختبرات فوراً!";
+    } else {
+        $message = "❌ فشل إضافة التجربة (تأكد من عدم تكرار كود التجربة)";
+    }
+}
+
 $experiments = getAllExperiments();
 ?>
 <!DOCTYPE html>
@@ -96,6 +126,32 @@ $experiments = getAllExperiments();
         <?php if ($message): ?>
             <div class="msg"><?=$message?></div>
         <?php endif; ?>
+
+        <!-- كارت إضافة تجربة جديدة -->
+        <div class="card" style="margin-bottom: 28px; border-top: 4px solid var(--accent);">
+            <div class="card-title" style="margin-bottom: 16px;"><i class="fas fa-plus-circle"></i> إضافة تجربة جديدة للمختبر</div>
+            <form method="POST" enctype="multipart/form-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; align-items: end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>عنوان التجربة</label>
+                    <input type="text" name="title" placeholder="مثال: الضغط والتسامي" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>المعرف (Code Name)</label>
+                    <input type="text" name="code_name" placeholder="مثال: pressure_exp" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>رابط صفحة التجربة</label>
+                    <input type="text" name="page_url" placeholder="experiments/matter.php" value="experiments/matter.php">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>صورة التجربة (اختياري)</label>
+                    <input type="file" name="exp_image" accept="image/*">
+                </div>
+                <div>
+                    <button type="submit" name="add_exp" class="btn" style="background: var(--accent); color: var(--dark); padding: 12px 20px; width: 100%; font-weight: 800;"><i class="fas fa-plus"></i> إضافة التجربة الآن</button>
+                </div>
+            </form>
+        </div>
 
         <div class="grid">
             <?php foreach ($experiments as $exp): ?>

@@ -10,6 +10,14 @@ $success_msg = '';
 
 $user_id = $_SESSION['user_id'] ?? $_SESSION['user']['id'] ?? null;
 $user_name = $_SESSION['user_name'] ?? $_SESSION['user']['name'] ?? 'المعلم';
+$user_days_left = 0;
+
+if ($user_id) {
+    $user_sub = getUserSubscription($user_id);
+    if ($user_sub && !empty($user_sub['is_valid']) && !empty($user_sub['expires_at'])) {
+        $user_days_left = max(0, (int)ceil((strtotime($user_sub['expires_at']) - time()) / 86400));
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
     $code = trim($_POST['code']);
@@ -768,11 +776,19 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
             <div class="header-brand-sub">Sabir Alsayyali</div>
         </div>
     </a>
-    <div style="display: flex; align-items: center; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         <?php if ($user_id): ?>
             <a href="my-experiments.php" class="header-badge" style="text-decoration: none; background: #dcfce7; color: #166534; border-color: #86efac;">
                 <i class="fas fa-user-check"></i>
-                <span>أهلاً بك أستاذ <?=htmlspecialchars($user_name)?> (تجاربي المتاحة)</span>
+                <span>أهلاً بك أستاذ <?=htmlspecialchars($user_name)?></span>
+            </a>
+            <div class="header-badge" style="background: #fef3c7; color: #92400e; border-color: #fcd34d; font-weight: 800;">
+                <i class="fas fa-clock"></i>
+                <span>الرصيد: <strong><?=htmlspecialchars($user_days_left)?></strong> يوم</span>
+            </div>
+            <a href="#rechargeSection" class="header-badge" style="text-decoration: none; background: var(--teal-800); color: white; border-color: var(--teal-700);">
+                <i class="fas fa-bolt"></i>
+                <span>شحن رصيد</span>
             </a>
         <?php else: ?>
             <a href="https://sabir511-platform.vercel.app/auth/login" class="header-badge" style="text-decoration: none; background: var(--teal-800); color: white;">
@@ -809,14 +825,14 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
         </div>
 
         <!-- RECHARGE / LOGIN CARD -->
-        <div class="login-card">
+        <div class="login-card" id="rechargeSection">
             <div class="card-logo-wrap">
                 <img src="logo2.png" alt="logo">
             </div>
 
             <?php if ($user_id): ?>
-                <div class="card-title">أهلاً بك أستاذ <?=htmlspecialchars($user_name)?> 👋</div>
-                <div class="card-sub">أدخل كود التفعيل لإضافة تمديد لمدّة اشتراكك بالشهور</div>
+                <div class="card-title">كود الاشتراك</div>
+                <div class="card-sub">أدخل كود التفعيل لإضافة تمديد لمدّة رصيدك بالشهور</div>
 
                 <?php if ($error): ?>
                 <div class="error-box">
@@ -918,32 +934,28 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
     <h2 class="section-title">اكتشف مجموعتنا المتنامية من التجارب</h2>
     <p class="section-desc">كل تجربة مبنية بعناية لتتناسب مع المنهج الدراسي – ونضيف تجارب جديدة باستمرار</p>
 
+    <?php $all_db_exps = getAllExperiments(); ?>
     <div class="exp-grid">
-        <div class="exp-card">
-            <div class="exp-icon icon-teal"><i class="fas fa-atom"></i></div>
-            <div class="exp-name">حالات المادة</div>
-            <div class="exp-desc">تأثير الحرارة والضغط على تحولات المادة بين الحالات الثلاث</div>
-        </div>
-        <div class="exp-card">
-            <div class="exp-icon icon-blue"><i class="fas fa-bolt"></i></div>
-            <div class="exp-name">الدائرة الكهربائية</div>
-            <div class="exp-desc">التوصيل على التوالي والتوازي ومكونات الدائرة الكهربائية</div>
-        </div>
-        <div class="exp-card">
-            <div class="exp-icon icon-purple"><i class="fas fa-magnet"></i></div>
-            <div class="exp-name">المغناطيس الكهربائي</div>
-            <div class="exp-desc">تأثير عدد اللفات والقلب الحديدي على شدة المجال المغناطيسي</div>
-        </div>
-        <div class="exp-card">
-            <div class="exp-icon icon-green"><i class="fas fa-running"></i></div>
-            <div class="exp-name">قوانين نيوتن</div>
-            <div class="exp-desc">القصور الذاتي والتسارع والعلاقة بين القوة والكتلة</div>
-        </div>
-        <div class="exp-card">
-            <div class="exp-icon icon-orange"><i class="fas fa-rainbow"></i></div>
-            <div class="exp-name">المنشور الزجاجي</div>
-            <div class="exp-desc">تحليل الضوء الأبيض وإظهار ألوان الطيف السبعة تفاعلياً</div>
-        </div>
+        <?php 
+        $color_classes = ['icon-teal', 'icon-blue', 'icon-purple', 'icon-green', 'icon-orange'];
+        $i = 0;
+        foreach ($all_db_exps as $exp): 
+            if (empty($exp['is_active'])) continue;
+            $color_cls = $color_classes[$i % count($color_classes)];
+            $i++;
+        ?>
+            <div class="exp-card" style="cursor: pointer;" onclick="location.href='<?=htmlspecialchars($user_id ? $exp['page_url'] : 'https://sabir511-platform.vercel.app/auth/login')?>'">
+                <div class="exp-icon <?=$color_cls?>">
+                    <?php if (!empty($exp['image_url'])): ?>
+                        <img src="<?=htmlspecialchars($exp['image_url'])?>" alt="<?=htmlspecialchars($exp['title'])?>" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+                    <?php else: ?>
+                        <i class="fas fa-flask"></i>
+                    <?php endif; ?>
+                </div>
+                <div class="exp-name"><?=htmlspecialchars($exp['title'])?></div>
+                <div class="exp-desc">محاكاة علمية تفاعلية مباشرة — اضغط لتشغيل التجربة</div>
+            </div>
+        <?php endforeach; ?>
     </div>
 
     <div class="expand-note">
