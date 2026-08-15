@@ -1,4 +1,5 @@
 <?php
+// index.php - منصة التجارب العلمية v2.0 (أكواد الشحن الموحدة والعلامة المائية)
 require_once 'config.php';
 require_once 'functions.php';
 require_once 'tracking.php';  // تضمين ملف التتبع
