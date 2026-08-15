@@ -1,6 +1,6 @@
 /**
- * Perfectly Balanced Background Security Watermark Component for Virtual Science Labs
- * Renders subtle background watermark tags (opacity: 0.035) behind page elements.
+ * Visible & Non-Intrusive Security Watermark Component for Virtual Science Labs
+ * Renders elegant, semi-transparent watermark tags (opacity: 0.08) overlaying the screen safely.
  */
 document.addEventListener("DOMContentLoaded", function() {
     if (typeof window.WATERMARK_USER === "undefined") return;
@@ -17,17 +17,17 @@ document.addEventListener("DOMContentLoaded", function() {
         width: 100vw;
         height: 100vh;
         pointer-events: none;
-        z-index: 0;
+        z-index: 999999;
         overflow: hidden;
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
         align-content: space-around;
-        opacity: 0.035;
+        opacity: 0.08;
         user-select: none;
     `;
 
-    // 4 subtle tiled watermark tags
+    // 4 elegant, visible watermark tags
     for (let i = 0; i < 4; i++) {
         const item = document.createElement("div");
         item.style.cssText = `
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
             font-family: 'Cairo', sans-serif;
             font-weight: 700;
             font-size: 0.85rem;
-            color: #64748b;
+            color: #475569;
             margin: 140px 90px;
             white-space: nowrap;
             letter-spacing: 0.5px;
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
         overlay.appendChild(item);
     }
 
-    document.body.insertBefore(overlay, document.body.firstChild);
+    document.body.appendChild(overlay);
 
     function escapeHtml(str) {
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
