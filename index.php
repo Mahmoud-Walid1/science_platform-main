@@ -9,6 +9,7 @@ $error = '';
 $success_msg = '';
 
 $user_id = $_SESSION['user_id'] ?? $_SESSION['user']['id'] ?? null;
+$user_name = $_SESSION['user_name'] ?? $_SESSION['user']['name'] ?? 'المعلم';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
     $code = trim($_POST['code']);
@@ -771,7 +772,7 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
         <?php if ($user_id): ?>
             <a href="my-experiments.php" class="header-badge" style="text-decoration: none; background: #dcfce7; color: #166534; border-color: #86efac;">
                 <i class="fas fa-user-check"></i>
-                <span>مرحباً بك (تجاربي المتاحة)</span>
+                <span>أهلاً بك أستاذ <?=htmlspecialchars($user_name)?> (تجاربي المتاحة)</span>
             </a>
         <?php else: ?>
             <a href="https://sabir511-platform.vercel.app/auth/login" class="header-badge" style="text-decoration: none; background: var(--teal-800); color: white;">
@@ -814,8 +815,8 @@ $homepage_packages = mysqli_query($conn, "SELECT name, duration_months, store_ur
             </div>
 
             <?php if ($user_id): ?>
-                <div class="card-title">شحن كارت الاشتراك</div>
-                <div class="card-sub">أدخل كود الشحن لإضافة تمديد لمدّة اشتراكك بالشهور</div>
+                <div class="card-title">أهلاً بك أستاذ <?=htmlspecialchars($user_name)?> 👋</div>
+                <div class="card-sub">أدخل كود التفعيل لإضافة تمديد لمدّة اشتراكك بالشهور</div>
 
                 <?php if ($error): ?>
                 <div class="error-box">
