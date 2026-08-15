@@ -1,6 +1,6 @@
 /**
  * Dynamic Security Watermark Component for Virtual Science Labs
- * Renders non-intrusive, continuous floating watermark displaying user identity to prevent screen recording/sharing.
+ * Renders an ultra-subtle, elegant watermark displaying user identity to prevent unauthorized screen recording.
  */
 document.addEventListener("DOMContentLoaded", function() {
     if (typeof window.WATERMARK_USER === "undefined") return;
@@ -23,23 +23,22 @@ document.addEventListener("DOMContentLoaded", function() {
         flex-wrap: wrap;
         justify-content: space-around;
         align-content: space-around;
-        opacity: 0.15;
+        opacity: 0.05;
         user-select: none;
     `;
 
-    // Create multiple subtle tiled watermark tags across the screen
-    for (let i = 0; i < 12; i++) {
+    // Create subtle, spacious tiled watermark tags
+    for (let i = 0; i < 6; i++) {
         const item = document.createElement("div");
         item.style.cssText = `
-            transform: rotate(-25deg);
+            transform: rotate(-20deg);
             font-family: 'Cairo', sans-serif;
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: #004e66;
-            margin: 40px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #475569;
+            margin: 80px 50px;
             white-space: nowrap;
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            letter-spacing: 0.5px;
         `;
         item.innerHTML = `<i class="fas fa-user-shield"></i> ${escapeHtml(userName)} ${userContact ? ' | ' + escapeHtml(userContact) : ''}`;
         overlay.appendChild(item);
