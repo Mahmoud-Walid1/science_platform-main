@@ -4,8 +4,12 @@ require_once '../functions.php';
 
 $sub = isAuthenticated();
 
-header("Location: separation_v2.php");
-exit();
+// Only redirect to v2 if not explicitly requested as fallback or 2D
+if (!isset($_GET['fallback']) && !isset($_GET['force_2d'])) {
+    header("Location: separation_v2.php");
+    exit();
+}
+$is_fallback = isset($_GET['fallback']) && $_GET['fallback'] === 'webgl';
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -24,11 +28,24 @@ exit();
             <i class="fas fa-flask"></i>
             <span>مختبرات العلوم والتقنية للجميع</span>
         </a>
-        <div class="exp-badge"><i class="fas fa-vial"></i> فصل المخاليط</div>
+        <div class="exp-badge"><i class="fas fa-vial"></i> فصل المخاليط (النسخة 2D التفاعلية)</div>
         <a href="../my-experiments.php" class="exit-btn"><i class="fas fa-arrow-right"></i> خروج</a>
     </header>
 
     <div class="main" id="labStage">
+
+        <?php if ($is_fallback): ?>
+        <div class="fallback-webgl-banner" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #38bdf8; border-radius: 12px; padding: 15px 20px; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+            <i class="fas fa-info-circle" style="font-size: 28px; color: #38bdf8;"></i>
+            <div style="flex: 1;">
+                <strong style="font-size: 16px; color: #38bdf8; display: block; margin-bottom: 3px;">تم توجيهك إلى النسخة التفاعلية (2D)</strong>
+                <span style="font-size: 13px; color: #cbd5e1;">يتعذر على متصفحك تشغيل جرافيكس الـ 3D حالياً بسبب قيود الذاكرة أو تسريع الجرافيكس. تم تحويلك للنسخة التفاعلية 2D لتنفيذ التجربة بكامل أدواتها وسلاسة تامة.</span>
+            </div>
+            <a href="separation_v2.php" style="background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; border: 1px solid rgba(255,255,255,0.2); font-weight: 600; white-content: nowrap;">
+                <i class="fas fa-redo"></i> محاولة 3D مجدداً
+            </a>
+        </div>
+        <?php endif; ?>
 
         <!-- بانر تعريفي: ليه أصلاً بنقدر نفصل المخاليط؟ (من دليل التجربة) -->
         <div class="intro-banner" id="introBanner">

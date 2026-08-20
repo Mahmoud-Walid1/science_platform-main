@@ -32,13 +32,27 @@ Options -Indexes
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType application/javascript "access plus 1 month"
     ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/x-javascript "access plus 1 month"
     
-    # Fonts
+    # Fonts & 3D Assets
     ExpiresByType font/woff2 "access plus 1 year"
     ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType model/gltf+json "access plus 1 month"
+    ExpiresByType model/gltf-binary "access plus 1 month"
+    ExpiresByType application/octet-stream "access plus 1 month"
 </IfModule>
 
-# 5. Gzip / Deflate Compression
+# 5. Cache-Control Headers for Hostinger CDN & Browsers
+<IfModule mod_headers.c>
+    <FilesMatch "\.(ico|jpe?g|png|gif|webp|svg|woff|woff2|eot|ttf)$">
+        Header set Cache-Control "max-age=31536000, public"
+    </FilesMatch>
+    <FilesMatch "\.(css|js|gltf|glb|bin|hdr)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </FilesMatch>
+</IfModule>
+
+# 6. Gzip / Deflate Compression
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/x-javascript text/javascript application/json model/gltf+json image/svg+xml
 </IfModule>

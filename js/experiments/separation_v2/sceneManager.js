@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 
 export class SceneManager {
-    constructor(canvasId) {
+    constructor(canvasId, options = {}) {
+        this.isLowPerformanceMode = !!options.isLowPerformanceMode;
+
         if (typeof canvasId === 'string') {
             this.canvas = document.getElementById(canvasId);
         } else {
@@ -39,25 +41,34 @@ export class SceneManager {
         this.camera.position.copy(this.defaultCameraPos);
         this.camera.lookAt(this.defaultLookAt);
 
-        try {
-            this.renderer = new THREE.WebGLRenderer({
+        // Multi-tier WebGL Initialization with Low-Power & Fallback Modes
+        this.renderer = null;
+
+        const tryCreateRenderer = (useAntialias, powerPref) => {
+            return new THREE.WebGLRenderer({
                 canvas: this.canvas,
-                antialias: true,
-                alpha: true
+                antialias: useAntialias,
+                alpha: true,
+                powerPreference: powerPref,
+                failIfMajorPerformanceCaveat: false
             });
+        };
+
+        try {
+            this.renderer = tryCreateRenderer(
+                !this.isLowPerformanceMode,
+                this.isLowPerformanceMode ? 'low-power' : 'high-performance'
+            );
         } catch (e1) {
-            console.warn('WebGL primary creation retry:', e1);
+            console.warn('WebGL primary creation fallback:', e1);
             if (this.canvas && this.canvas.parentNode) {
                 const freshCanvas = this.canvas.cloneNode(true);
                 this.canvas.parentNode.replaceChild(freshCanvas, this.canvas);
                 this.canvas = freshCanvas;
             }
             try {
-                this.renderer = new THREE.WebGLRenderer({
-                    canvas: this.canvas,
-                    antialias: false,
-                    alpha: true
-                });
+                this.isLowPerformanceMode = true;
+                this.renderer = tryCreateRenderer(false, 'low-power');
             } catch (e2) {
                 console.error("WebGL Initialization error:", e2);
                 this.renderer = null;
@@ -66,24 +77,38 @@ export class SceneManager {
 
         if (this.renderer) {
             this.renderer.setSize(this.width, this.height);
-            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            this.renderer.shadowMap.enabled = true;
-            this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            this.renderer.setPixelRatio(this.isLowPerformanceMode ? 1 : Math.min(window.devicePixelRatio, 2));
+            
+            if (this.isLowPerformanceMode) {
+                this.renderer.shadowMap.enabled = false;
+            } else {
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            }
+            
             this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
             this.renderer.toneMappingExposure = 1.1;
 
             this.canvas.addEventListener('webglcontextlost', (event) => {
                 event.preventDefault();
-                console.warn('WebGL context lost. Restoring automatically...');
+                console.warn('WebGL context lost. Attempting recovery...');
+                if (typeof this.onContextLost === 'function') {
+                    this.onContextLost();
+                }
             }, false);
 
             this.canvas.addEventListener('webglcontextrestored', () => {
-                console.log('WebGL context restored automatically!');
+                console.log('WebGL context restored successfully!');
                 if (this.renderer) {
                     this.onResize();
                 }
             }, false);
         }
+
+        // Automatic Memory & Context Cleanup on Unload / Navigation
+        const cleanupHandler = () => this.dispose();
+        window.addEventListener('beforeunload', cleanupHandler, { once: true });
+        window.addEventListener('pagehide', cleanupHandler, { once: true });
 
         this.setupLights();
         this.setupEnvironment();
@@ -454,5 +479,34 @@ export class SceneManager {
             }
         };
         animate();
+    }
+
+    dispose() {
+        console.log("Cleaning up WebGL SceneManager resources...");
+        try {
+            if (this.scene) {
+                this.scene.traverse((child) => {
+                    if (child.geometry) child.geometry.dispose();
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(m => m.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                });
+            }
+            if (this.renderer) {
+                const gl = this.renderer.getContext();
+                this.renderer.dispose();
+                if (gl && typeof gl.getExtension === 'function') {
+                    const loseContextExt = gl.getExtension('WEBGL_lose_context');
+                    if (loseContextExt) loseContextExt.loseContext();
+                }
+                this.renderer = null;
+            }
+        } catch (e) {
+            console.warn("SceneManager disposal error:", e);
+        }
     }
 }
