@@ -100,7 +100,7 @@ INSERT INTO `experiments` (`id`, `code_name`, `title`, `page_url`, `is_active`) 
 (3, 'electromagnet', 'المغناطيس الكهربائي', 'experiments/magnet.php', 1),
 (4, 'newton_laws', 'قوانين نيوتن للحركة', 'experiments/newton.php', 1),
 (5, 'light_prism', 'تحليل الضوء بالمنشور', 'experiments/prism.php', 1),
-(6, 'mixture_separation', 'فصل المخاليط', 'experiments/separation.php', 1)
+(6, 'mixture_separation', 'فصل المخاليط', 'experiments/separation_v2.php', 1)
 ON DUPLICATE KEY UPDATE `id`=`id`;
 
 -- --------------------------------------------------------

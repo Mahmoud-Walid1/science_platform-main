@@ -4,14 +4,8 @@ require_once '../functions.php';
 
 $sub = isAuthenticated();
 
-$user_name = $_SESSION['user']['name'] ?? $_SESSION['user_name'] ?? 'معلم معتمد';
-$user_contact = $_SESSION['user']['whatsappNumber'] ?? $_SESSION['user']['phone'] ?? $_SESSION['user']['email'] ?? '';
-
-$exp_active = mysqli_fetch_assoc(mysqli_query($conn, "SELECT is_active FROM experiments WHERE id = 6"))['is_active'];
-if (!$exp_active) {
-    header("Location: ../my-experiments.php?msg=experiment_disabled");
-    exit();
-}
+header("Location: separation_v2.php");
+exit();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">

@@ -44,3 +44,15 @@
 ### 3. مجلد التجارب والحماية (`experiments/` & `js/`)
 - **`js/watermark.js`**: سكربت العلامة المائية الشفافة المتحركة لمنع تسجيل الشاشة ومشاركة الحسابات.
 - **`experiments/`**: صفحات التجارب التفاعلية (`circuits.php`, `matter.php`, `magnet.php`, `newton.php`, `prism.php`, `separation.php`).
+- **`experiments/separation_v2.php`** [experiments/separation_v2.php](file:///d:/downloads/%D8%A7%D8%B3%D8%AA%D8%A7%D8%B0%20%D8%B5%D8%A7%D8%A8%D8%B1/%D9%85%D9%88%D8%A7%D9%82%D8%B9/%D8%A7%D9%84%D9%85%D8%AE%D8%AA%D8%A8%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%A7%D9%81%D8%AA%D8%B1%D8%A7%D8%B6%D9%8I/science_platform-main/experiments/separation_v2.php) & **`experiments/separation_v2.html`**: بيئة التجربة الأيزومترية 3D الجديدة لفصل المخاليط بالثيم الفاتح الموحد للمنصة، الكاميرا الأيزومترية الثابتة، سحب وإفلات المواد 3D من الرف، والتكوين الحر للمخاليط.
+- **`css/separation_v2.css`** [css/separation_v2.css](file:///d:/downloads/%D8%A7%D8%B3%D8%AA%D8%A7%D8%B0%20%D8%B5%D8%A7%D8%A8%D8%B1/%D9%85%D9%88%D8%A7%D9%82%D8%B9/%D8%A7%D9%84%D9%85%D8%AE%D8%AA%D8%A8%D8%B1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%A7%D9%81%D8%AA%D8%B1%D8%A7%D8%B6%D9%8I/science_platform-main/css/separation_v2.css): ملف التنسيق البصري الفاتح المعزز للبطاقات الزجاجية والهيدر الموحد.
+- **`js/experiments/separation_v2/`**: الموديول البرمجي التفصيلي بنمط Clean Architecture:
+  - `sceneManager.js`: إعداد مشهد Three.js، الإضاءة، والكاميرا الأيزومترية الثابتة.
+  - `materialsShelf.js`: بناء وتوليد زجاجات المواد الـ 3D مع ملصقات المسميات.
+  - `tools3D.js`: توليد أدوات الفصل الثلاثية الأبعاد (مغناطيس، قمع ترشيح مركب الحبيبات، موقد، قمع فصل ثنائي الصمام والقاع المخروطي، غربال).
+  - `beaker3D.js`: كأس المختبر المدرّج محاكاة السوائل والترسيب والجسيمات الواقعية.
+  - `pouringEngine.js`: أنيميشن سكب المواد زجاجياً وإمالتها.
+  - `dragControls.js`: محرك السحب والإفلات الـ 3D عبر المستويات الفضائية والرف.
+  - `separationEngine.js`: حساب وإجراء عمليات الفصل التفاعلية (انزلاق وتفريغ الزيت الذاتي بقمع الفصل، الجذب المغناطيسي من الكؤوس ومن فوق ورقة الترشيح، التنبيهات التفصيلية).
+  - `uiOverlay.js`: واجهة الإرشادات والمخاليط المقترحة بالثيم الفاتح.
+  - `app.js`: نقطة الانطلاق الرئيسية لتجميع المحاكاة.
