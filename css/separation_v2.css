@@ -433,37 +433,39 @@ body, html {
 }
 
 .edu-header-card {
-    background: linear-gradient(135deg, var(--primary-teal), #002d3d);
-    color: #ffffff;
-    padding: 20px 28px;
+    background: linear-gradient(135deg, #004e66, #002d3d) !important;
+    color: #ffffff !important;
+    padding: 22px 28px;
     border-radius: 16px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 6px 20px rgba(0, 78, 102, 0.18);
+    box-shadow: 0 6px 20px rgba(0, 78, 102, 0.2);
 }
 
 .edu-header-icon {
     font-size: 2.2rem;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.18);
     width: 60px;
     height: 60px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #38bdf8;
+    color: #38bdf8 !important;
 }
 
 .edu-header-info h2 {
     font-size: 1.35rem;
     font-weight: 800;
     margin-bottom: 4px;
+    color: #ffffff !important;
 }
 
 .edu-header-info p {
     font-size: 0.9rem;
-    opacity: 0.9;
+    color: #e2e8f0 !important;
+    opacity: 1 !important;
 }
 
 /* Edu Tabs Navigation */
@@ -482,7 +484,7 @@ body, html {
     font-family: 'Cairo', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: #0f172a !important;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -490,16 +492,24 @@ body, html {
     transition: all 0.2s ease;
 }
 
+.edu-tab-btn i {
+    color: #004e66;
+}
+
 .edu-tab-btn:hover {
     background: #f1f5f9;
-    border-color: var(--primary-teal);
+    border-color: #004e66;
 }
 
 .edu-tab-btn.active {
-    background: var(--primary-teal);
-    color: #ffffff;
-    border-color: var(--primary-teal);
-    box-shadow: 0 4px 12px rgba(0, 78, 102, 0.2);
+    background: #004e66 !important;
+    color: #ffffff !important;
+    border-color: #004e66 !important;
+    box-shadow: 0 4px 14px rgba(0, 78, 102, 0.3);
+}
+
+.edu-tab-btn.active i {
+    color: #ffffff !important;
 }
 
 /* Panels */
