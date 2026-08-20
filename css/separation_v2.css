@@ -379,29 +379,39 @@ body, html {
 .header-mode-switcher .mode-btn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 6px 16px;
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: 8px 18px;
     border-radius: 16px;
     font-family: 'Cairo', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.25 ease;
+    transition: all 0.25s ease;
+}
+
+.header-mode-switcher .mode-btn span,
+.header-mode-switcher .mode-btn i {
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .header-mode-switcher .mode-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .header-mode-switcher .mode-btn.active {
-    background: #ffffff;
-    color: var(--primary-teal);
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    background: #ffffff !important;
+    color: #004e66 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.header-mode-switcher .mode-btn.active span,
+.header-mode-switcher .mode-btn.active i {
+    color: #004e66 !important;
 }
 
 /* Educational Main Panel */

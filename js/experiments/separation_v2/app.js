@@ -11,54 +11,50 @@ import { QuizEngine } from './quizEngine.js';
 class SeparationApp {
     constructor() {
         this.canvas = document.getElementById('canvas3d');
-        if (!this.canvas) return;
-
         this.init();
     }
 
     init() {
-        // 1. Core Scene Manager
-        this.sceneManager = new SceneManager(this.canvas);
+        // 1. Educational Concepts, Properties Table & Interactive Quiz Engine (Always Initialize First)
+        try {
+            this.quizEngine = new QuizEngine('educationalPanel');
+            this.quizEngine.init();
+        } catch (e) {
+            console.warn('Quiz engine init warning:', e);
+        }
 
-        // 2. Beaker 3D Object & Fluids
-        this.beaker3D = new Beaker3D(this.sceneManager);
-
-        // 3. Raw Materials Shelf (Top Back)
-        this.materialsShelf = new MaterialsShelf(this.sceneManager);
-
-        // 4. Interactive Tools 3D (Side Equipment Racks)
-        this.tools3D = new Tools3D(this.sceneManager);
-
-        // 5. UI Overlay
-        this.uiOverlay = new UIOverlay(this.beaker3D, this.materialsShelf, this.tools3D, this.sceneManager);
-
-        // 6. Separation Physics Engine
-        this.separationEngine = new SeparationEngine(this.sceneManager, this.beaker3D, this.uiOverlay);
-
-        // 7. Pouring Engine (Pouring animations)
-        this.pouringEngine = new PouringEngine(this.sceneManager, this.beaker3D);
-        this.separationEngine.setPouringEngine(this.pouringEngine);
-
-        // 8. 3D Drag & Drop Controls
-        this.dragControls = new DragControls3D(
-            this.sceneManager,
-            this.materialsShelf,
-            this.tools3D,
-            this.beaker3D,
-            this.pouringEngine,
-            this.separationEngine,
-            this.uiOverlay
-        );
-
-        // 9. Educational Concepts, Properties Table & Interactive Quiz Engine
-        this.quizEngine = new QuizEngine('educationalPanel');
-        this.quizEngine.init();
-
-        // 10. Bind Header Mode Switcher Controls
+        // 2. Bind Header Mode Switcher Controls Immediately
         this.initModeSwitcher();
 
-        // Start 3D Render Loop
-        this.sceneManager.startLoop();
+        if (!this.canvas) return;
+
+        // 3. 3D Laboratory Environment Initialization
+        try {
+            this.sceneManager = new SceneManager(this.canvas);
+            this.beaker3D = new Beaker3D(this.sceneManager);
+            this.materialsShelf = new MaterialsShelf(this.sceneManager);
+            this.tools3D = new Tools3D(this.sceneManager);
+            this.uiOverlay = new UIOverlay(this.beaker3D, this.materialsShelf, this.tools3D, this.sceneManager);
+            this.separationEngine = new SeparationEngine(this.sceneManager, this.beaker3D, this.uiOverlay);
+            this.pouringEngine = new PouringEngine(this.sceneManager, this.beaker3D);
+            this.separationEngine.setPouringEngine(this.pouringEngine);
+            this.dragControls = new DragControls3D(
+                this.sceneManager,
+                this.materialsShelf,
+                this.tools3D,
+                this.beaker3D,
+                this.pouringEngine,
+                this.separationEngine,
+                this.uiOverlay
+            );
+
+            // Start 3D Render Loop
+            if (this.sceneManager && this.sceneManager.renderer) {
+                this.sceneManager.startLoop();
+            }
+        } catch (err) {
+            console.error("3D Lab scene initialization handled:", err);
+        }
     }
 
     initModeSwitcher() {
@@ -69,7 +65,8 @@ class SeparationApp {
 
         if (!btn3D || !btnQuiz || !labContainer || !eduPanel) return;
 
-        btn3D.addEventListener('click', () => {
+        btn3D.addEventListener('click', (e) => {
+            e.preventDefault();
             btn3D.classList.add('active');
             btnQuiz.classList.remove('active');
 
@@ -78,11 +75,14 @@ class SeparationApp {
 
             // Smooth resize & camera frustum refresh when returning to 3D mode
             setTimeout(() => {
-                this.sceneManager.onResize();
+                if (this.sceneManager && typeof this.sceneManager.onResize === 'function') {
+                    this.sceneManager.onResize();
+                }
             }, 50);
         });
 
-        btnQuiz.addEventListener('click', () => {
+        btnQuiz.addEventListener('click', (e) => {
+            e.preventDefault();
             btnQuiz.classList.add('active');
             btn3D.classList.remove('active');
 

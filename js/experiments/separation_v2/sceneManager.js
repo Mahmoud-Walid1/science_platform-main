@@ -56,9 +56,15 @@ export class SceneManager {
                 });
             } catch (e2) {
                 console.warn('Secondary WebGL creation fallback:', e2);
-                this.renderer = new THREE.WebGLRenderer({
-                    canvas: this.canvas
-                });
+                try {
+                    this.renderer = new THREE.WebGLRenderer({
+                        canvas: this.canvas
+                    });
+                } catch (e3) {
+                    console.error('WebGL is disabled or unavailable on this device:', e3);
+                    this.renderer = null;
+                    this.webglFailed = true;
+                }
             }
         }
 
