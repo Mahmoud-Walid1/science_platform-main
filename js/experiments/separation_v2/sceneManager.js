@@ -39,79 +39,34 @@ export class SceneManager {
         this.camera.position.copy(this.defaultCameraPos);
         this.camera.lookAt(this.defaultLookAt);
 
-        // Helper to obtain explicit WebGL context (forces SwiftShader software WebGL if GPU hardware is disabled)
-        const obtainGLContext = (canvasEl) => {
-            const opts = {
-                alpha: true,
-                depth: true,
-                stencil: false,
-                antialias: false,
-                powerPreference: 'default',
-                failIfMajorPerformanceCaveat: false,
-                preserveDrawingBuffer: false
-            };
-            let gl = null;
-            try { gl = canvasEl.getContext('webgl2', opts); } catch (e) {}
-            if (!gl) {
-                try { gl = canvasEl.getContext('webgl', opts) || canvasEl.getContext('experimental-webgl', opts); } catch (e) {}
-            }
-            return gl;
-        };
-
-        const createFreshCanvas = () => {
-            if (this.canvas && this.canvas.parentNode) {
-                const fresh = this.canvas.cloneNode(true);
-                this.canvas.parentNode.replaceChild(fresh, this.canvas);
-                this.canvas = fresh;
-            }
-        };
-
-        // Multi-Stage Ultra-Compatible WebGL Renderer Initialization
         try {
-            const glCtx = obtainGLContext(this.canvas);
             this.renderer = new THREE.WebGLRenderer({
                 canvas: this.canvas,
-                context: glCtx || undefined,
-                antialias: false,
-                alpha: true,
-                powerPreference: "default",
-                failIfMajorPerformanceCaveat: false
+                antialias: true,
+                alpha: true
             });
         } catch (e1) {
-            console.warn('Primary WebGL attempt, trying fresh canvas + explicit GL:', e1);
-            createFreshCanvas();
+            console.warn('WebGL primary creation retry:', e1);
+            if (this.canvas && this.canvas.parentNode) {
+                const freshCanvas = this.canvas.cloneNode(true);
+                this.canvas.parentNode.replaceChild(freshCanvas, this.canvas);
+                this.canvas = freshCanvas;
+            }
             try {
-                const glCtx = obtainGLContext(this.canvas);
                 this.renderer = new THREE.WebGLRenderer({
                     canvas: this.canvas,
-                    context: glCtx || undefined,
                     antialias: false,
-                    alpha: true,
-                    powerPreference: "low-power",
-                    precision: "mediump",
-                    failIfMajorPerformanceCaveat: false
+                    alpha: true
                 });
             } catch (e2) {
-                console.warn('Secondary WebGL attempt, trying minimal context fallback:', e2);
-                createFreshCanvas();
-                try {
-                    this.renderer = new THREE.WebGLRenderer({
-                        canvas: this.canvas,
-                        alpha: true,
-                        stencil: false,
-                        depth: true,
-                        antialias: false
-                    });
-                } catch (e3) {
-                    console.error('WebGL Renderer creation error:', e3);
-                    this.renderer = null;
-                }
+                console.error("WebGL Initialization error:", e2);
+                this.renderer = null;
             }
         }
 
         if (this.renderer) {
             this.renderer.setSize(this.width, this.height);
-            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             this.renderer.shadowMap.enabled = true;
             this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
