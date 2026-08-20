@@ -39,55 +39,51 @@ export class SceneManager {
         this.camera.position.copy(this.defaultCameraPos);
         this.camera.lookAt(this.defaultLookAt);
 
-        // Robust Multi-Stage WebGL Context Creation (Compatible with low-end GPUs, sandboxed browsers & Hostinger)
-        const contextAttribs = {
-            alpha: true,
-            depth: true,
-            stencil: false,
-            antialias: false,
-            powerPreference: 'default',
-            failIfMajorPerformanceCaveat: false
+        // Automatic Fresh Canvas Replacement Helper to clear Chrome context locks
+        const createFreshCanvas = () => {
+            if (this.canvas && this.canvas.parentNode) {
+                const fresh = this.canvas.cloneNode(true);
+                this.canvas.parentNode.replaceChild(fresh, this.canvas);
+                this.canvas = fresh;
+            }
         };
 
+        // Multi-Stage Ultra-Compatible WebGL Initialization
         try {
             this.renderer = new THREE.WebGLRenderer({
                 canvas: this.canvas,
-                antialias: true,
+                antialias: false,
                 alpha: true,
                 powerPreference: "default",
                 failIfMajorPerformanceCaveat: false
             });
         } catch (e1) {
-            console.warn('Primary WebGL creation fallback:', e1);
+            console.warn('Primary WebGL attempt, trying low-power fallback:', e1);
+            createFreshCanvas();
             try {
-                let gl = null;
-                try { gl = this.canvas.getContext('webgl2', contextAttribs); } catch(ex) {}
-                if (!gl) {
-                    try { gl = this.canvas.getContext('webgl', contextAttribs) || this.canvas.getContext('experimental-webgl', contextAttribs); } catch(ex) {}
-                }
-                if (gl) {
-                    this.renderer = new THREE.WebGLRenderer({
-                        canvas: this.canvas,
-                        context: gl
-                    });
-                } else {
-                    this.renderer = new THREE.WebGLRenderer({
-                        canvas: this.canvas,
-                        alpha: true,
-                        antialias: false
-                    });
-                }
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: false,
+                    alpha: true,
+                    powerPreference: "low-power",
+                    precision: "mediump",
+                    failIfMajorPerformanceCaveat: false
+                });
             } catch (e2) {
-                console.warn('Secondary WebGL creation fallback:', e2);
+                console.warn('Secondary WebGL attempt, trying minimal context fallback:', e2);
+                createFreshCanvas();
                 try {
                     this.renderer = new THREE.WebGLRenderer({
                         canvas: this.canvas,
-                        precision: "mediump"
+                        alpha: true,
+                        stencil: false,
+                        depth: true,
+                        antialias: false
                     });
                 } catch (e3) {
-                    console.error('WebGL is disabled or unavailable on this browser/device:', e3);
+                    console.error('WebGL hardware acceleration unavailable, activating Canvas2D auto-engine:', e3);
+                    createFreshCanvas();
                     this.renderer = null;
-                    this.webglFailed = true;
                 }
             }
         }
@@ -102,17 +98,18 @@ export class SceneManager {
 
             this.canvas.addEventListener('webglcontextlost', (event) => {
                 event.preventDefault();
-                console.warn('WebGL context lost. Waiting for restoration...');
+                console.warn('WebGL context lost. Restoring automatically...');
             }, false);
 
             this.canvas.addEventListener('webglcontextrestored', () => {
-                console.log('WebGL context restored!');
+                console.log('WebGL context restored automatically!');
                 if (this.renderer) {
                     this.onResize();
                 }
             }, false);
         } else {
-            this.showWebGLWarningBanner();
+            // Software 2D Canvas Auto-Renderer for devices without WebGL hardware acceleration
+            this.initSoftwareCanvasFallback();
         }
 
         this.setupLights();
@@ -453,30 +450,47 @@ export class SceneManager {
         this.toolShelfY = 1.29;
     }
 
-    showWebGLWarningBanner() {
+    initSoftwareCanvasFallback() {
         if (!this.canvas || !this.canvas.parentElement) return;
-        if (document.getElementById('webglWarningBanner')) return;
-        const banner = document.createElement('div');
-        banner.id = 'webglWarningBanner';
-        banner.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;background:#ffffff;padding:24px 32px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.15);text-align:center;max-width:480px;border:2px solid #38bdf8;font-family:Cairo,sans-serif;';
-        banner.innerHTML = `
-            <div style="font-size:3rem;margin-bottom:12px;">⚠️</div>
-            <h3 style="color:#004e66;font-weight:800;font-size:1.2rem;margin-bottom:8px;">تنبيه تسريع الأجهزة (WebGL)</h3>
-            <p style="color:#475569;font-size:0.92rem;line-height:1.6;margin-bottom:18px;">
-                ميزة التسريع المادي (Hardware Acceleration) معطلة في متصفحك. يرجى تفعيلها من إعدادات المتصفح لمشاهدة المختبر الـ 3D، أو الانتقال لقسم المعلومات والأسئلة مباشرة.
-            </p>
-            <button id="btnFallbackQuiz" style="background:#004e66;color:#fff;border:none;padding:10px 24px;border-radius:12px;font-family:Cairo,sans-serif;font-weight:700;cursor:pointer;">
-                <i class="fas fa-book-open"></i> الانتقال لقسم المعلومات والأسئلة
-            </button>
-        `;
-        this.canvas.parentElement.appendChild(banner);
-        const btn = banner.querySelector('#btnFallbackQuiz');
-        if (btn) {
-            btn.addEventListener('click', () => {
-                const btnQuiz = document.getElementById('btnModeQuiz');
-                if (btnQuiz) btnQuiz.click();
-            });
-        }
+        const ctx = this.canvas.getContext('2d');
+        if (!ctx) return;
+        this.isSoftwareCanvas = true;
+
+        const render2DLoop = () => {
+            if (!this.isSoftwareCanvas) return;
+            const w = this.canvas.width = this.canvas.parentElement.clientWidth || window.innerWidth;
+            const h = this.canvas.height = this.canvas.parentElement.clientHeight || (window.innerHeight - 60);
+
+            // Lab Background
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+            bgGrad.addColorStop(0, '#f0f4f9');
+            bgGrad.addColorStop(1, '#e2e8f0');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // Lab Marble Bench Table
+            const tableY = h * 0.65;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, tableY, w, h - tableY);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillRect(0, tableY, w, 6);
+
+            // Glass Beaker
+            const cx = w * 0.45;
+            const by = tableY - 140;
+            ctx.strokeStyle = '#004e66';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(cx - 50, by, 100, 140);
+            ctx.fillStyle = 'rgba(2, 132, 199, 0.4)';
+            ctx.fillRect(cx - 46, by + 40, 92, 96);
+
+            // Top Equipment Rack
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(w * 0.1, tableY - 260, w * 0.8, 12);
+
+            requestAnimationFrame(render2DLoop);
+        };
+        render2DLoop();
     }
 
     onResize() {

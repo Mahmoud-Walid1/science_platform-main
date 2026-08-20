@@ -817,3 +817,75 @@ body, html {
 .btn-restart-quiz:hover {
     background: #003648;
 }
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* MOBILE & TABLET RESPONSIVE MEDIA QUERIES                            */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .lab-header-v2 {
+        padding: 0 12px;
+        height: 56px;
+    }
+
+    .lab-brand-v2 span {
+        font-size: 0.95rem;
+    }
+
+    .header-mode-switcher {
+        padding: 2px;
+    }
+
+    .header-mode-switcher .mode-btn {
+        padding: 5px 10px;
+        font-size: 0.76rem;
+        gap: 5px;
+    }
+
+    .stepper-banner {
+        top: 6px;
+        padding: 4px 12px;
+        font-size: 0.78rem;
+        max-width: 90vw;
+    }
+
+    .toggle-sidebar-btn {
+        top: 48px;
+        right: 10px;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+    }
+
+    .educational-panel {
+        padding: 14px;
+    }
+
+    .edu-header-card {
+        padding: 16px;
+        gap: 14px;
+    }
+
+    .edu-header-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.6rem;
+    }
+
+    .edu-header-info h2 {
+        font-size: 1.1rem;
+    }
+
+    .edu-tabs-nav {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .edu-tab-btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+
+    .quiz-container-card {
+        padding: 18px;
+    }
+}
