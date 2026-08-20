@@ -39,7 +39,25 @@ export class SceneManager {
         this.camera.position.copy(this.defaultCameraPos);
         this.camera.lookAt(this.defaultLookAt);
 
-        // Automatic Fresh Canvas Replacement Helper to clear Chrome context locks
+        // Helper to obtain explicit WebGL context (forces SwiftShader software WebGL if GPU hardware is disabled)
+        const obtainGLContext = (canvasEl) => {
+            const opts = {
+                alpha: true,
+                depth: true,
+                stencil: false,
+                antialias: false,
+                powerPreference: 'default',
+                failIfMajorPerformanceCaveat: false,
+                preserveDrawingBuffer: false
+            };
+            let gl = null;
+            try { gl = canvasEl.getContext('webgl2', opts); } catch (e) {}
+            if (!gl) {
+                try { gl = canvasEl.getContext('webgl', opts) || canvasEl.getContext('experimental-webgl', opts); } catch (e) {}
+            }
+            return gl;
+        };
+
         const createFreshCanvas = () => {
             if (this.canvas && this.canvas.parentNode) {
                 const fresh = this.canvas.cloneNode(true);
@@ -48,21 +66,25 @@ export class SceneManager {
             }
         };
 
-        // Multi-Stage Ultra-Compatible WebGL Initialization
+        // Multi-Stage Ultra-Compatible WebGL Renderer Initialization
         try {
+            const glCtx = obtainGLContext(this.canvas);
             this.renderer = new THREE.WebGLRenderer({
                 canvas: this.canvas,
+                context: glCtx || undefined,
                 antialias: false,
                 alpha: true,
                 powerPreference: "default",
                 failIfMajorPerformanceCaveat: false
             });
         } catch (e1) {
-            console.warn('Primary WebGL attempt, trying low-power fallback:', e1);
+            console.warn('Primary WebGL attempt, trying fresh canvas + explicit GL:', e1);
             createFreshCanvas();
             try {
+                const glCtx = obtainGLContext(this.canvas);
                 this.renderer = new THREE.WebGLRenderer({
                     canvas: this.canvas,
+                    context: glCtx || undefined,
                     antialias: false,
                     alpha: true,
                     powerPreference: "low-power",
@@ -81,8 +103,7 @@ export class SceneManager {
                         antialias: false
                     });
                 } catch (e3) {
-                    console.error('WebGL hardware acceleration unavailable, activating Canvas2D auto-engine:', e3);
-                    createFreshCanvas();
+                    console.error('WebGL Renderer creation error:', e3);
                     this.renderer = null;
                 }
             }
@@ -107,9 +128,6 @@ export class SceneManager {
                     this.onResize();
                 }
             }, false);
-        } else {
-            // Software 2D Canvas Auto-Renderer for devices without WebGL hardware acceleration
-            this.initSoftwareCanvasFallback();
         }
 
         this.setupLights();
@@ -448,49 +466,6 @@ export class SceneManager {
         this.tableY = 0;
         this.shelfY = 2.14;
         this.toolShelfY = 1.29;
-    }
-
-    initSoftwareCanvasFallback() {
-        if (!this.canvas || !this.canvas.parentElement) return;
-        const ctx = this.canvas.getContext('2d');
-        if (!ctx) return;
-        this.isSoftwareCanvas = true;
-
-        const render2DLoop = () => {
-            if (!this.isSoftwareCanvas) return;
-            const w = this.canvas.width = this.canvas.parentElement.clientWidth || window.innerWidth;
-            const h = this.canvas.height = this.canvas.parentElement.clientHeight || (window.innerHeight - 60);
-
-            // Lab Background
-            const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-            bgGrad.addColorStop(0, '#f0f4f9');
-            bgGrad.addColorStop(1, '#e2e8f0');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, w, h);
-
-            // Lab Marble Bench Table
-            const tableY = h * 0.65;
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, tableY, w, h - tableY);
-            ctx.fillStyle = '#cbd5e1';
-            ctx.fillRect(0, tableY, w, 6);
-
-            // Glass Beaker
-            const cx = w * 0.45;
-            const by = tableY - 140;
-            ctx.strokeStyle = '#004e66';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(cx - 50, by, 100, 140);
-            ctx.fillStyle = 'rgba(2, 132, 199, 0.4)';
-            ctx.fillRect(cx - 46, by + 40, 92, 96);
-
-            // Top Equipment Rack
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillRect(w * 0.1, tableY - 260, w * 0.8, 12);
-
-            requestAnimationFrame(render2DLoop);
-        };
-        render2DLoop();
     }
 
     onResize() {
