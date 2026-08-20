@@ -146,14 +146,14 @@ export class Tools3D {
     buildFilterMesh(group) {
         const standMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.2 });
         const glassFunnelMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
+            color: 0xdbeafe,
             transparent: true,
-            opacity: 0.45,
-            roughness: 0.05,
-            transmission: 0.92,
-            thickness: 0.15,
+            opacity: 0.65,
+            roughness: 0.1,
+            transmission: 0.25,
+            thickness: 0.3,
             ior: 1.5,
-            depthWrite: false
+            depthWrite: true
         });
         const filterPaperMat = new THREE.MeshStandardMaterial({
             color: 0xf8fafc,
@@ -178,7 +178,7 @@ export class Tools3D {
         const funnelConeMesh = new THREE.Mesh(funnelConeGeo, glassFunnelMat);
         funnelConeMesh.position.set(0, 0.96, 0);
         funnelConeMesh.rotation.x = Math.PI;
-        funnelConeMesh.castShadow = true;
+        funnelConeMesh.castShadow = false;
         group.add(funnelConeMesh);
 
         const stemGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.48, 24);
@@ -329,14 +329,14 @@ export class Tools3D {
 
     buildSeparatoryFunnelMesh(group) {
         const glassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
+            color: 0xdbeafe,
             transparent: true,
-            opacity: 0.45,
-            roughness: 0.05,
-            transmission: 0.92,
-            thickness: 0.15,
+            opacity: 0.65,
+            roughness: 0.1,
+            transmission: 0.25,
+            thickness: 0.3,
             ior: 1.5,
-            depthWrite: false
+            depthWrite: true
         });
         const stopperMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.2 });
         const valveMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.2 });
@@ -366,7 +366,7 @@ export class Tools3D {
         const bodyGeo = new THREE.LatheGeometry(points, 32);
         const bodyMesh = new THREE.Mesh(bodyGeo, glassMat);
         bodyMesh.position.y = 0.0;
-        bodyMesh.castShadow = true;
+        bodyMesh.castShadow = false;
         group.add(bodyMesh);
 
         const lowerConePoints = [];

@@ -400,7 +400,6 @@ export class SceneManager {
         });
         const table = new THREE.Mesh(tableGeo, tableMat);
         table.position.set(0, -0.11, 0.2);
-        table.receiveShadow = true;
         this.scene.add(table);
 
         const rimGeo = new THREE.BoxGeometry(7.62, 0.08, 0.06);
@@ -414,8 +413,6 @@ export class SceneManager {
         const shelfMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.35, metalness: 0.1 });
         const matShelf = new THREE.Mesh(matShelfGeo, shelfMat);
         matShelf.position.set(0, 2.1, -0.9);
-        matShelf.castShadow = true;
-        matShelf.receiveShadow = true;
         this.scene.add(matShelf);
 
         for (let xPos of [-2.3, 2.3]) {
@@ -429,8 +426,6 @@ export class SceneManager {
         const toolShelfGeo = new THREE.BoxGeometry(2.8, 0.08, 0.65);
         const toolShelf = new THREE.Mesh(toolShelfGeo, shelfMat);
         toolShelf.position.set(2.0, 1.25, -0.9);
-        toolShelf.castShadow = true;
-        toolShelf.receiveShadow = true;
         this.scene.add(toolShelf);
 
         const toolBracket = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.3, 0.5), shelfMat);

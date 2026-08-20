@@ -64,7 +64,7 @@ export class MaterialsShelf {
                 const boxGeo = new THREE.BoxGeometry(0.36, 0.22, 0.36);
                 const boxMesh = new THREE.Mesh(boxGeo, boxMat);
                 boxMesh.position.y = 0.11;
-                boxMesh.castShadow = true;
+                boxMesh.castShadow = false;
                 bottleGroup.add(boxMesh);
 
                 const stickerMat = new THREE.MeshBasicMaterial({ map: this.createStickerTexture('ورقة ترشيح') });
@@ -79,19 +79,19 @@ export class MaterialsShelf {
                 bottleGroup.add(paperCone);
             } else if (matInfo.type.startsWith('liquid')) {
                 const glassMat = new THREE.MeshPhysicalMaterial({
-                    color: 0xffffff,
+                    color: 0xdbeafe,
                     transparent: true,
-                    opacity: 0.35,
-                    roughness: 0.05,
-                    transmission: 0.92,
+                    opacity: 0.65,
+                    roughness: 0.1,
+                    transmission: 0.25,
                     ior: 1.5,
-                    thickness: 0.12,
-                    depthWrite: false
+                    thickness: 0.25,
+                    depthWrite: true
                 });
 
                 const flaskBody = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.36, 24), glassMat);
                 flaskBody.position.y = 0.18;
-                flaskBody.castShadow = true;
+                flaskBody.castShadow = false;
                 bottleGroup.add(flaskBody);
 
                 const liquidMat = new THREE.MeshStandardMaterial({
@@ -116,18 +116,18 @@ export class MaterialsShelf {
             } else {
                 // Solid Jars (Sand, Salt, Iron, Pebbles)
                 const jarGlassMat = new THREE.MeshPhysicalMaterial({
-                    color: 0xffffff,
+                    color: 0xdbeafe,
                     transparent: true,
-                    opacity: 0.4,
+                    opacity: 0.65,
                     roughness: 0.1,
-                    transmission: 0.85,
+                    transmission: 0.25,
                     ior: 1.45,
-                    depthWrite: false
+                    depthWrite: true
                 });
 
                 const jarBody = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.36, 24), jarGlassMat);
                 jarBody.position.y = 0.18;
-                jarBody.castShadow = true;
+                jarBody.castShadow = false;
                 bottleGroup.add(jarBody);
 
                 if (matInfo.id === 'pebbles') {
