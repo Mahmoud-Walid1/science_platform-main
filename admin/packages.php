@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_package'])) {
     $is_active = isset($_POST['is_active']) ? 1 : 0;
 
     $stmt = $conn->prepare("UPDATE packages SET name = ?, duration_months = ?, store_url = ?, is_active = ? WHERE id = ?");
-    $stmt->bind_param("sisi", $name, $duration_months, $store_url, $is_active, $package_id);
+    $stmt->bind_param("sisii", $name, $duration_months, $store_url, $is_active, $package_id);
     if ($stmt->execute()) {
         $message = "✅ تم تحديث الباقة ورابط الشراء بنجاح!";
     } else {
