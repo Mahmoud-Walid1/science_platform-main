@@ -43,15 +43,16 @@ export class SceneManager {
             this.renderer = new THREE.WebGLRenderer({
                 canvas: this.canvas,
                 antialias: true,
-                alpha: true
+                alpha: true,
+                powerPreference: "high-performance",
+                failIfMajorPerformanceCaveat: false
             });
         } catch (e1) {
             console.warn('Primary WebGL creation fallback:', e1);
             try {
-                const glCtx = this.canvas.getContext('webgl2') || this.canvas.getContext('webgl');
                 this.renderer = new THREE.WebGLRenderer({
                     canvas: this.canvas,
-                    context: glCtx
+                    powerPreference: "default"
                 });
             } catch (e2) {
                 console.warn('Secondary WebGL creation fallback:', e2);
@@ -76,7 +77,9 @@ export class SceneManager {
 
             this.canvas.addEventListener('webglcontextrestored', () => {
                 console.log('WebGL context restored!');
-                this.onResize();
+                if (this.renderer) {
+                    this.onResize();
+                }
             }, false);
         }
 
@@ -444,7 +447,9 @@ export class SceneManager {
                 fn(delta, elapsedTime);
             }
 
-            this.renderer.render(this.scene, this.camera);
+            if (this.renderer && this.renderer.getContext() && !this.renderer.getContext().isContextLost()) {
+                this.renderer.render(this.scene, this.camera);
+            }
         };
         animate();
     }

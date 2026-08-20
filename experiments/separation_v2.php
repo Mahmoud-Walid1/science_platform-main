@@ -34,11 +34,19 @@ if (!$exp_active) {
     <header class="lab-header-v2">
         <a href="../my-experiments.php" class="lab-brand-v2">
             <i class="fas fa-flask"></i>
-            <span>مختبرات العلوم والتقنية 3D (المختبر الأيزومتري)</span>
+            <span>مختبر فصل المخاليط</span>
         </a>
-        <div class="exp-badge-v2">
-            <i class="fas fa-vial"></i> فصل المخاليط التفاعلي
+
+        <!-- Header Segmented Control Mode Switcher -->
+        <div class="header-mode-switcher">
+            <button type="button" class="mode-btn active" id="btnMode3D">
+                <i class="fas fa-cubes"></i> <span>المختبر التفاعلي (3D)</span>
+            </button>
+            <button type="button" class="mode-btn" id="btnModeQuiz">
+                <i class="fas fa-book-open"></i> <span>المعلومات والأسئلة والتقييم</span>
+            </button>
         </div>
+
         <a href="../my-experiments.php" class="exit-btn-v2">
             <i class="fas fa-arrow-right"></i> خروج
         </a>
@@ -114,6 +122,11 @@ if (!$exp_active) {
             </div>
         </aside>
 
+    </div>
+
+    <!-- Educational Concepts, Physical Properties Table & Interactive Quiz Panel -->
+    <div class="educational-panel" id="educationalPanel" style="display: none;">
+        <!-- Rendered dynamically by QuizEngine -->
     </div>
 
     <!-- Three.js Import Map -->

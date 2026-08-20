@@ -6,6 +6,7 @@ import { PouringEngine } from './pouringEngine.js';
 import { DragControls3D } from './dragControls.js';
 import { SeparationEngine } from './separationEngine.js';
 import { UIOverlay } from './uiOverlay.js';
+import { QuizEngine } from './quizEngine.js';
 
 class SeparationApp {
     constructor() {
@@ -49,8 +50,45 @@ class SeparationApp {
             this.uiOverlay
         );
 
+        // 9. Educational Concepts, Properties Table & Interactive Quiz Engine
+        this.quizEngine = new QuizEngine('educationalPanel');
+        this.quizEngine.init();
+
+        // 10. Bind Header Mode Switcher Controls
+        this.initModeSwitcher();
+
         // Start 3D Render Loop
         this.sceneManager.startLoop();
+    }
+
+    initModeSwitcher() {
+        const btn3D = document.getElementById('btnMode3D');
+        const btnQuiz = document.getElementById('btnModeQuiz');
+        const labContainer = document.querySelector('.lab-container-v2');
+        const eduPanel = document.getElementById('educationalPanel');
+
+        if (!btn3D || !btnQuiz || !labContainer || !eduPanel) return;
+
+        btn3D.addEventListener('click', () => {
+            btn3D.classList.add('active');
+            btnQuiz.classList.remove('active');
+
+            labContainer.style.display = 'flex';
+            eduPanel.style.display = 'none';
+
+            // Smooth resize & camera frustum refresh when returning to 3D mode
+            setTimeout(() => {
+                this.sceneManager.onResize();
+            }, 50);
+        });
+
+        btnQuiz.addEventListener('click', () => {
+            btnQuiz.classList.add('active');
+            btn3D.classList.remove('active');
+
+            labContainer.style.display = 'none';
+            eduPanel.style.display = 'block';
+        });
     }
 }
 
