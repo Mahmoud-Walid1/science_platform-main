@@ -39,29 +39,53 @@ export class SceneManager {
         this.camera.position.copy(this.defaultCameraPos);
         this.camera.lookAt(this.defaultLookAt);
 
+        // Robust Multi-Stage WebGL Context Creation (Compatible with low-end GPUs, sandboxed browsers & Hostinger)
+        const contextAttribs = {
+            alpha: true,
+            depth: true,
+            stencil: false,
+            antialias: false,
+            powerPreference: 'default',
+            failIfMajorPerformanceCaveat: false
+        };
+
         try {
             this.renderer = new THREE.WebGLRenderer({
                 canvas: this.canvas,
                 antialias: true,
                 alpha: true,
-                powerPreference: "high-performance",
+                powerPreference: "default",
                 failIfMajorPerformanceCaveat: false
             });
         } catch (e1) {
             console.warn('Primary WebGL creation fallback:', e1);
             try {
-                this.renderer = new THREE.WebGLRenderer({
-                    canvas: this.canvas,
-                    powerPreference: "default"
-                });
+                let gl = null;
+                try { gl = this.canvas.getContext('webgl2', contextAttribs); } catch(ex) {}
+                if (!gl) {
+                    try { gl = this.canvas.getContext('webgl', contextAttribs) || this.canvas.getContext('experimental-webgl', contextAttribs); } catch(ex) {}
+                }
+                if (gl) {
+                    this.renderer = new THREE.WebGLRenderer({
+                        canvas: this.canvas,
+                        context: gl
+                    });
+                } else {
+                    this.renderer = new THREE.WebGLRenderer({
+                        canvas: this.canvas,
+                        alpha: true,
+                        antialias: false
+                    });
+                }
             } catch (e2) {
                 console.warn('Secondary WebGL creation fallback:', e2);
                 try {
                     this.renderer = new THREE.WebGLRenderer({
-                        canvas: this.canvas
+                        canvas: this.canvas,
+                        precision: "mediump"
                     });
                 } catch (e3) {
-                    console.error('WebGL is disabled or unavailable on this device:', e3);
+                    console.error('WebGL is disabled or unavailable on this browser/device:', e3);
                     this.renderer = null;
                     this.webglFailed = true;
                 }
@@ -70,7 +94,7 @@ export class SceneManager {
 
         if (this.renderer) {
             this.renderer.setSize(this.width, this.height);
-            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
             this.renderer.shadowMap.enabled = true;
             this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -87,6 +111,8 @@ export class SceneManager {
                     this.onResize();
                 }
             }, false);
+        } else {
+            this.showWebGLWarningBanner();
         }
 
         this.setupLights();
@@ -427,8 +453,34 @@ export class SceneManager {
         this.toolShelfY = 1.29;
     }
 
-    onResize() {
+    showWebGLWarningBanner() {
         if (!this.canvas || !this.canvas.parentElement) return;
+        if (document.getElementById('webglWarningBanner')) return;
+        const banner = document.createElement('div');
+        banner.id = 'webglWarningBanner';
+        banner.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;background:#ffffff;padding:24px 32px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.15);text-align:center;max-width:480px;border:2px solid #38bdf8;font-family:Cairo,sans-serif;';
+        banner.innerHTML = `
+            <div style="font-size:3rem;margin-bottom:12px;">⚠️</div>
+            <h3 style="color:#004e66;font-weight:800;font-size:1.2rem;margin-bottom:8px;">تنبيه تسريع الأجهزة (WebGL)</h3>
+            <p style="color:#475569;font-size:0.92rem;line-height:1.6;margin-bottom:18px;">
+                ميزة التسريع المادي (Hardware Acceleration) معطلة في متصفحك. يرجى تفعيلها من إعدادات المتصفح لمشاهدة المختبر الـ 3D، أو الانتقال لقسم المعلومات والأسئلة مباشرة.
+            </p>
+            <button id="btnFallbackQuiz" style="background:#004e66;color:#fff;border:none;padding:10px 24px;border-radius:12px;font-family:Cairo,sans-serif;font-weight:700;cursor:pointer;">
+                <i class="fas fa-book-open"></i> الانتقال لقسم المعلومات والأسئلة
+            </button>
+        `;
+        this.canvas.parentElement.appendChild(banner);
+        const btn = banner.querySelector('#btnFallbackQuiz');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                const btnQuiz = document.getElementById('btnModeQuiz');
+                if (btnQuiz) btnQuiz.click();
+            });
+        }
+    }
+
+    onResize() {
+        if (!this.canvas || !this.canvas.parentElement || !this.renderer) return;
         this.width = this.canvas.parentElement.clientWidth || window.innerWidth;
         this.height = this.canvas.parentElement.clientHeight || (window.innerHeight - 60);
 
