@@ -90,13 +90,13 @@ export class QuizEngine {
                 <!-- Tabs Menu -->
                 <div class="edu-tabs-nav">
                     <button type="button" class="edu-tab-btn active" data-edutab="concepts">
-                        <i class="fas fa-atom"></i> المفاهيم الكيميائية
+                        <i class="fas fa-atom"></i> <span>المفاهيم الكيميائية</span>
                     </button>
                     <button type="button" class="edu-tab-btn" data-edutab="table">
-                        <i class="fas fa-table-list"></i> جدول الخصائص الخمس
+                        <i class="fas fa-table-list"></i> <span>جدول الخصائص الخمس</span>
                     </button>
                     <button type="button" class="edu-tab-btn" data-edutab="quiz">
-                        <i class="fas fa-clipboard-check"></i> اختبر فهمك التفاعلي
+                        <i class="fas fa-clipboard-check"></i> <span>اختبر فهمك التفاعلي</span>
                     </button>
                 </div>
 
@@ -276,7 +276,11 @@ export class QuizEngine {
                     <p>${q.explanation}</p>
                 `;
 
-                quizBox.querySelector('#quizActions').style.display = 'flex';
+                const quizActions = quizBox.querySelector('#quizActions');
+                quizActions.style.display = 'flex';
+                setTimeout(() => {
+                    quizActions.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
             });
         });
 

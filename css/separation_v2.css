@@ -2,6 +2,7 @@
 :root {
     --bg-light: #f0f4f9;
     --card-bg: rgba(255, 255, 255, 0.95);
+    --primary-teal: #004e66;
     --teal-800: #004e66;
     --teal-600: #007399;
     --teal-500: #00a8d4;
@@ -379,7 +380,7 @@ body, html {
 .header-mode-switcher .mode-btn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: rgba(255, 255, 255, 0.9);
     padding: 8px 18px;
     border-radius: 16px;
     font-family: 'Cairo', sans-serif;
@@ -394,7 +395,7 @@ body, html {
 
 .header-mode-switcher .mode-btn span,
 .header-mode-switcher .mode-btn i {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: inherit;
 }
 
 .header-mode-switcher .mode-btn:hover {
@@ -479,14 +480,14 @@ body, html {
 }
 
 .edu-tab-btn {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
     padding: 10px 20px;
     border-radius: 12px;
     font-family: 'Cairo', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
-    color: #0f172a !important;
+    color: #1e293b !important;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -494,13 +495,17 @@ body, html {
     transition: all 0.2s ease;
 }
 
+.edu-tab-btn span {
+    color: #1e293b !important;
+}
+
 .edu-tab-btn i {
-    color: #004e66;
+    color: #004e66 !important;
 }
 
 .edu-tab-btn:hover {
-    background: #f1f5f9;
-    border-color: #004e66;
+    background: #f1f5f9 !important;
+    border-color: #004e66 !important;
 }
 
 .edu-tab-btn.active {
@@ -510,6 +515,7 @@ body, html {
     box-shadow: 0 4px 14px rgba(0, 78, 102, 0.3);
 }
 
+.edu-tab-btn.active span,
 .edu-tab-btn.active i {
     color: #ffffff !important;
 }
@@ -751,24 +757,32 @@ body, html {
 .quiz-actions {
     display: flex;
     justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #f1f5f9;
 }
 
 .btn-next-question {
-    background: var(--primary-teal);
-    color: #ffffff;
+    background: #004e66 !important;
+    color: #ffffff !important;
     border: none;
-    padding: 10px 24px;
+    padding: 12px 28px;
     border-radius: 12px;
     font-family: 'Cairo', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 800;
     cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 78, 102, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     transition: all 0.2s ease;
 }
 
 .btn-next-question:hover {
-    background: #003648;
+    background: #003648 !important;
     transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 78, 102, 0.4);
 }
 
 .quiz-result-card {

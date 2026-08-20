@@ -31,19 +31,19 @@ export class SingleBeaker3D {
     initBeakerMesh() {
         const beakerGeo = new THREE.CylinderGeometry(0.35, 0.32, 0.72, 36, 1, true);
         const glassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
+            color: 0xdbeafe,
             transparent: true,
-            opacity: 0.45,
-            roughness: 0.05,
+            opacity: 0.65,
+            roughness: 0.1,
             metalness: 0.1,
-            transmission: 0.95,
-            thickness: 0.3,
+            transmission: 0.25,
+            thickness: 0.5,
             ior: 1.52,
-            depthWrite: false
+            depthWrite: true
         });
         const beakerMesh = new THREE.Mesh(beakerGeo, glassMat);
         beakerMesh.position.y = 0.36;
-        beakerMesh.castShadow = true;
+        beakerMesh.castShadow = false;
         this.group.add(beakerMesh);
 
         const rimGeo = new THREE.TorusGeometry(0.352, 0.012, 12, 36);

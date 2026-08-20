@@ -78,13 +78,7 @@ export class SceneManager {
         if (this.renderer) {
             this.renderer.setSize(this.width, this.height);
             this.renderer.setPixelRatio(this.isLowPerformanceMode ? 1 : Math.min(window.devicePixelRatio, 2));
-            
-            if (this.isLowPerformanceMode) {
-                this.renderer.shadowMap.enabled = false;
-            } else {
-                this.renderer.shadowMap.enabled = true;
-                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            }
+            this.renderer.shadowMap.enabled = false;
             
             this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
             this.renderer.toneMappingExposure = 1.1;
@@ -343,7 +337,7 @@ export class SceneManager {
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.35);
         dirLight.position.set(4, 10, 8);
-        dirLight.castShadow = true;
+        dirLight.castShadow = false;
         dirLight.shadow.mapSize.width = 2048;
         dirLight.shadow.mapSize.height = 2048;
         dirLight.shadow.bias = -0.0005;
