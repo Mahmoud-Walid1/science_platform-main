@@ -85,7 +85,7 @@ export class Tools3D {
 
         const geoN = new THREE.ExtrudeGeometry(shapeN, extrudeSettings);
         const northMesh = new THREE.Mesh(geoN, redMat);
-        northMesh.castShadow = true;
+        northMesh.castShadow = false;
         northMesh.position.set(0, 0, -0.055);
         group.add(northMesh);
 
@@ -100,7 +100,7 @@ export class Tools3D {
 
         const geoS = new THREE.ExtrudeGeometry(shapeS, extrudeSettings);
         const southMesh = new THREE.Mesh(geoS, blueMat);
-        southMesh.castShadow = true;
+        southMesh.castShadow = false;
         southMesh.position.set(0, 0, -0.055);
         group.add(southMesh);
 
@@ -259,16 +259,17 @@ export class Tools3D {
 
         const base = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.035, 32), blueBaseMat);
         base.position.y = 0.018;
-        base.castShadow = true;
+        base.castShadow = false;
         group.add(base);
 
         const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.26, 24), chromeMat);
         tube.position.y = 0.16;
-        tube.castShadow = true;
+        tube.castShadow = false;
         group.add(tube);
 
         const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.04, 24), chromeMat);
         collar.position.y = 0.08;
+        collar.castShadow = false;
         group.add(collar);
 
         const hoseConn = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.12, 16), chromeMat);
@@ -322,7 +323,7 @@ export class Tools3D {
             leg.position.set(Math.cos(angle) * radius, 0.29, Math.sin(angle) * radius);
             leg.rotation.z = Math.cos(angle) * -0.06;
             leg.rotation.x = Math.sin(angle) * 0.06;
-            leg.castShadow = true;
+            leg.castShadow = false;
             group.add(leg);
         }
     }
@@ -473,7 +474,7 @@ export class Tools3D {
         // 1. Outer Brass Cylindrical Rim Frame
         const outerRim = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.16, 36, 1, true), brassRimMat);
         outerRim.position.y = 0.08;
-        outerRim.castShadow = true;
+        outerRim.castShadow = false;
         group.add(outerRim);
 
         // 2. Top & Bottom Metallic Borders
@@ -522,7 +523,7 @@ export class Tools3D {
 
         const bodyMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.25, 0.52, 32), darkBodyMat);
         bodyMesh.position.y = 0.26;
-        bodyMesh.castShadow = true;
+        bodyMesh.castShadow = false;
         group.add(bodyMesh);
 
         const lidMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 0.04, 32), lidMat);
