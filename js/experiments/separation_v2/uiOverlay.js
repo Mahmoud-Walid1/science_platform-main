@@ -158,7 +158,10 @@ export class UIOverlay {
                 this.hideCleanMagnetButton();
                 this.hideResetCameraBtn();
 
-                // 3. Comprehensive Scene Equipment & Tool State Reset
+                // 3. Reset Stepper Banner Text to Initial State
+                this.updateStepper('المرحلة 1', 'تجهيز المخلوط: قم بإضافة مادتين في الكأس لتركيب المخلوط');
+
+                // 4. Comprehensive Scene Equipment & Tool State Reset
                 if (this.sceneManager) {
                     this.sceneManager.resetCameraView();
                     const toRemove = [];
