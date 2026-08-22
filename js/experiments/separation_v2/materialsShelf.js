@@ -64,7 +64,7 @@ export class MaterialsShelf {
                 const boxGeo = new THREE.BoxGeometry(0.36, 0.22, 0.36);
                 const boxMesh = new THREE.Mesh(boxGeo, boxMat);
                 boxMesh.position.y = 0.11;
-                boxMesh.castShadow = false;
+                boxMesh.castShadow = true;
                 bottleGroup.add(boxMesh);
 
                 const stickerMat = new THREE.MeshBasicMaterial({ map: this.createStickerTexture('ورقة ترشيح') });
@@ -78,62 +78,56 @@ export class MaterialsShelf {
                 paperCone.position.set(0, 0.24, 0);
                 bottleGroup.add(paperCone);
             } else if (matInfo.type.startsWith('liquid')) {
-                const liquidColor = matInfo.id === 'oil' ? 0xf59e0b : 0x0284c7;
-                const liquidMat = new THREE.MeshStandardMaterial({
-                    color: liquidColor,
-                    transparent: true,
-                    opacity: 0.95,
-                    roughness: 0.1,
-                    depthWrite: true
-                });
-                const liquidMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.28, 24), liquidMat);
-                liquidMesh.position.y = 0.14;
-                liquidMesh.renderOrder = 2;
-                bottleGroup.add(liquidMesh);
-
                 const glassMat = new THREE.MeshPhysicalMaterial({
-                    color: 0xdbeafe,
+                    color: 0xffffff,
                     transparent: true,
-                    opacity: 0.50,
-                    roughness: 0.1,
-                    transmission: 0.2,
+                    opacity: 0.35,
+                    roughness: 0.05,
+                    transmission: 0.92,
                     ior: 1.5,
-                    thickness: 0.25,
+                    thickness: 0.12,
                     depthWrite: false
                 });
+
                 const flaskBody = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.36, 24), glassMat);
                 flaskBody.position.y = 0.18;
-                flaskBody.castShadow = false;
-                flaskBody.renderOrder = 10;
+                flaskBody.castShadow = true;
                 bottleGroup.add(flaskBody);
+
+                const liquidMat = new THREE.MeshStandardMaterial({
+                    color: matInfo.color,
+                    transparent: true,
+                    opacity: 0.88,
+                    roughness: 0.1
+                });
+                const liquidMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.26, 24), liquidMat);
+                liquidMesh.position.y = 0.13;
+                bottleGroup.add(liquidMesh);
 
                 const capMat = new THREE.MeshStandardMaterial({ color: 0x004e66, roughness: 0.2 });
                 const capMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.09, 24), capMat);
                 capMesh.position.y = 0.405;
-                capMesh.renderOrder = 11;
                 bottleGroup.add(capMesh);
 
                 const stickerMat = new THREE.MeshBasicMaterial({ map: this.createStickerTexture(matInfo.name) });
                 const stickerMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.26, 0.13), stickerMat);
                 stickerMesh.position.set(0, 0.2, 0.175);
-                stickerMesh.renderOrder = 12;
                 bottleGroup.add(stickerMesh);
             } else {
                 // Solid Jars (Sand, Salt, Iron, Pebbles)
                 const jarGlassMat = new THREE.MeshPhysicalMaterial({
-                    color: 0xdbeafe,
+                    color: 0xffffff,
                     transparent: true,
-                    opacity: 0.50,
+                    opacity: 0.4,
                     roughness: 0.1,
-                    transmission: 0.2,
+                    transmission: 0.85,
                     ior: 1.45,
                     depthWrite: false
                 });
 
                 const jarBody = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.36, 24), jarGlassMat);
                 jarBody.position.y = 0.18;
-                jarBody.castShadow = false;
-                jarBody.renderOrder = 10;
+                jarBody.castShadow = true;
                 bottleGroup.add(jarBody);
 
                 if (matInfo.id === 'pebbles') {

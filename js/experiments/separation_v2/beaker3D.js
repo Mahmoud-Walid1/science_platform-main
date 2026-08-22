@@ -31,34 +31,31 @@ export class SingleBeaker3D {
     initBeakerMesh() {
         const beakerGeo = new THREE.CylinderGeometry(0.35, 0.32, 0.72, 36, 1, true);
         const glassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xdbeafe,
+            color: 0xffffff,
             transparent: true,
-            opacity: 0.60,
-            roughness: 0.1,
+            opacity: 0.45,
+            roughness: 0.05,
             metalness: 0.1,
-            transmission: 0.25,
-            thickness: 0.5,
+            transmission: 0.95,
+            thickness: 0.3,
             ior: 1.52,
             depthWrite: false
         });
         const beakerMesh = new THREE.Mesh(beakerGeo, glassMat);
         beakerMesh.position.y = 0.36;
-        beakerMesh.castShadow = false;
-        beakerMesh.renderOrder = 10;
+        beakerMesh.castShadow = true;
         this.group.add(beakerMesh);
 
         const rimGeo = new THREE.TorusGeometry(0.352, 0.012, 12, 36);
         const rimMesh = new THREE.Mesh(rimGeo, glassMat);
         rimMesh.rotation.x = Math.PI / 2;
         rimMesh.position.y = 0.72;
-        rimMesh.renderOrder = 10;
         rimMesh.raycast = () => {};
         this.group.add(rimMesh);
 
         const baseGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.04, 36);
         const baseMesh = new THREE.Mesh(baseGeo, glassMat);
         baseMesh.position.y = 0.02;
-        baseMesh.renderOrder = 10;
         baseMesh.raycast = () => {};
         this.group.add(baseMesh);
 
@@ -82,10 +79,10 @@ export class SingleBeaker3D {
         const waterMat = new THREE.MeshStandardMaterial({
             color: 0x0284c7,
             transparent: true,
-            opacity: 0.92,
+            opacity: 0.88,
             roughness: 0.1,
             metalness: 0.05,
-            depthWrite: true
+            depthWrite: false
         });
         this.waterMesh = new THREE.Mesh(waterGeo, waterMat);
         this.waterMesh.position.y = 0.16;
@@ -94,15 +91,15 @@ export class SingleBeaker3D {
         this.waterMesh.raycast = () => {};
         this.group.add(this.waterMesh);
 
-        // Natural Golden Amber Yellow Vegetable Oil Color (0xf59e0b)
+        // Natural Golden Yellow Vegetable Oil Color (0xfacc15)
         const oilGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.12, 36);
         const oilMat = new THREE.MeshStandardMaterial({
-            color: 0xf59e0b,
+            color: 0xfacc15,
             roughness: 0.15,
             metalness: 0.05,
             transparent: true,
-            opacity: 0.92,
-            depthWrite: true
+            opacity: 0.88,
+            depthWrite: false
         });
         this.oilMesh = new THREE.Mesh(oilGeo, oilMat);
         this.oilMesh.position.y = 0.34;

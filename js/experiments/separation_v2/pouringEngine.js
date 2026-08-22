@@ -123,7 +123,7 @@ export class PouringEngine {
 
                 const animateTilt = (t) => {
                     const p = Math.min((t - tiltStart) / tiltDuration, 1);
-                    beakerGroup.rotation.z = p * (Math.PI / 2.4);
+                    beakerGroup.rotation.z = -p * (Math.PI / 2.4);
 
                     if (beakerObj.waterMesh && beakerObj.waterMesh.visible) {
                         beakerObj.waterMesh.scale.y = Math.max(0.01, (1 - p) * 1.0);
@@ -234,7 +234,7 @@ export class PouringEngine {
 
                 const animateTilt = (t) => {
                     const p = Math.min((t - tiltStart) / tiltDuration, 1);
-                    beakerGroup.rotation.z = p * (Math.PI / 2.4);
+                    beakerGroup.rotation.z = -p * (Math.PI / 2.4);
 
                     // Smoothly deplete water/oil/solids inside beaker while pouring
                     if (beakerObj.waterMesh && beakerObj.waterMesh.visible) {
@@ -310,7 +310,7 @@ export class PouringEngine {
             const elapsed = now - tiltStart;
             const progress = Math.min(elapsed / tiltDuration, 1);
 
-            bottleGroup.rotation.z = progress * (Math.PI / 2.6);
+            bottleGroup.rotation.z = -progress * (Math.PI / 2.6);
 
             if (progress < 1) {
                 requestAnimationFrame(animateTilt);

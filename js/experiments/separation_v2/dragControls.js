@@ -178,43 +178,43 @@ export class DragControls3D {
                                 filterTool.position.z
                             );
                         }
-                    } else {
-                        const b1Pos = this.beaker3D.beaker1.group.position;
-                        const b2Pos = this.beaker3D.beaker2.group.position;
-                        const d1 = Math.hypot(targetPos.x - b1Pos.x, targetPos.z - b1Pos.z);
-                        const d2 = Math.hypot(targetPos.x - b2Pos.x, targetPos.z - b2Pos.z);
-                        const closestBeaker = d1 <= d2 ? b1Pos : b2Pos;
+                    const b1Pos = this.beaker3D.beaker1.group.position;
+                    const b2Pos = this.beaker3D.beaker2.group.position;
+                    const d1 = Math.hypot(targetPos.x - b1Pos.x, targetPos.z - b1Pos.z);
+                    const d2 = Math.hypot(targetPos.x - b2Pos.x, targetPos.z - b2Pos.z);
+                    const closestBeaker = d1 <= d2 ? b1Pos : b2Pos;
+                    const minDist = Math.min(d1, d2);
+                    if (minDist < 0.70) {
                         this.sceneManager.showTargetGlowAt(closestBeaker.x, 0, closestBeaker.z);
-                    }
-                } else if (this.selectedObject.userData.type === 'beaker_object') {
-                    const beakerObj = (this.selectedObject.userData.id === '1') ? this.beaker3D.beaker1 : this.beaker3D.beaker2;
-                    const funnelTool = this.scene.getObjectByName('tool_funnel');
-                    const filterTool = this.scene.getObjectByName('tool_filter');
-                    const burnerTool = this.scene.getObjectByName('tool_evaporation');
-
-                    if (magnetTool) {
-                        this.separationEngine.checkMagnetProximity(magnetTool);
-                    }
-
-                    if (trashTool && Math.hypot(targetPos.x - trashTool.position.x, targetPos.z - trashTool.position.z) < 0.7) {
-                        this.sceneManager.showTargetGlowAt(trashTool.position.x, trashTool.position.y + 0.52, trashTool.position.z);
-                    } else if (burnerTool && Math.hypot(targetPos.x - burnerTool.position.x, targetPos.z - burnerTool.position.z) < 0.7) {
-                        this.sceneManager.showTargetGlowAt(burnerTool.position.x, burnerTool.position.y + 0.58, burnerTool.position.z);
-                    } else if (funnelTool && Math.hypot(targetPos.x - funnelTool.position.x, targetPos.z - funnelTool.position.z) < 0.7) {
-                        this.sceneManager.showTargetGlowAt(funnelTool.position.x, funnelTool.position.y + 1.25, funnelTool.position.z);
-                    } else if (filterTool && Math.hypot(targetPos.x - filterTool.position.x, targetPos.z - filterTool.position.z) < 0.7) {
-                        const receivingBeaker = this.separationEngine.findReceivingBeakerUnder(filterTool, beakerObj);
-                        this.sceneManager.showTargetGlowAt(filterTool.position.x, filterTool.position.y + 0.96, filterTool.position.z);
-
-                        if (!receivingBeaker) {
-                            this.sceneManager.showSecondaryTargetGlowAt(filterTool.position.x, 0, filterTool.position.z);
-                        }
                     } else {
-                        if (this.sceneManager.secondaryTargetGlowMesh) this.sceneManager.secondaryTargetGlowMesh.visible = false;
+                        this.sceneManager.hideTargetGlow();
                     }
-                } else if (this.selectedObject.userData.type === 'tool_object' && this.selectedObject.userData.toolData.id === 'magnet') {
-                    this.separationEngine.checkMagnetProximity(this.selectedObject);
                 }
+            } else if (this.selectedObject.userData.type === 'beaker_object') {
+                const beakerObj = (this.selectedObject.userData.id === '1') ? this.beaker3D.beaker1 : this.beaker3D.beaker2;
+                const funnelTool = this.scene.getObjectByName('tool_funnel');
+                const filterTool = this.scene.getObjectByName('tool_filter');
+                const burnerTool = this.scene.getObjectByName('tool_evaporation');
+
+                if (trashTool && Math.hypot(targetPos.x - trashTool.position.x, targetPos.z - trashTool.position.z) < 0.65) {
+                    this.sceneManager.showTargetGlowAt(trashTool.position.x, trashTool.position.y + 0.52, trashTool.position.z);
+                } else if (burnerTool && Math.hypot(targetPos.x - burnerTool.position.x, targetPos.z - burnerTool.position.z) < 0.65) {
+                    this.sceneManager.showTargetGlowAt(burnerTool.position.x, burnerTool.position.y + 0.58, burnerTool.position.z);
+                } else if (funnelTool && Math.hypot(targetPos.x - funnelTool.position.x, targetPos.z - funnelTool.position.z) < 0.65) {
+                    this.sceneManager.showTargetGlowAt(funnelTool.position.x, funnelTool.position.y + 1.25, funnelTool.position.z);
+                } else if (filterTool && Math.hypot(targetPos.x - filterTool.position.x, targetPos.z - filterTool.position.z) < 0.65) {
+                    const receivingBeaker = this.separationEngine.findReceivingBeakerUnder(filterTool, beakerObj);
+                    this.sceneManager.showTargetGlowAt(filterTool.position.x, filterTool.position.y + 0.96, filterTool.position.z);
+
+                    if (!receivingBeaker) {
+                        this.sceneManager.showSecondaryTargetGlowAt(filterTool.position.x, 0, filterTool.position.z);
+                    }
+                } else {
+                    if (this.sceneManager.secondaryTargetGlowMesh) this.sceneManager.secondaryTargetGlowMesh.visible = false;
+                }
+            } else if (this.selectedObject.userData.type === 'tool_object' && this.selectedObject.userData.toolData.id === 'magnet') {
+                this.separationEngine.checkMagnetProximity(this.selectedObject);
+            }
             }
         } else {
             this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -258,26 +258,26 @@ export class DragControls3D {
 
     extractFilterPaperWithSand(filterTool) {
         const paperCone = filterTool.getObjectByName('filterPaper');
+        const sandResidue = filterTool.getObjectByName('sandResidue');
 
-        if (filterTool.userData.hasFilterPaper) {
+        if (filterTool.userData.hasFilterPaper && sandResidue && sandResidue.visible) {
             soundManager.playPaperSound();
 
             paperCone.visible = false;
+            sandResidue.visible = false;
             filterTool.userData.hasFilterPaper = false;
 
-            const trappedList = filterTool.userData.trappedIngredients || [];
-            const trappedNames = trappedList.map(i => i.name);
-            const solidName = trappedNames.length > 0 ? (trappedNames.length > 1 ? `(${trappedNames.join(' + ')})` : trappedNames[0]) : 'المحتويات الصلبة';
+            const solidType = filterTool.userData.trappedSolidType || 'sand';
+            const solidName = filterTool.userData.trappedSolidName || 'الرمل';
+            const solidColor = filterTool.userData.trappedSolidColor || 0xc28e5c;
 
             this.extractedPaperCount++;
             const usedPaperGroup = new THREE.Group();
             usedPaperGroup.name = `extracted_paper_${this.extractedPaperCount}`;
-            const firstIng = trappedList[0] || { id: 'sand', name: 'الرمل', color: 0xc28e5c, particleColor: 0xc28e5c, type: 'solid_granular' };
             usedPaperGroup.userData = {
                 type: 'extracted_paper',
                 hasContents: true,
-                trappedIngredients: [...trappedList],
-                trappedSolidData: { id: firstIng.id || 'sand', name: solidName, color: firstIng.color || 0xc28e5c, particleColor: firstIng.color || 0xc28e5c, type: 'solid_granular' },
+                trappedSolidData: { id: solidType, name: solidName, color: solidColor, particleColor: solidColor, type: 'solid_granular' },
                 isDragging: false
             };
 
@@ -287,44 +287,12 @@ export class DragControls3D {
             coneMesh.position.y = 0.16;
             usedPaperGroup.add(coneMesh);
 
-            const hasSand = trappedList.some(i => i.id === 'sand');
-            const hasIron = trappedList.some(i => i.id === 'iron');
-            const hasPebbles = trappedList.some(i => i.id === 'pebbles');
-
-            if (hasSand) {
-                const sandMat = new THREE.MeshStandardMaterial({ color: 0xc28e5c, roughness: 0.95 });
-                const sMesh = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.18, 32), sandMat);
-                sMesh.name = 'trappedSolidMesh';
-                sMesh.rotation.x = Math.PI;
-                sMesh.position.y = 0.12;
-                usedPaperGroup.add(sMesh);
-            }
-
-            if (hasIron) {
-                const ironMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9, metalness: 0.8 });
-                const speckGeo = new THREE.BoxGeometry(0.025, 0.025, 0.035);
-                for (let i = 0; i < 24; i++) {
-                    const speck = new THREE.Mesh(speckGeo, ironMat);
-                    const r = Math.random() * 0.12;
-                    const theta = Math.random() * Math.PI * 2;
-                    speck.position.set(r * Math.cos(theta), 0.12 + Math.random() * 0.04, r * Math.sin(theta));
-                    speck.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-                    usedPaperGroup.add(speck);
-                }
-            }
-
-            if (hasPebbles) {
-                const pebMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.8 });
-                const pebGeo = new THREE.DodecahedronGeometry(0.028, 1);
-                for (let i = 0; i < 8; i++) {
-                    const peb = new THREE.Mesh(pebGeo, pebMat);
-                    const r = Math.random() * 0.10;
-                    const theta = Math.random() * Math.PI * 2;
-                    peb.position.set(r * Math.cos(theta), 0.13 + Math.random() * 0.03, r * Math.sin(theta));
-                    peb.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-                    usedPaperGroup.add(peb);
-                }
-            }
+            const solidMat = new THREE.MeshStandardMaterial({ color: solidColor, roughness: 0.95 });
+            const sMesh = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.20, 32), solidMat);
+            sMesh.name = 'trappedSolidMesh';
+            sMesh.rotation.x = Math.PI;
+            sMesh.position.y = 0.12;
+            usedPaperGroup.add(sMesh);
 
             const petriDishMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, transmission: 0.9 });
             const dishMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.03, 32), petriDishMat);
@@ -334,7 +302,7 @@ export class DragControls3D {
             usedPaperGroup.position.set(-1.4 - (this.extractedPaperCount * 0.7), 0.0, 0.6);
             this.scene.add(usedPaperGroup);
 
-            this.uiOverlay.showToast(`تم استخراج ورقة الترشيح بنجاح! تحتوي على ${solidName} المستخرجة 📜 (اسحبها للتفريغ للكأس أو لسلة المهملات 🗑️)`, 'success');
+            this.uiOverlay.showToast(`تم استخراج ورقة الترشيح بنجاح! تحتوي على راسب (${solidName}) المستخرج 📜 (اسحبها للتفريغ للكأس أو لسلة المهملات 🗑️)`, 'success');
             this.uiOverlay.updateStepper('تم الاستخراج بنجاح ✓', `تم استخراج ورقة الترشيح! اسحب الورقة لسلة المهملات للتخلص منها وتنظيف المعمل`);
         }
     }
@@ -404,7 +372,7 @@ export class DragControls3D {
 
                             const animateTiltDump = (t) => {
                                 const p = Math.min((t - tiltStart) / tiltDuration, 1);
-                                obj.rotation.z = p * (Math.PI / 2.4);
+                                obj.rotation.z = -p * (Math.PI / 2.4);
 
                                 if (p < 1) {
                                     requestAnimationFrame(animateTiltDump);
@@ -454,7 +422,7 @@ export class DragControls3D {
                 return;
             }
 
-            if (obj.userData.hasContents && (obj.userData.trappedIngredients || obj.userData.trappedSolidData)) {
+            if (obj.userData.hasContents && obj.userData.trappedSolidData) {
                 const b1Pos = this.beaker3D.beaker1.group.position;
                 const b2Pos = this.beaker3D.beaker2.group.position;
                 const d1 = Math.hypot(obj.position.x - b1Pos.x, obj.position.z - b1Pos.z);
@@ -463,12 +431,9 @@ export class DragControls3D {
                 const targetBeaker = d1 <= d2 ? this.beaker3D.beaker1 : this.beaker3D.beaker2;
                 const minDist = Math.min(d1, d2);
 
-                if (minDist < 2.2 || isSingleClick) {
-                    const ingredientsToDump = (obj.userData.trappedIngredients && obj.userData.trappedIngredients.length > 0)
-                        ? obj.userData.trappedIngredients
-                        : [obj.userData.trappedSolidData];
-
-                    const solidNames = ingredientsToDump.map(i => i.name).join(' + ') || 'المحوى الصلب';
+                if (minDist < 0.70 || isSingleClick) {
+                    const solidData = obj.userData.trappedSolidData;
+                    const solidMesh = obj.getObjectByName('trappedSolidMesh');
 
                     const pourTargetPos = new THREE.Vector3(targetBeaker.group.position.x + 0.28, targetBeaker.group.position.y + 0.85, targetBeaker.group.position.z);
                     const origPaperPos = new THREE.Vector3(-1.4, 0.0, 0.6);
@@ -495,28 +460,20 @@ export class DragControls3D {
 
                             const animatePaperTilt = (t) => {
                                 const p = Math.min((t - tiltStart) / tiltDuration, 1);
-                                obj.rotation.z = p * (Math.PI / 2.2);
+                                obj.rotation.z = -p * (Math.PI / 2.2);
 
                                 if (p < 1) {
                                     requestAnimationFrame(animatePaperTilt);
                                 } else {
-                                    // Hide all residue meshes on the extracted paper
-                                    obj.children.forEach(child => {
-                                        if (child.name === 'trappedSolidMesh' || (child.geometry && !(child.geometry instanceof THREE.CylinderGeometry) && child !== obj.children[0])) {
-                                            child.visible = false;
-                                        }
-                                    });
-
-                                    ingredientsToDump.forEach(ing => {
-                                        if (ing) targetBeaker.addIngredient(ing);
-                                    });
+                                    if (solidMesh) solidMesh.visible = false;
+                                    targetBeaker.addIngredient(solidData);
                                     obj.userData.hasContents = false;
 
                                     setTimeout(() => {
                                         obj.rotation.z = 0;
                                         obj.position.copy(origPaperPos);
-                                        this.uiOverlay.showToast(`تم تفريغ المحتوى الصلب (${solidNames}) من ورقة الترشيح إلى الكأس المعملي بنجاح 📜✨`, 'success');
-                                        this.uiOverlay.updateStepper('تم التفريغ بنجاح ✓', `تم إفراغ راسب (${solidNames}) من ورقة الترشيح واستقراره داخل الكأس`);
+                                        this.uiOverlay.showToast(`تم تفريغ المحتوى الصلب (${solidData.name}) من ورقة الترشيح إلى الكأس المعملي بنجاح 📜✨`, 'success');
+                                        this.uiOverlay.updateStepper('تم التفريغ بنجاح ✓', `تم إفراغ راسب (${solidData.name}) من ورقة الترشيح واستقراره داخل الكأس`);
                                     }, 600);
                                 }
                             };
@@ -552,8 +509,8 @@ export class DragControls3D {
             const targetBeakerObj = d1 <= d2 ? this.beaker3D.beaker1 : this.beaker3D.beaker2;
             const minDist = Math.min(d1, d2);
 
-            // Easy Pouring: Trigger if dragged within 1.5m OR if single clicked!
-            if (minDist < 1.8 || isSingleClick) {
+            // Precision Pouring: Trigger if dragged within 0.7m OR if single clicked!
+            if (minDist < 0.70 || isSingleClick) {
                 const matType = obj.userData.materialData ? obj.userData.materialData.type : '';
                 const hasLiquidInBeaker = targetBeakerObj.ingredients.some(i => i.type && i.type.startsWith('liquid'));
 
@@ -605,7 +562,7 @@ export class DragControls3D {
             const beakerObj = (obj.userData.id === '1') ? this.beaker3D.beaker1 : this.beaker3D.beaker2;
 
             const burnerTool = this.scene.getObjectByName('tool_evaporation');
-            if (burnerTool && Math.hypot(obj.position.x - burnerTool.position.x, obj.position.z - burnerTool.position.z) < 0.75) {
+            if (burnerTool && Math.hypot(obj.position.x - burnerTool.position.x, obj.position.z - burnerTool.position.z) < 0.65) {
                 obj.position.set(burnerTool.position.x, burnerTool.position.y + 0.58, burnerTool.position.z);
                 this.uiOverlay.showToast('تم تركيب الكأس بدقة متناهية فوق شبكة موقد التبخير! 💥🔥 اضغط على الموقد لإشعال الشعلة.', 'success');
                 this.uiOverlay.updateStepper('المرحلة 2', 'تم تركيب الكأس فوق الموقد! اضغط على الموقد لإشعال الشعلة وتبخير الماء');
@@ -613,7 +570,7 @@ export class DragControls3D {
             }
 
             const funnelTool = this.scene.getObjectByName('tool_funnel');
-            if (funnelTool && Math.hypot(obj.position.x - funnelTool.position.x, obj.position.z - funnelTool.position.z) < 0.75) {
+            if (funnelTool && Math.hypot(obj.position.x - funnelTool.position.x, obj.position.z - funnelTool.position.z) < 0.65) {
                 if (beakerObj.ingredients.length > 0) {
                     this.pouringEngine.pourBeakerIntoFunnel(beakerObj, funnelTool, () => {
                         this.separationEngine.pourMixtureIntoSeparatoryFunnel(funnelTool, beakerObj);
@@ -623,7 +580,7 @@ export class DragControls3D {
             }
 
             const filterTool = this.scene.getObjectByName('tool_filter');
-            if (filterTool && Math.hypot(obj.position.x - filterTool.position.x, obj.position.z - filterTool.position.z) < 1.35) {
+            if (filterTool && Math.hypot(obj.position.x - filterTool.position.x, obj.position.z - filterTool.position.z) < 0.65) {
                 if (beakerObj.ingredients.length > 0) {
                     this.separationEngine.filterMixture(filterTool, beakerObj);
                 }
@@ -631,7 +588,7 @@ export class DragControls3D {
             }
 
             const sieveTool = this.scene.getObjectByName('tool_sieve');
-            if (sieveTool && Math.hypot(obj.position.x - sieveTool.position.x, obj.position.z - sieveTool.position.z) < 1.05) {
+            if (sieveTool && Math.hypot(obj.position.x - sieveTool.position.x, obj.position.z - sieveTool.position.z) < 0.65) {
                 if (beakerObj.ingredients.length > 0) {
                     this.separationEngine.sieveMixture(sieveTool, beakerObj);
                 }
@@ -648,7 +605,7 @@ export class DragControls3D {
             const targetBeakerPos = d1 <= d2 ? b1 : b2;
             const minDist = Math.min(d1, d2);
 
-            if (minDist < 0.8) {
+            if (minDist < 0.65) {
                 soundManager.playPaperSound();
                 obj.position.set(targetBeakerPos.x, targetBeakerPos.y + 0.65, targetBeakerPos.z);
                 this.uiOverlay.showToast('تم تركيب الغربال المعملي فوق الكأس بنجاح! 🪵✨ اصب الكأس المحتوي على حصى بالداخل لفصل الحصى الكبيرة فوق شبكة الغربال.', 'success');

@@ -1,9 +1,7 @@
 import * as THREE from 'three';
 
 export class SceneManager {
-    constructor(canvasId, options = {}) {
-        this.isLowPerformanceMode = !!options.isLowPerformanceMode;
-
+    constructor(canvasId) {
         if (typeof canvasId === 'string') {
             this.canvas = document.getElementById(canvasId);
         } else {
@@ -41,68 +39,66 @@ export class SceneManager {
         this.camera.position.copy(this.defaultCameraPos);
         this.camera.lookAt(this.defaultLookAt);
 
-        // Multi-tier WebGL Initialization with Low-Power & Fallback Modes
-        this.renderer = null;
-
-        const tryCreateRenderer = (useAntialias, powerPref) => {
-            return new THREE.WebGLRenderer({
-                canvas: this.canvas,
-                antialias: useAntialias,
-                alpha: true,
-                powerPreference: powerPref,
-                failIfMajorPerformanceCaveat: false
-            });
-        };
-
         try {
-            this.renderer = tryCreateRenderer(
-                !this.isLowPerformanceMode,
-                this.isLowPerformanceMode ? 'low-power' : 'high-performance'
-            );
+            this.renderer = new THREE.WebGLRenderer({
+                canvas: this.canvas,
+                antialias: true,
+                alpha: true
+            });
         } catch (e1) {
-            console.warn('WebGL primary creation fallback:', e1);
-            if (this.canvas && this.canvas.parentNode) {
-                const freshCanvas = this.canvas.cloneNode(true);
-                this.canvas.parentNode.replaceChild(freshCanvas, this.canvas);
-                this.canvas = freshCanvas;
-            }
+            console.warn('Primary WebGL attempt, trying low-power fallback:', e1);
+            createFreshCanvas();
             try {
-                this.isLowPerformanceMode = true;
-                this.renderer = tryCreateRenderer(false, 'low-power');
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: false,
+                    alpha: true,
+                    powerPreference: "low-power",
+                    precision: "mediump",
+                    failIfMajorPerformanceCaveat: false
+                });
             } catch (e2) {
-                console.error("WebGL Initialization error:", e2);
-                this.renderer = null;
+                console.warn('Secondary WebGL attempt, trying minimal context fallback:', e2);
+                createFreshCanvas();
+                try {
+                    this.renderer = new THREE.WebGLRenderer({
+                        canvas: this.canvas,
+                        alpha: true,
+                        stencil: false,
+                        depth: true,
+                        antialias: false
+                    });
+                } catch (e3) {
+                    console.error('WebGL hardware acceleration unavailable, activating Canvas2D auto-engine:', e3);
+                    createFreshCanvas();
+                    this.renderer = null;
+                }
             }
         }
 
         if (this.renderer) {
             this.renderer.setSize(this.width, this.height);
-            this.renderer.setPixelRatio(this.isLowPerformanceMode ? 1 : Math.min(window.devicePixelRatio, 2));
-            this.renderer.shadowMap.enabled = false;
-            
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+            this.renderer.shadowMap.enabled = true;
+            this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
             this.renderer.toneMappingExposure = 1.1;
 
             this.canvas.addEventListener('webglcontextlost', (event) => {
                 event.preventDefault();
-                console.warn('WebGL context lost. Attempting recovery...');
-                if (typeof this.onContextLost === 'function') {
-                    this.onContextLost();
-                }
+                console.warn('WebGL context lost. Restoring automatically...');
             }, false);
 
             this.canvas.addEventListener('webglcontextrestored', () => {
-                console.log('WebGL context restored successfully!');
+                console.log('WebGL context restored automatically!');
                 if (this.renderer) {
                     this.onResize();
                 }
             }, false);
+        } else {
+            // Software 2D Canvas Auto-Renderer for devices without WebGL hardware acceleration
+            this.initSoftwareCanvasFallback();
         }
-
-        // Automatic Memory & Context Cleanup on Unload / Navigation
-        const cleanupHandler = () => this.dispose();
-        window.addEventListener('beforeunload', cleanupHandler, { once: true });
-        window.addEventListener('pagehide', cleanupHandler, { once: true });
 
         this.setupLights();
         this.setupEnvironment();
@@ -337,7 +333,7 @@ export class SceneManager {
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.35);
         dirLight.position.set(4, 10, 8);
-        dirLight.castShadow = false;
+        dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = 2048;
         dirLight.shadow.mapSize.height = 2048;
         dirLight.shadow.bias = -0.0005;
@@ -400,6 +396,7 @@ export class SceneManager {
         });
         const table = new THREE.Mesh(tableGeo, tableMat);
         table.position.set(0, -0.11, 0.2);
+        table.receiveShadow = true;
         this.scene.add(table);
 
         const rimGeo = new THREE.BoxGeometry(7.62, 0.08, 0.06);
@@ -413,6 +410,8 @@ export class SceneManager {
         const shelfMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.35, metalness: 0.1 });
         const matShelf = new THREE.Mesh(matShelfGeo, shelfMat);
         matShelf.position.set(0, 2.1, -0.9);
+        matShelf.castShadow = true;
+        matShelf.receiveShadow = true;
         this.scene.add(matShelf);
 
         for (let xPos of [-2.3, 2.3]) {
@@ -426,6 +425,8 @@ export class SceneManager {
         const toolShelfGeo = new THREE.BoxGeometry(2.8, 0.08, 0.65);
         const toolShelf = new THREE.Mesh(toolShelfGeo, shelfMat);
         toolShelf.position.set(2.0, 1.25, -0.9);
+        toolShelf.castShadow = true;
+        toolShelf.receiveShadow = true;
         this.scene.add(toolShelf);
 
         const toolBracket = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.3, 0.5), shelfMat);
@@ -438,7 +439,7 @@ export class SceneManager {
     }
 
     onResize() {
-        if (!this.canvas || !this.canvas.parentElement || !this.renderer) return;
+        if (!this.canvas || !this.canvas.parentElement) return;
         this.width = this.canvas.parentElement.clientWidth || window.innerWidth;
         this.height = this.canvas.parentElement.clientHeight || (window.innerHeight - 60);
 
@@ -463,39 +464,8 @@ export class SceneManager {
                 fn(delta, elapsedTime);
             }
 
-            if (this.renderer && this.renderer.getContext() && !this.renderer.getContext().isContextLost()) {
-                this.renderer.render(this.scene, this.camera);
-            }
+            this.renderer.render(this.scene, this.camera);
         };
         animate();
-    }
-
-    dispose() {
-        console.log("Cleaning up WebGL SceneManager resources...");
-        try {
-            if (this.scene) {
-                this.scene.traverse((child) => {
-                    if (child.geometry) child.geometry.dispose();
-                    if (child.material) {
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach(m => m.dispose());
-                        } else {
-                            child.material.dispose();
-                        }
-                    }
-                });
-            }
-            if (this.renderer) {
-                const gl = this.renderer.getContext();
-                this.renderer.dispose();
-                if (gl && typeof gl.getExtension === 'function') {
-                    const loseContextExt = gl.getExtension('WEBGL_lose_context');
-                    if (loseContextExt) loseContextExt.loseContext();
-                }
-                this.renderer = null;
-            }
-        } catch (e) {
-            console.warn("SceneManager disposal error:", e);
-        }
     }
 }

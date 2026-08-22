@@ -25,51 +25,6 @@ export class SeparationEngine {
         if (!magnetGroup || this.isMagnetAttracting) return;
 
         const magnetPos = magnetGroup.position;
-
-        // 1. Check proximity to Filter Paper Tool first
-        const filterTool = this.scene.getObjectByName('tool_filter');
-        if (filterTool) {
-            const dFilter = Math.hypot(magnetPos.x - filterTool.position.x, magnetPos.z - filterTool.position.z);
-            const trapped = filterTool.userData.trappedIngredients || [];
-            const hasIronOnFilter = trapped.some(i => i.id === 'iron' || i.type === 'solid_magnetic');
-
-            if (dFilter < 1.8 && hasIronOnFilter && !magnetGroup.userData.hasAttractedIron) {
-                this.isMagnetAttracting = true;
-
-                // Remove iron from filter tool trapped ingredients
-                filterTool.userData.trappedIngredients = trapped.filter(i => i.id !== 'iron' && i.type !== 'solid_magnetic');
-
-                const ironResidue = filterTool.getObjectByName('ironResidue');
-                if (ironResidue) ironResidue.visible = false;
-
-                const filterStartPos = filterTool.position.clone();
-                filterStartPos.y += 0.95;
-
-                this.animateFlyingIronFilings(filterStartPos, magnetGroup, () => {
-                    this.attachFilingsToMagnet(magnetGroup);
-                    soundManager.playMagnetClack();
-
-                    magnetGroup.userData.hasAttractedIron = true;
-                    this.isMagnetAttracting = false;
-
-                    const remainingInsoluble = filterTool.userData.trappedIngredients.filter(i => i.id === 'sand' || i.id === 'pebbles');
-                    const remNames = remainingInsoluble.map(i => i.name);
-                    const remStr = remNames.length > 0 ? remNames.join(' + ') : 'ورقة الترشيح';
-
-                    const msg = `نجحت عملية الجذب المغناطيسي من فوق ورقة الترشيح! 🧲✨ طارت برادة الحديد وانجذبت للمغناطيس، وتم تجريد الورقة منها ليتبقى (${remStr}) فقط على الورقة.`;
-
-                    this.uiOverlay.showToast(msg, 'success');
-                    this.uiOverlay.updateStepper('تم الجذب المغناطيسي من الورقة ✓', `طارت برادة الحديد وانجذبت للمغناطيس! المادة المتبقية على الورقة: ${remStr}`);
-
-                    this.uiOverlay.showCleanMagnetButton(() => {
-                        this.cleanMagnet(magnetGroup);
-                    });
-                });
-                return;
-            }
-        }
-
-        // 2. Check proximity to Beakers
         const b1Group = this.beaker3D.beaker1.group;
         const b2Group = this.beaker3D.beaker2.group;
 
@@ -79,7 +34,7 @@ export class SeparationEngine {
         const targetBeaker = d1 <= d2 ? this.beaker3D.beaker1 : this.beaker3D.beaker2;
         const minDist = Math.min(d1, d2);
 
-        if (minDist < 1.8) {
+        if (minDist < 0.70) {
             const hasIron = targetBeaker.ingredients.some(i => i.id === 'iron' || i.type === 'solid_magnetic' || (i.name && i.name.includes('حديد')));
             const hasWater = targetBeaker.ingredients.some(i => i.id === 'water');
 
@@ -109,7 +64,7 @@ export class SeparationEngine {
         }
     }
 
-    animateFlyingIronFilings(startSource, magnetGroup, onComplete) {
+    animateFlyingIronFilings(targetBeaker, magnetGroup, onComplete) {
         const flyingGroup = new THREE.Group();
         flyingGroup.name = 'flyingFilingsGroup';
 
@@ -118,19 +73,8 @@ export class SeparationEngine {
         const mat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9, metalness: 0.8 });
 
         const particles = [];
-        let startPos;
-        if (startSource instanceof THREE.Vector3) {
-            startPos = startSource.clone();
-        } else if (startSource && startSource.group) {
-            startPos = startSource.group.position.clone();
-            startPos.y += 0.15;
-        } else if (startSource && startSource.position) {
-            startPos = startSource.position.clone();
-            startPos.y += 0.95;
-        } else {
-            startPos = new THREE.Vector3();
-        }
-
+        const startPos = targetBeaker.group.position.clone();
+        startPos.y += 0.15;
         const endPos = magnetGroup.position.clone();
         endPos.y -= 0.04;
 
@@ -307,7 +251,7 @@ export class SeparationEngine {
         if (!valveKey) return;
 
         const funnelWater = funnelGroup.getObjectByName('funnelWater');
-        const funnelOilLower = funnelGroup.getObjectByName('funnelOilLower');
+        const funnelOilSettled = funnelGroup.getObjectByName('funnelOilSettled');
 
         this.funnelDraining = !this.funnelDraining;
         valveKey.rotation.y = this.funnelDraining ? Math.PI / 2 : 0;
@@ -321,7 +265,7 @@ export class SeparationEngine {
             if (funnelWater && funnelWater.visible) {
                 if (waterStreamMesh) waterStreamMesh.visible = true;
                 this.uiOverlay.showToast('تم فتح الصمام! جارٍ تصريف السائل المائي...', 'info');
-            } else if (funnelOilLower && funnelOilLower.visible) {
+            } else if (funnelOilSettled && funnelOilSettled.visible) {
                 if (oilStreamMesh) oilStreamMesh.visible = true;
                 this.uiOverlay.showToast('تم فتح الصمام! جارٍ تصريف الزيت النقي المتبقي بالقمع...', 'info');
             }
@@ -343,8 +287,6 @@ export class SeparationEngine {
 
         const filterStream = filterTool.getObjectByName('filterStream');
         const sandResidue = filterTool.getObjectByName('sandResidue');
-        const ironResidue = filterTool.getObjectByName('ironResidue');
-        const pebblesResidue = filterTool.getObjectByName('pebblesResidue');
 
         const hasFilterPaper = filterTool.userData.hasFilterPaper === true;
         const pouredIngredients = [...beakerObj.ingredients];
@@ -361,36 +303,32 @@ export class SeparationEngine {
         const receivingBeaker = this.findReceivingBeakerUnder(filterTool, beakerObj);
         const hasBeakerUnderneath = receivingBeaker !== null;
 
-        // Store composite trapped solids list on filter tool
-        filterTool.userData.trappedIngredients = pouredIngredients.filter(i => i.id === 'sand' || i.id === 'pebbles' || i.id === 'iron' || (i.id === 'salt' && !hasWater));
+        let solidName = 'الرمل';
+        let solidColor = 0xc28e5c;
+        let solidType = 'sand';
 
-        const trappedList = filterTool.userData.trappedIngredients;
-        const trappedNames = trappedList.map(i => i.name);
-        let trappedStr = 'المكونات الصلبة';
-        if (trappedNames.length > 1) {
-            trappedStr = `(${trappedNames.join(' + ')})`;
-        } else if (trappedNames.length === 1) {
-            trappedStr = trappedNames[0];
+        if (hasPebbles) {
+            solidName = 'الحصى';
+            solidColor = 0x64748b;
+            solidType = 'pebbles';
+        } else if (hasIron) {
+            solidName = 'برادة الحديد';
+            solidColor = 0x1e293b;
+            solidType = 'iron';
+        } else if (hasSalt && !hasWater) {
+            solidName = 'الملح الجاف';
+            solidColor = 0xf8fafc;
+            solidType = 'salt';
         }
 
-        let mainSolidColor = 0xc28e5c;
-        if (hasSand) mainSolidColor = 0xc28e5c;
-        else if (hasIron) mainSolidColor = 0x1e293b;
-        else if (hasPebbles) mainSolidColor = 0x64748b;
+        filterTool.userData.trappedSolidType = solidType;
+        filterTool.userData.trappedSolidName = solidName;
+        filterTool.userData.trappedSolidColor = solidColor;
 
-        if (hasInsolubleSolid && hasFilterPaper) {
-            if (sandResidue) {
-                sandResidue.visible = hasSand;
-                if (hasSand) sandResidue.scale.set(0.01, 0.01, 0.01);
-            }
-            if (ironResidue) {
-                ironResidue.visible = hasIron;
-                if (hasIron) ironResidue.scale.set(0.01, 0.01, 0.01);
-            }
-            if (pebblesResidue) {
-                pebblesResidue.visible = hasPebbles;
-                if (hasPebbles) pebblesResidue.scale.set(0.01, 0.01, 0.01);
-            }
+        if (sandResidue && hasInsolubleSolid && hasFilterPaper) {
+            sandResidue.material.color.setHex(solidColor);
+            sandResidue.visible = true;
+            sandResidue.scale.set(0.01, 0.01, 0.01);
         }
 
         if (filterStream && hasWater && hasFilterPaper) {
@@ -445,7 +383,7 @@ export class SeparationEngine {
                         this.pouringEngine.streamMesh.visible = true;
                     }
                     if (hasInsolubleSolid) {
-                        this.pouringEngine.grainStream.material.color.setHex(mainSolidColor);
+                        this.pouringEngine.grainStream.material.color.setHex(solidColor);
                         this.pouringEngine.grainStream.position.set(streamX, streamY + 0.08, fPos.z);
                         this.pouringEngine.grainStream.visible = true;
                     }
@@ -455,8 +393,8 @@ export class SeparationEngine {
                     const p = Math.min((t - tiltStart) / tiltPourDuration, 1);
                     const easeP = 0.5 - Math.cos(p * Math.PI) / 2;
 
-                    // 1. Tilt beaker over funnel mouth to the left
-                    beakerGroup.rotation.z = easeP * (Math.PI / 2.4);
+                    // 1. Tilt beaker over funnel mouth
+                    beakerGroup.rotation.z = -easeP * (Math.PI / 2.4);
 
                     // 2. Deplete fluid & particles inside pouring beaker
                     if (beakerObj.waterMesh && beakerObj.waterMesh.visible) {
@@ -468,11 +406,9 @@ export class SeparationEngine {
                         }
                     });
 
-                    // 3. Accumulate trapped solid residues inside filter paper cone in real-time
-                    if (hasFilterPaper) {
-                        if (sandResidue && sandResidue.visible) sandResidue.scale.set(easeP, easeP, easeP);
-                        if (ironResidue && ironResidue.visible) ironResidue.scale.set(easeP, easeP, easeP);
-                        if (pebblesResidue && pebblesResidue.visible) pebblesResidue.scale.set(easeP, easeP, easeP);
+                    // 3. Accumulate trapped solid residue inside filter paper cone in real-time
+                    if (sandResidue && sandResidue.visible && hasFilterPaper) {
+                        sandResidue.scale.set(easeP, easeP, easeP);
                     }
 
                     // 4. Smoothly rise water level in receiving beaker below in real-time!
@@ -504,13 +440,13 @@ export class SeparationEngine {
                             if (receivingBeaker) pouredIngredients.forEach(ing => receivingBeaker.addIngredient(ing));
                             this.uiOverlay.showToast('تنبيه كيميائي: نزل المخلوط بالكامل دون ترشيح! يجب تركيب ورقة الترشيح المطوية داخل القمع أولاً لاحتجاز الحبيبات الصلبة.', 'warning');
                         } else if (!hasWater && hasAnySolid) {
-                            this.uiOverlay.showToast(`تنبيه كيميائي: ورقة الترشيح احتجزت ${trappedStr} الجافة ولا تفصل بين المواد الصلبة الجافة!`, 'warning');
+                            this.uiOverlay.showToast(`تنبيه كيميائي: ورقة الترشيح احتجزت (${solidName}) الجافة ولا تفصل بين المواد الصلبة الجافة!`, 'warning');
                         } else {
                             if (!hasBeakerUnderneath && hasWater) {
                                 this.createLiquidSpillPuddle(filterPos.x, filterPos.z, 0x0284c7);
                             }
-                            this.uiOverlay.showToast(`تمت عملية الترشيح بنجاح! تم احتجاز ${trappedStr} على ورقة الترشيح ونزل الماء النقي الرائق إلى الكأس.`, 'success');
-                            this.uiOverlay.updateStepper('المرحلة 2 تمت ✓', `اكتمل الترشيح! تم احتجاز ${trappedStr} على ورقة الترشيح ونزل الماء الرائق في الكأس السفلي`);
+                            this.uiOverlay.showToast('تمت عملية الترشيح بنجاح! تم احتجاز المحتوى الصلب في القمع ونزل الماء النقي الرائق إلى الكأس.', 'success');
+                            this.uiOverlay.updateStepper('المرحلة 2 تمت ✓', 'اكتمل الترشيح! استقر الراسب الصلب بالقمع ونزل الماء الرائق في الكأس السفلي');
                         }
 
                         // Step 3: Return camera to normal laboratory perspective after 1.2s!
@@ -546,6 +482,7 @@ export class SeparationEngine {
         const funnelWater = funnelTool.getObjectByName('funnelWater');
         const funnelOilLower = funnelTool.getObjectByName('funnelOilLower');
         const funnelOilUpper = funnelTool.getObjectByName('funnelOilUpper');
+        const funnelOilSettled = funnelTool.getObjectByName('funnelOilSettled');
 
         beakerObj.resetBeaker();
 
@@ -554,7 +491,8 @@ export class SeparationEngine {
 
         if (hasWater && hasOil) {
             if (funnelWater) { funnelWater.visible = true; funnelWater.scale.set(1, 1, 1); }
-            if (funnelOilUpper) { funnelOilUpper.visible = true; funnelOilUpper.position.set(0, 1.14, 0); funnelOilUpper.scale.set(1, 1, 1); }
+            if (funnelOilUpper) { funnelOilUpper.visible = true; funnelOilUpper.scale.set(1, 1, 1); }
+            if (funnelOilSettled) { funnelOilSettled.visible = true; funnelOilSettled.scale.set(1, 1, 1); }
             if (funnelOilLower) funnelOilLower.visible = false;
             this.uiOverlay.showToast('انفصل السائلان بنجاح حسب الكثافة! هبط الماء الأكبر كثافة للأسفل وطفا الزيت الأقل كثافة بالأعلى ✨. افتح الصمام الآن.', 'success');
             this.uiOverlay.updateStepper('انفصال الكثافة ✓', 'انفصل الزيت عن الماء! افتح الصمام لتصريف الماء أولاً في الكأس السفلي');
@@ -631,7 +569,7 @@ export class SeparationEngine {
 
                 const animateSieveTilt = (t) => {
                     const prog = Math.min((t - tiltStart) / tiltDuration, 1);
-                    beakerGroup.rotation.z = prog * (Math.PI / 2.3);
+                    beakerGroup.rotation.z = -prog * (Math.PI / 2.3);
 
                     // Deplete pouring beaker content
                     if (beakerObj.waterMesh && beakerObj.waterMesh.visible) {
@@ -689,7 +627,7 @@ export class SeparationEngine {
 
                         const animateReturn = (rT) => {
                             const rP = Math.min((rT - returnStart) / returnDur, 1);
-                            beakerGroup.rotation.z = (1 - rP) * (Math.PI / 2.3);
+                            beakerGroup.rotation.z = -(1 - rP) * (Math.PI / 2.3);
                             beakerGroup.position.lerpVectors(dumpPos, homePos, rP);
 
                             if (rP < 1) {
@@ -813,14 +751,12 @@ export class SeparationEngine {
                     waterStreamMesh.scale.z = 0.85 + Math.cos(time * 30) * 0.15;
                 }
 
-                // Seamless transition: As water drains out, oil in upper bulb glides down into lower cone!
+                // Seamless transition: As water drains out, oil in upper bulb shrinks and oil in lower cone fills up!
                 if (funnelOilUpper && funnelOilUpper.visible) {
-                    const oilPosY = 0.68 + (1.14 - 0.68) * waterScale;
-                    funnelOilUpper.position.y = oilPosY;
                     funnelOilUpper.scale.set(waterScale, waterScale, waterScale);
                     if (funnelOilLower) {
                         funnelOilLower.visible = true;
-                        funnelOilLower.scale.set(1.0, 1.0 - waterScale * 0.3, 1.0);
+                        funnelOilLower.scale.set(1.0 - waterScale, 1.0 - waterScale, 1.0 - waterScale);
                     }
                 }
 
@@ -831,26 +767,18 @@ export class SeparationEngine {
 
                 if (funnelWater.scale.y <= 0.05) {
                     funnelWater.visible = false;
-                    if (funnelOilUpper) {
-                        funnelOilUpper.visible = false;
-                        funnelOilUpper.position.y = 1.14; // reset home position for upper bulb
-                    }
+                    if (funnelOilUpper) funnelOilUpper.visible = false;
                     if (waterStreamMesh) waterStreamMesh.visible = false;
 
-                    // Oil has cleanly taken over the lower cone at full original scale 1.0!
+                    // Oil has cleanly taken over the lower cone at scale 1.0!
                     if (funnelOilLower) {
                         funnelOilLower.visible = true;
                         funnelOilLower.scale.set(1, 1, 1);
                     }
 
-                    // Auto-stop motion and close stopcock valve automatically
                     this.funnelDraining = false;
                     const valveKey = funnelTool.getObjectByName('funnelValveKey');
                     if (valveKey) valveKey.rotation.y = 0;
-
-                    if (funnelTool.userData.ingredients) {
-                        funnelTool.userData.ingredients = funnelTool.userData.ingredients.filter(i => i.id !== 'water');
-                    }
 
                     if (!hasBeakerUnderneath) {
                         this.createLiquidSpillPuddle(fPos.x, fPos.z, 0x0284c7);
@@ -859,8 +787,8 @@ export class SeparationEngine {
                             water: { id: 'water', name: 'ماء', color: 0x0284c7, particleColor: 0x38bdf8, type: 'liquid_water' }
                         };
                         receivingBeaker.addIngredient(RAW_MATERIALS.water);
-                        this.uiOverlay.showToast('تم تصريف السائل المائي بالكامل بنجاح في الكأس السفلي! استقرت طبقة الزيت بسلاسة في قاع القمع بذات حجمها الأصلي وتوقفت الحركة تلقائياً. أغلق الصمام واجلب كأساً جديداً لتصريف الزيت.', 'success');
-                        this.uiOverlay.updateStepper('تصريف الماء ✓', 'تم تجميع الماء بالكامل! استقرت طبقة الزيت في قاع القمع بذات حجمها الأصلي، توقفت الحركة تلقائياً وجاهزة للتصريف في كأس جديد');
+                        this.uiOverlay.showToast('تم تصريف السائل المائي بالكامل بنجاح في الكأس السفلي! استقرت طبقة الزيت في قاع القمع جاهزة للتصريف، أغلق الصمام واجلب كأساً ثانياً لتجميع الزيت.', 'success');
+                        this.uiOverlay.updateStepper('تصريف الماء ✓', 'تم تجميع الماء بالكامل! استقرت طبقة الزيت في قاع القمع. اجلب كأساً ثانياً لتصريف الزيت النقي');
                     }
                 }
             } else if (funnelOilLower && funnelOilLower.visible) {

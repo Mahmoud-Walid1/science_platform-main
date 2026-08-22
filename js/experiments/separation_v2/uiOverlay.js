@@ -158,10 +158,7 @@ export class UIOverlay {
                 this.hideCleanMagnetButton();
                 this.hideResetCameraBtn();
 
-                // 3. Reset Stepper Banner Text to Initial State
-                this.updateStepper('المرحلة 1', 'تجهيز المخلوط: قم بإضافة مادتين في الكأس لتركيب المخلوط');
-
-                // 4. Comprehensive Scene Equipment & Tool State Reset
+                // 3. Comprehensive Scene Equipment & Tool State Reset
                 if (this.sceneManager) {
                     this.sceneManager.resetCameraView();
                     const toRemove = [];
@@ -188,20 +185,17 @@ export class UIOverlay {
 
                         // Reset Separatory Funnel
                         if (obj.name === 'tool_funnel') {
-                            obj.userData.ingredients = [];
+                            obj.userData.pouredIngredients = [];
                             const fWater = obj.getObjectByName('funnelWater');
-                            const fOilLower = obj.getObjectByName('funnelOilLower');
-                            const fOilUpper = obj.getObjectByName('funnelOilUpper');
+                            const fOil = obj.getObjectByName('funnelOil');
+                            const fOilSettled = obj.getObjectByName('funnelOilSettled');
                             const wStream = obj.getObjectByName('drainingStream');
                             const oStream = obj.getObjectByName('drainingOilStream');
                             const valve = obj.getObjectByName('funnelValveKey');
 
                             if (fWater) fWater.visible = false;
-                            if (fOilLower) fOilLower.visible = false;
-                            if (fOilUpper) {
-                                fOilUpper.visible = false;
-                                fOilUpper.position.set(0, 1.14, 0);
-                            }
+                            if (fOil) fOil.visible = false;
+                            if (fOilSettled) fOilSettled.visible = false;
                             if (wStream) wStream.visible = false;
                             if (oStream) oStream.visible = false;
                             if (valve) valve.rotation.y = 0;

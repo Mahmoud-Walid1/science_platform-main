@@ -85,7 +85,7 @@ export class Tools3D {
 
         const geoN = new THREE.ExtrudeGeometry(shapeN, extrudeSettings);
         const northMesh = new THREE.Mesh(geoN, redMat);
-        northMesh.castShadow = false;
+        northMesh.castShadow = true;
         northMesh.position.set(0, 0, -0.055);
         group.add(northMesh);
 
@@ -100,7 +100,7 @@ export class Tools3D {
 
         const geoS = new THREE.ExtrudeGeometry(shapeS, extrudeSettings);
         const southMesh = new THREE.Mesh(geoS, blueMat);
-        southMesh.castShadow = false;
+        southMesh.castShadow = true;
         southMesh.position.set(0, 0, -0.055);
         group.add(southMesh);
 
@@ -146,14 +146,14 @@ export class Tools3D {
     buildFilterMesh(group) {
         const standMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.2 });
         const glassFunnelMat = new THREE.MeshPhysicalMaterial({
-            color: 0xdbeafe,
+            color: 0xffffff,
             transparent: true,
-            opacity: 0.65,
-            roughness: 0.1,
-            transmission: 0.25,
-            thickness: 0.3,
+            opacity: 0.45,
+            roughness: 0.05,
+            transmission: 0.92,
+            thickness: 0.15,
             ior: 1.5,
-            depthWrite: true
+            depthWrite: false
         });
         const filterPaperMat = new THREE.MeshStandardMaterial({
             color: 0xf8fafc,
@@ -178,7 +178,7 @@ export class Tools3D {
         const funnelConeMesh = new THREE.Mesh(funnelConeGeo, glassFunnelMat);
         funnelConeMesh.position.set(0, 0.96, 0);
         funnelConeMesh.rotation.x = Math.PI;
-        funnelConeMesh.castShadow = false;
+        funnelConeMesh.castShadow = true;
         group.add(funnelConeMesh);
 
         const stemGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.48, 24);
@@ -197,44 +197,11 @@ export class Tools3D {
         const residueGeo = new THREE.ConeGeometry(0.25, 0.22, 32);
         const sandResidueMat = new THREE.MeshStandardMaterial({ color: 0xc28e5c, roughness: 0.95 });
         const sandResidueMesh = new THREE.Mesh(residueGeo, sandResidueMat);
-        sandResidueMesh.position.set(0, 0.01, 0);
+        sandResidueMesh.position.set(0, 0.94, 0);
+        sandResidueMesh.rotation.x = Math.PI;
         sandResidueMesh.name = 'sandResidue';
         sandResidueMesh.visible = false;
-        paperConeMesh.add(sandResidueMesh);
-
-        // Iron Filings Residue cluster inside filter paper cone
-        const ironResidueGroup = new THREE.Group();
-        ironResidueGroup.name = 'ironResidue';
-        ironResidueGroup.position.set(0, 0.02, 0);
-        const ironResidueMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9, metalness: 0.8 });
-        const speckGeo = new THREE.BoxGeometry(0.025, 0.025, 0.035);
-        for (let i = 0; i < 30; i++) {
-            const speck = new THREE.Mesh(speckGeo, ironResidueMat);
-            const r = Math.random() * 0.14;
-            const theta = Math.random() * Math.PI * 2;
-            speck.position.set(r * Math.cos(theta), r * 0.3 - 0.04, r * Math.sin(theta));
-            speck.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-            ironResidueGroup.add(speck);
-        }
-        ironResidueGroup.visible = false;
-        paperConeMesh.add(ironResidueGroup);
-
-        // Pebbles Residue cluster inside filter paper cone
-        const pebblesResidueGroup = new THREE.Group();
-        pebblesResidueGroup.name = 'pebblesResidue';
-        pebblesResidueGroup.position.set(0, 0.02, 0);
-        const pebMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.8 });
-        const pebGeo = new THREE.DodecahedronGeometry(0.028, 1);
-        for (let i = 0; i < 10; i++) {
-            const peb = new THREE.Mesh(pebGeo, pebMat);
-            const r = Math.random() * 0.12;
-            const theta = Math.random() * Math.PI * 2;
-            peb.position.set(r * Math.cos(theta), r * 0.3 - 0.04, r * Math.sin(theta));
-            peb.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-            pebblesResidueGroup.add(peb);
-        }
-        pebblesResidueGroup.visible = false;
-        paperConeMesh.add(pebblesResidueGroup);
+        group.add(sandResidueMesh);
 
         const streamGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.52, 16);
         const streamMat = new THREE.MeshStandardMaterial({
@@ -259,17 +226,16 @@ export class Tools3D {
 
         const base = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.035, 32), blueBaseMat);
         base.position.y = 0.018;
-        base.castShadow = false;
+        base.castShadow = true;
         group.add(base);
 
         const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.26, 24), chromeMat);
         tube.position.y = 0.16;
-        tube.castShadow = false;
+        tube.castShadow = true;
         group.add(tube);
 
         const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.04, 24), chromeMat);
         collar.position.y = 0.08;
-        collar.castShadow = false;
         group.add(collar);
 
         const hoseConn = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.12, 16), chromeMat);
@@ -323,21 +289,21 @@ export class Tools3D {
             leg.position.set(Math.cos(angle) * radius, 0.29, Math.sin(angle) * radius);
             leg.rotation.z = Math.cos(angle) * -0.06;
             leg.rotation.x = Math.sin(angle) * 0.06;
-            leg.castShadow = false;
+            leg.castShadow = true;
             group.add(leg);
         }
     }
 
     buildSeparatoryFunnelMesh(group) {
         const glassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xdbeafe,
+            color: 0xffffff,
             transparent: true,
-            opacity: 0.65,
-            roughness: 0.1,
-            transmission: 0.25,
-            thickness: 0.3,
+            opacity: 0.45,
+            roughness: 0.05,
+            transmission: 0.92,
+            thickness: 0.15,
             ior: 1.5,
-            depthWrite: true
+            depthWrite: false
         });
         const stopperMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.2 });
         const valveMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.2 });
@@ -367,7 +333,7 @@ export class Tools3D {
         const bodyGeo = new THREE.LatheGeometry(points, 32);
         const bodyMesh = new THREE.Mesh(bodyGeo, glassMat);
         bodyMesh.position.y = 0.0;
-        bodyMesh.castShadow = false;
+        bodyMesh.castShadow = true;
         group.add(bodyMesh);
 
         const lowerConePoints = [];
@@ -420,6 +386,14 @@ export class Tools3D {
         funnelOilUpperMesh.renderOrder = 2;
         funnelOilUpperMesh.visible = false;
         group.add(funnelOilUpperMesh);
+
+        // Settled Oil Mesh alias
+        const funnelOilSettledMesh = new THREE.Mesh(upperBulbGeo, oilMat);
+        funnelOilSettledMesh.position.set(0, 1.14, 0);
+        funnelOilSettledMesh.name = 'funnelOilSettled';
+        funnelOilSettledMesh.renderOrder = 2;
+        funnelOilSettledMesh.visible = false;
+        group.add(funnelOilSettledMesh);
 
         const streamGeo = new THREE.CylinderGeometry(0.022, 0.028, 0.62, 16);
         const streamMat = new THREE.MeshStandardMaterial({
@@ -474,7 +448,7 @@ export class Tools3D {
         // 1. Outer Brass Cylindrical Rim Frame
         const outerRim = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.16, 36, 1, true), brassRimMat);
         outerRim.position.y = 0.08;
-        outerRim.castShadow = false;
+        outerRim.castShadow = true;
         group.add(outerRim);
 
         // 2. Top & Bottom Metallic Borders
@@ -523,7 +497,7 @@ export class Tools3D {
 
         const bodyMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.25, 0.52, 32), darkBodyMat);
         bodyMesh.position.y = 0.26;
-        bodyMesh.castShadow = false;
+        bodyMesh.castShadow = true;
         group.add(bodyMesh);
 
         const lidMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 0.04, 32), lidMat);
