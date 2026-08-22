@@ -2,6 +2,11 @@
 require_once '../config.php';
 require_once '../functions.php';
 
+// Force browser to revalidate PHP page without stale HTML cache
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 $sub = isAuthenticated();
 
 $user_name = $_SESSION['user']['name'] ?? $_SESSION['user_name'] ?? 'معلم معتمد';
@@ -12,6 +17,9 @@ if (!$exp_active) {
     header("Location: ../my-experiments.php?msg=experiment_disabled");
     exit();
 }
+
+$css_v = file_exists('../css/separation_v2.css') ? filemtime('../css/separation_v2.css') : time();
+$js_v  = file_exists('../js/experiments/separation_v2/app.js') ? filemtime('../js/experiments/separation_v2/app.js') : time();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -25,8 +33,8 @@ if (!$exp_active) {
     <!-- FontAwesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Modern Isometric Lab Light Stylesheet -->
-    <link rel="stylesheet" href="../css/separation_v2.css">
+    <!-- Modern Isometric Lab Light Stylesheet with Automatic Cache-Busting -->
+    <link rel="stylesheet" href="../css/separation_v2.css?v=<?= $css_v ?>">
 </head>
 <body>
 
@@ -137,7 +145,7 @@ if (!$exp_active) {
         }
     }
     </script>
-    <!-- ES Module App Entry Point -->
-    <script type="module" src="../js/experiments/separation_v2/app.js"></script>
+    <!-- ES Module App Entry Point with Automatic Cache-Busting -->
+    <script type="module" src="../js/experiments/separation_v2/app.js?v=<?= $js_v ?>"></script>
 </body>
 </html>

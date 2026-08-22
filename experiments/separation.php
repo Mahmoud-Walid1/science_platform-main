@@ -2,6 +2,10 @@
 require_once '../config.php';
 require_once '../functions.php';
 
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 $sub = isAuthenticated();
 
 // Only redirect to v2 if not explicitly requested as fallback or 2D
@@ -10,6 +14,8 @@ if (!isset($_GET['fallback']) && !isset($_GET['force_2d'])) {
     exit();
 }
 $is_fallback = isset($_GET['fallback']) && $_GET['fallback'] === 'webgl';
+
+$css_v = file_exists('../css/separation.css') ? filemtime('../css/separation.css') : time();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -19,7 +25,7 @@ $is_fallback = isset($_GET['fallback']) && $_GET['fallback'] === 'webgl';
     <title>فصل المخاليط | مختبرات العلوم والتقنية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/separation.css">
+    <link rel="stylesheet" href="../css/separation.css?v=<?= $css_v ?>">
 </head>
 <body>
 
