@@ -596,8 +596,14 @@ export class DragControls3D {
             }
         }
 
-        // Drag Sieve Tool onto a Beaker
+        // Drag Sieve Tool onto a Beaker or Trash Can
         if (obj.userData.type === 'tool_object' && obj.userData.toolData && obj.userData.toolData.id === 'sieve') {
+            const trashTool = this.scene.getObjectByName('tool_trash');
+            if (trashTool && Math.hypot(obj.position.x - trashTool.position.x, obj.position.z - trashTool.position.z) < 0.85) {
+                this.separationEngine.cleanSievePebbles(obj);
+                return;
+            }
+
             const b1 = this.beaker3D.beaker1.group.position;
             const b2 = this.beaker3D.beaker2.group.position;
             const d1 = Math.hypot(obj.position.x - b1.x, obj.position.z - b1.z);

@@ -224,8 +224,30 @@ export class SeparationEngine {
             this.toggleSeparatoryValve(toolGroup);
         } else if (toolData.id === 'magnet') {
             this.checkMagnetProximity(toolGroup);
+        } else if (toolData.id === 'sieve') {
+            this.cleanSievePebbles(toolGroup);
         } else {
             this.uiOverlay.showToast(`أداة ${toolData.name} جاهزة للاستخدام اليدوي الحر.`, 'info');
+        }
+    }
+
+    cleanSievePebbles(sieveGroup) {
+        if (!sieveGroup) return;
+        const sievePebbles = sieveGroup.getObjectByName('sievePebbles');
+
+        if (sievePebbles && sievePebbles.visible) {
+            soundManager.playTrashDump();
+            sievePebbles.visible = false;
+            if (sievePebbles.children) {
+                sievePebbles.children.forEach(c => c.visible = false);
+            }
+            if (sieveGroup.userData.homePosition) {
+                sieveGroup.position.copy(sieveGroup.userData.homePosition);
+            }
+            this.uiOverlay.showToast('تم تفريغ وإلقاء الحصى المحتجزة فوق الغربال بداخل سلة المهملات المعملية بنجاح! 🗑️🧹', 'success');
+            this.uiOverlay.updateStepper('تنظيف الغربال ✓', 'تم التخلص من الحصى المحتجزة بداخل سلة المهملات وتنظيف الغربال');
+        } else {
+            this.uiOverlay.showToast('الغربال المعملي نظيف وجاهز للتركيب فوق الكأس المعملي 🪵✨', 'info');
         }
     }
 
