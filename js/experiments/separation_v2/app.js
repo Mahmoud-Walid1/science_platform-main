@@ -1,12 +1,12 @@
-import { SceneManager } from './sceneManager.js?v=2.2';
-import { MaterialsShelf } from './materialsShelf.js?v=2.2';
-import { Tools3D } from './tools3D.js?v=2.2';
-import { Beaker3D } from './beaker3D.js?v=2.2';
-import { PouringEngine } from './pouringEngine.js?v=2.2';
-import { DragControls3D } from './dragControls.js?v=2.2';
-import { SeparationEngine } from './separationEngine.js?v=2.2';
-import { UIOverlay } from './uiOverlay.js?v=2.2';
-import { QuizEngine } from './quizEngine.js?v=2.2';
+import { SceneManager } from './sceneManager.js?v=2.3';
+import { MaterialsShelf } from './materialsShelf.js?v=2.3';
+import { Tools3D } from './tools3D.js?v=2.3';
+import { Beaker3D } from './beaker3D.js?v=2.3';
+import { PouringEngine } from './pouringEngine.js?v=2.3';
+import { DragControls3D } from './dragControls.js?v=2.3';
+import { SeparationEngine } from './separationEngine.js?v=2.3';
+import { UIOverlay } from './uiOverlay.js?v=2.3';
+import { QuizEngine } from './quizEngine.js?v=2.3';
 
 class SeparationApp {
     constructor() {
