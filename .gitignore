@@ -10,3 +10,6 @@ Thumbs.db
 *.log
 
 # نسخ احتياطية قديمة (زي prism_backup_before_patch.php لو حبيتي تشيليها من التتبع لاحقًا)
+
+# mock login
+mock-login.php
