@@ -4,16 +4,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// استيراد الإعدادات المحلية إذا كانت متوفرة
-if (file_exists(__DIR__ . '/config.local.php')) {
-    include_once __DIR__ . '/config.local.php';
-}
-
-// بيانات الاتصال بقاعدة بيانات Hostinger الافتراضية
-if (!defined('DB_HOST')) define('DB_HOST', 'localhost');
-if (!defined('DB_USER')) define('DB_USER', 'u860574850_user1_labs1');
-if (!defined('DB_PASS')) define('DB_PASS', 'S511511_s');
-if (!defined('DB_NAME')) define('DB_NAME', 'u860574850_user1_labs1');
+// بيانات الاتصال بقاعدة بيانات Hostinger
+define('DB_HOST', 'localhost');
+define('DB_USER', 'u860574850_user1_labs1');
+define('DB_PASS', 'S511511_s');
+define('DB_NAME', 'u860574850_user1_labs1');
 
 // الاتصال بقاعدة البيانات
 $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
