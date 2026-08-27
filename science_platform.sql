@@ -51,12 +51,28 @@ CREATE TABLE IF NOT EXISTS `user_subscriptions` (
   `expires_at` datetime NOT NULL,
   `is_frozen` tinyint(4) NOT NULL DEFAULT 0 COMMENT '1=مجمد, 0=نشط',
   `frozen_days_remaining` int(11) NOT NULL DEFAULT 0,
+  `status` varchar(20) NOT NULL DEFAULT 'active' COMMENT 'active, frozen, cancelled, expired',
+  `admin_message` text DEFAULT NULL COMMENT 'رسالة الأدمن المخصصة للمعلم',
+  `message_show_once` tinyint(4) DEFAULT 1 COMMENT '1=عدم التكرار بعد العرض',
+  `message_read` tinyint(4) DEFAULT 0 COMMENT '1=تمت القراءة والعرض',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_user_id` (`user_id`),
   KEY `fk_sub_package` (`package_id`),
   CONSTRAINT `fk_sub_package` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+-- Table structure for `teachers`
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `teachers` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `phone` varchar(100) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

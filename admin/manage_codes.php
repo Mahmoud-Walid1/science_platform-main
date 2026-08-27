@@ -96,6 +96,7 @@ $codes_list = mysqli_fetch_all($result, MYSQLI_ASSOC);
     <div class="sidebar">
         <div class="sidebar-brand"><i class="fas fa-flask"></i> لوحة المختبرات</div>
         <a href="index.php" class="nav-item"><i class="fas fa-chart-line"></i> الملخص والأداء</a>
+        <a href="manage_subscriptions.php" class="nav-item"><i class="fas fa-id-card"></i> إدارة اشتراكات المعلمين</a>
         <a href="create_codes.php" class="nav-item"><i class="fas fa-magic"></i> توليد الأكواد بالجملة</a>
         <a href="manage_codes.php" class="nav-item active"><i class="fas fa-barcode"></i> إدارة وتصدير الأكواد</a>
         <a href="experiments.php" class="nav-item"><i class="fas fa-vials"></i> التجارب العلمية</a>

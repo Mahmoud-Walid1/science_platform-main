@@ -121,6 +121,61 @@ function redeemCode($code, $user_id) {
 /**
  * جلب تفاصيل اشتراك المستخدم وتأكيد حالة التجميد
  */
+/**
+ * التأكد الآلي من تحديث الهيكل وإضافة الأعمدة الجديدة إذا لم تكن موجودة
+ */
+function ensureSubscriptionSchemaUpdated() {
+    global $conn;
+    if (!$conn) return;
+
+    // التأكد من وجود جدول المعلمين
+    $conn->query("CREATE TABLE IF NOT EXISTS teachers (
+        id INT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        phone VARCHAR(100) DEFAULT NULL,
+        email VARCHAR(255) DEFAULT NULL,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )");
+
+    // التثبت من وجود أعمدة user_subscriptions
+    $columns = [];
+    $res = $conn->query("SHOW COLUMNS FROM user_subscriptions");
+    if ($res) {
+        while ($row = $res->fetch_assoc()) {
+            $columns[] = $row['Field'];
+        }
+    }
+
+    if (!in_array('status', $columns)) {
+        @$conn->query("ALTER TABLE user_subscriptions ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'active'");
+    }
+    if (!in_array('admin_message', $columns)) {
+        @$conn->query("ALTER TABLE user_subscriptions ADD COLUMN admin_message TEXT DEFAULT NULL");
+    }
+    if (!in_array('message_show_once', $columns)) {
+        @$conn->query("ALTER TABLE user_subscriptions ADD COLUMN message_show_once TINYINT(4) DEFAULT 1");
+    }
+    if (!in_array('message_read', $columns)) {
+        @$conn->query("ALTER TABLE user_subscriptions ADD COLUMN message_read TINYINT(4) DEFAULT 0");
+    }
+
+    // التثبت من بريد المعلم في teachers
+    $t_cols = [];
+    $res_t = $conn->query("SHOW COLUMNS FROM teachers");
+    if ($res_t) {
+        while ($row = $res_t->fetch_assoc()) {
+            $t_cols[] = $row['Field'];
+        }
+    }
+    if (!in_array('email', $t_cols)) {
+        @$conn->query("ALTER TABLE teachers ADD COLUMN email VARCHAR(255) DEFAULT NULL");
+    }
+}
+ensureSubscriptionSchemaUpdated();
+
+/**
+ * جلب تفاصيل اشتراك المستخدم وتأكيد حالة التجميد والإلغاء
+ */
 function getUserSubscription($user_id) {
     global $conn;
     $user_id = (int)$user_id;
@@ -145,8 +200,12 @@ function getUserSubscription($user_id) {
     $is_active = false;
     $now = time();
     $expires_timestamp = strtotime($sub['expires_at']);
+    $status_code = $sub['status'] ?? 'active';
 
-    if ($global_freeze || $sub['is_frozen']) {
+    if ($status_code === 'cancelled') {
+        $is_active = false;
+        $sub['status_text'] = '⛔ تم إلغاء الاشتراك بواسطة الإدارة';
+    } elseif ($global_freeze || $sub['is_frozen'] || $status_code === 'frozen') {
         // في حالة التجميد، يظل الاشتراك متاحاً وحافظاً لأيامه
         $is_active = true;
         $sub['status_text'] = '❄️ الاشتراك مُجمد (فترة إجازة وحساب الأيام متوقف)';
@@ -180,7 +239,8 @@ function isAuthenticated() {
 
     $sub = getUserSubscription($user_id);
     if (!$sub || !$sub['is_valid']) {
-        header("Location: ../index.php?msg=subscription_required");
+        $msg = ($sub && isset($sub['status']) && $sub['status'] === 'cancelled') ? 'subscription_cancelled' : 'subscription_required';
+        header("Location: ../index.php?msg=" . $msg);
         exit();
     }
 
@@ -227,17 +287,11 @@ function logAccess($code, $user_id, $status) {
     if ($user_id_num) {
         $u_name = $_SESSION['user']['name'] ?? $_SESSION['user_name'] ?? ('المعلم #' . $user_id_num);
         $u_phone = $_SESSION['user']['whatsappNumber'] ?? $_SESSION['user']['phone'] ?? '';
-        
-        $conn->query("CREATE TABLE IF NOT EXISTS teachers (
-            id INT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            phone VARCHAR(100) DEFAULT NULL,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )");
+        $u_email = $_SESSION['user']['email'] ?? $_SESSION['user_email'] ?? '';
 
-        $stmt_t = $conn->prepare("INSERT INTO teachers (id, name, phone) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, phone = ?, updated_at = NOW()");
+        $stmt_t = $conn->prepare("INSERT INTO teachers (id, name, phone, email) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, phone = ?, email = ?, updated_at = NOW()");
         if ($stmt_t) {
-            $stmt_t->bind_param("issss", $user_id_num, $u_name, $u_phone, $u_name, $u_phone);
+            $stmt_t->bind_param("issssss", $user_id_num, $u_name, $u_phone, $u_email, $u_name, $u_phone, $u_email);
             $stmt_t->execute();
         }
     }
@@ -245,6 +299,111 @@ function logAccess($code, $user_id, $status) {
     $stmt = $conn->prepare("INSERT INTO access_logs (code, user_id, ip_address, status) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("siss", $code, $user_id_num, $ip, $status);
     return $stmt->execute();
+}
+
+/**
+ * جلب جميع الاشتراكات مع بيانات المعلمين وخيارات البحث الشامل (الاسم، الهاتف، الايميل، الـ ID)
+ */
+function getAllTeacherSubscriptions($search = '') {
+    global $conn;
+    $search = trim($search);
+
+    $sql = "SELECT us.*, p.name AS package_name, p.duration_months,
+                   t.name AS teacher_name, t.phone AS teacher_phone, t.email AS teacher_email
+            FROM user_subscriptions us
+            JOIN packages p ON us.package_id = p.id
+            LEFT JOIN teachers t ON us.user_id = t.id";
+
+    if (!empty($search)) {
+        $sql .= " WHERE us.user_id LIKE ? 
+                  OR t.name LIKE ? 
+                  OR t.phone LIKE ? 
+                  OR t.email LIKE ?";
+    }
+
+    $sql .= " ORDER BY us.updated_at DESC";
+
+    $stmt = $conn->prepare($sql);
+    if (!empty($search)) {
+        $param = "%{$search}%";
+        $stmt->bind_param("ssss", $param, $param, $param, $param);
+    }
+
+    $stmt->execute();
+    $res = $stmt->get_result();
+    return $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
+}
+
+/**
+ * تحديث بيانات اشتراك المعلم بواسطة الأدمن
+ */
+function updateSubscriptionByAdmin($user_id, $package_id, $expires_at, $status) {
+    global $conn;
+    $user_id = (int)$user_id;
+    $package_id = (int)$package_id;
+    $expires_at = trim($expires_at);
+    $status = in_array($status, ['active', 'frozen', 'cancelled', 'expired']) ? $status : 'active';
+    $is_frozen = ($status === 'frozen') ? 1 : 0;
+
+    $stmt = $conn->prepare(
+        "UPDATE user_subscriptions 
+         SET package_id = ?, expires_at = ?, status = ?, is_frozen = ?, updated_at = NOW() 
+         WHERE user_id = ?"
+    );
+    $stmt->bind_param("issii", $package_id, $expires_at, $status, $is_frozen, $user_id);
+    return $stmt->execute();
+}
+
+/**
+ * حفظ رسالة الأدمن المخصصة للمعلم
+ */
+function setTeacherAdminMessage($user_id, $message, $show_once = 1) {
+    global $conn;
+    $user_id = (int)$user_id;
+    $message = trim($message);
+    $show_once = (int)$show_once;
+
+    $stmt = $conn->prepare(
+        "UPDATE user_subscriptions 
+         SET admin_message = ?, message_show_once = ?, message_read = 0 
+         WHERE user_id = ?"
+    );
+    $stmt->bind_param("sii", $message, $show_once, $user_id);
+    return $stmt->execute();
+}
+
+/**
+ * تحديث حالة قراءة الرسالة المخصصة
+ */
+function markTeacherMessageRead($user_id) {
+    global $conn;
+    $user_id = (int)$user_id;
+    $stmt = $conn->prepare("UPDATE user_subscriptions SET message_read = 1 WHERE user_id = ?");
+    return $stmt->execute();
+}
+
+/**
+ * جلب الرسالة المنبثقة المستحقة للمعلم فور دخوله
+ */
+function getPendingTeacherMessage($user_id) {
+    global $conn;
+    $user_id = (int)$user_id;
+
+    $stmt = $conn->prepare(
+        "SELECT admin_message, message_show_once, message_read 
+         FROM user_subscriptions 
+         WHERE user_id = ? AND admin_message IS NOT NULL AND admin_message != ''"
+    );
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    if ($res && $row = $res->fetch_assoc()) {
+        if ($row['message_read'] == 0 || $row['message_show_once'] == 0) {
+            return $row['admin_message'];
+        }
+    }
+    return null;
 }
 
 /**

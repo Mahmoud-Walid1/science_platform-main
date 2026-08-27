@@ -21,6 +21,9 @@ if ($is_subscribed && !empty($sub['expires_at'])) {
     $days_left = max(0, (int)ceil((strtotime($sub['expires_at']) - time()) / 86400));
 }
 
+// جلب أي رسالة مخصصة قادمة من الأدمن
+$pending_message = getPendingTeacherMessage($user_id);
+
 // معالجة نموذج شحن كود التفعيل
 $error = '';
 $success_msg = '';
@@ -495,6 +498,62 @@ function getExpVisuals($code_name, $title) {
             });
         }
     </script>
+
+    <?php if (!empty($pending_message)): ?>
+    <!-- نافذة تنبيه الأدمن المنبثقة التلقائية -->
+    <div id="adminNoticeModal" class="notice-modal-overlay">
+        <div class="notice-modal-card">
+            <div class="notice-modal-header">
+                <div class="notice-modal-title"><i class="fas fa-bell"></i> تنبيه من إدارة المنصة</div>
+                <button type="button" class="notice-modal-close" onclick="closeAdminNotice()">&times;</button>
+            </div>
+            <div class="notice-modal-body">
+                <div class="notice-icon"><i class="fas fa-bullhorn"></i></div>
+                <div class="notice-text"><?=nl2br(htmlspecialchars($pending_message))?></div>
+            </div>
+            <div class="notice-progress-bar"><div class="notice-progress-fill" id="noticeFill"></div></div>
+        </div>
+    </div>
+    <style>
+        .notice-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: noticeFadeIn 0.3s ease; }
+        .notice-modal-card { background: white; border-radius: 20px; width: 90%; max-width: 480px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); overflow: hidden; position: relative; animation: noticeSlideUp 0.35s ease-out; }
+        .notice-modal-header { background: linear-gradient(135deg, #004e66, #002d3d); color: white; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .notice-modal-title { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; color: #7ddcf0; }
+        .notice-modal-close { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.4rem; cursor: pointer; transition: 0.2s; }
+        .notice-modal-close:hover { color: white; }
+        .notice-modal-body { padding: 28px 24px; text-align: center; }
+        .notice-icon { width: 60px; height: 60px; background: #e0f2fe; color: #0284c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 16px; }
+        .notice-text { font-size: 1.05rem; font-weight: 700; color: #1e293b; line-height: 1.7; }
+        .notice-progress-bar { width: 100%; height: 5px; background: #e2e8f0; position: relative; }
+        .notice-progress-fill { height: 100%; background: linear-gradient(90deg, #00a8d4, #004e66); width: 100%; transition: width 5s linear; }
+        @keyframes noticeFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes noticeSlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+    <script>
+        let noticeTimer = null;
+        function closeAdminNotice() {
+            const modal = document.getElementById('adminNoticeModal');
+            if (modal) modal.style.display = 'none';
+            if (noticeTimer) clearTimeout(noticeTimer);
+        }
+        
+        // إبلاغ السيرفر بقراءة الرسالة فوراً عبر AJAX
+        fetch('mark_message_read.php')
+            .then(res => res.json())
+            .catch(err => console.error(err));
+
+        // الإغلاق التلقائي بعد 5 ثوانٍ مع حركة شريط التظليل
+        window.addEventListener('DOMContentLoaded', () => {
+            const fill = document.getElementById('noticeFill');
+            if (fill) {
+                setTimeout(() => { fill.style.width = '0%'; }, 50);
+            }
+            noticeTimer = setTimeout(() => {
+                closeAdminNotice();
+            }, 5050);
+        });
+    </script>
+    <?php endif; ?>
 
     <!-- العلامة المائية لحماية شاشة المعلم -->
     <script>
