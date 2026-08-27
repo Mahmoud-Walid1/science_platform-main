@@ -165,7 +165,7 @@ $experiments = getAllExperiments();
                     <label>حالة التجربة</label>
                     <select name="is_active" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-family: 'Cairo'; font-weight: 700;">
                         <option value="1">✅ نشطة ومتاحة للمعلمين</option>
-                        <option value="2" selected>🛠️ قيد التنفيذ (تشويق قريباً)</option>
+                        <option value="2" selected>⏳ قيد التنفيذ (تشويق قريباً)</option>
                         <option value="0">❌ معطلة ومخفية</option>
                     </select>
                 </div>
@@ -188,7 +188,7 @@ $experiments = getAllExperiments();
                             <?php if ($exp['is_active'] == 1): ?>
                                 <span style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;"><i class="fas fa-check-circle"></i> متاحة</span>
                             <?php elseif ($exp['is_active'] == 2): ?>
-                                <span style="background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;"><i class="fas fa-hammer"></i> قيد التنفيذ</span>
+                                <span style="background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;"><i class="fas fa-hourglass-half"></i> قيد التنفيذ</span>
                             <?php else: ?>
                                 <span style="background:#f1f5f9; color:#64748b; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;"><i class="fas fa-ban"></i> معطلة</span>
                             <?php endif; ?>
@@ -209,7 +209,7 @@ $experiments = getAllExperiments();
                             <label>حالة التجربة</label>
                             <select name="is_active" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-family: 'Cairo'; font-weight: 700;">
                                 <option value="1" <?=$exp['is_active'] == 1 ? 'selected' : ''?>>✅ نشطة ومتاحة</option>
-                                <option value="2" <?=$exp['is_active'] == 2 ? 'selected' : ''?>>🛠️ قيد التنفيذ (قريباً)</option>
+                                <option value="2" <?=$exp['is_active'] == 2 ? 'selected' : ''?>>⏳ قيد التنفيذ (قريباً)</option>
                                 <option value="0" <?=$exp['is_active'] == 0 ? 'selected' : ''?>>❌ معطلة ومخفية</option>
                             </select>
                         </div>

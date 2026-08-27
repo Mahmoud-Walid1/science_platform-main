@@ -425,9 +425,9 @@ function getExpVisuals($code_name, $title) {
                     <div class="exp-card coming-soon exp-item-card" title="هذه التجربة قيد التطوير والإنتاج وستتاح للمعلمين قريباً!">
                         <div class="card-top">
                             <div class="exp-icon-box" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706;">
-                                <i class="fas fa-hammer"></i>
+                                <i class="fas fa-hourglass-half"></i>
                             </div>
-                            <span class="exp-badge-coming"><i class="fas fa-clock"></i> قيد التطوير 🛠️</span>
+                            <span class="exp-badge-coming"><i class="fas fa-clock"></i> قيد التطوير</span>
                         </div>
                         <div class="exp-card-name"><?=htmlspecialchars($exp['title'])?></div>
                         <div class="card-bottom" style="color: #b45309;">
