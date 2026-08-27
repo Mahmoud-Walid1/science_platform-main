@@ -235,6 +235,15 @@ function getExpVisuals($code_name, $title) {
         .exp-badge-lock {
             background: #fef2f2; color: #dc2626; font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 100px;
         }
+        .exp-badge-coming {
+            background: #fef3c7; color: #b45309; font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 100px; border: 1px solid #fde68a;
+        }
+        .exp-card.coming-soon {
+            background: #fffbeb; border: 1px dashed #f59e0b; cursor: default;
+        }
+        .exp-card.coming-soon:hover {
+            transform: none; box-shadow: 0 4px 14px rgba(0,0,0,0.02); border-color: #f59e0b;
+        }
 
         .exp-card-name { font-size: 1.1rem; font-weight: 900; color: var(--primary-dark); margin-top: 12px; line-height: 1.3; }
         
@@ -382,7 +391,7 @@ function getExpVisuals($code_name, $title) {
                 <?php 
                     $visuals = getExpVisuals($exp['code_name'], $exp['title']); 
                 ?>
-                <?php if ($exp['is_active']): ?>
+                <?php if ($exp['is_active'] == 1): ?>
                     <?php if ($is_subscribed): ?>
                         <a href="<?=htmlspecialchars($exp['page_url'])?>" class="exp-card exp-item-card">
                             <div class="card-top">
@@ -412,6 +421,20 @@ function getExpVisuals($code_name, $title) {
                             </div>
                         </div>
                     <?php endif; ?>
+                <?php elseif ($exp['is_active'] == 2): ?>
+                    <div class="exp-card coming-soon exp-item-card" title="هذه التجربة قيد التطوير والإنتاج وستتاح للمعلمين قريباً!">
+                        <div class="card-top">
+                            <div class="exp-icon-box" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706;">
+                                <i class="fas fa-hammer"></i>
+                            </div>
+                            <span class="exp-badge-coming"><i class="fas fa-clock"></i> قيد التطوير 🛠️</span>
+                        </div>
+                        <div class="exp-card-name"><?=htmlspecialchars($exp['title'])?></div>
+                        <div class="card-bottom" style="color: #b45309;">
+                            <span>قيد التطوير قريباً</span>
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                    </div>
                 <?php else: ?>
                     <div class="exp-card disabled exp-item-card">
                         <div class="card-top">

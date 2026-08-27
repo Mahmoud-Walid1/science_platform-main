@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `experiments` (
   `title` varchar(100) NOT NULL,
   `page_url` varchar(100) NOT NULL,
   `image_url` varchar(255) DEFAULT NULL,
-  `is_active` tinyint(4) DEFAULT 1,
+  `is_active` tinyint(4) DEFAULT 1 COMMENT '1=نشطة, 0=معطلة, 2=قيد التنفيذ/قريباً',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `code_name` (`code_name`)

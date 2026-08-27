@@ -9,10 +9,25 @@ if (!file_exists($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-// تفعيل/تعطيل تجربة
+// تغيير حالة التجربة المباشر
+if (isset($_GET['status']) && isset($_GET['id'])) {
+    $exp_id = (int)$_GET['id'];
+    $status = (int)$_GET['status'];
+    if (in_array($status, [0, 1, 2])) {
+        mysqli_query($conn, "UPDATE experiments SET is_active = $status WHERE id = $exp_id");
+    }
+    header("Location: experiments.php");
+    exit();
+}
+
+// التبديل التتابعي القديم لزر toggle
 if (isset($_GET['toggle'])) {
     $exp_id = (int)$_GET['toggle'];
-    mysqli_query($conn, "UPDATE experiments SET is_active = NOT is_active WHERE id = $exp_id");
+    $res = mysqli_query($conn, "SELECT is_active FROM experiments WHERE id = $exp_id");
+    if ($row = mysqli_fetch_assoc($res)) {
+        $next = ($row['is_active'] == 1) ? 2 : (($row['is_active'] == 2) ? 0 : 1);
+        mysqli_query($conn, "UPDATE experiments SET is_active = $next WHERE id = $exp_id");
+    }
     header("Location: experiments.php");
     exit();
 }
@@ -21,6 +36,8 @@ if (isset($_GET['toggle'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_exp'])) {
     $exp_id = (int)$_POST['exp_id'];
     $title = trim($_POST['title']);
+    $page_url = trim($_POST['page_url'] ?? '#');
+    $is_active = isset($_POST['is_active']) ? (int)$_POST['is_active'] : 1;
 
     $image_path = null;
     if (isset($_FILES['exp_image']) && $_FILES['exp_image']['error'] === UPLOAD_ERR_OK) {
@@ -35,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_exp'])) {
     }
 
     if ($image_path) {
-        $stmt = $conn->prepare("UPDATE experiments SET title = ?, image_url = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $title, $image_path, $exp_id);
+        $stmt = $conn->prepare("UPDATE experiments SET title = ?, page_url = ?, is_active = ?, image_url = ? WHERE id = ?");
+        $stmt->bind_param("ssisi", $title, $page_url, $is_active, $image_path, $exp_id);
     } else {
-        $stmt = $conn->prepare("UPDATE experiments SET title = ? WHERE id = ?");
-        $stmt->bind_param("si", $title, $exp_id);
+        $stmt = $conn->prepare("UPDATE experiments SET title = ?, page_url = ?, is_active = ? WHERE id = ?");
+        $stmt->bind_param("ssii", $title, $page_url, $is_active, $exp_id);
     }
     $stmt->execute();
     $message = "✅ تم تحديث التجربة بنجاح!";
@@ -50,8 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_exp'])) {
     $title = trim($_POST['title']);
     $code_name = trim($_POST['code_name']);
     $page_url = trim($_POST['page_url']);
+    $is_active = isset($_POST['is_active']) ? (int)$_POST['is_active'] : 1;
 
-    if (empty($page_url)) $page_url = 'experiments/matter.php';
+    if (empty($page_url)) $page_url = '#';
     if (empty($code_name)) $code_name = 'exp_' . time();
 
     $image_path = null;
@@ -66,10 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_exp'])) {
         }
     }
 
-    $stmt = $conn->prepare("INSERT INTO experiments (code_name, title, page_url, image_url, is_active) VALUES (?, ?, ?, ?, 1)");
-    $stmt->bind_param("ssss", $code_name, $title, $page_url, $image_path);
+    $stmt = $conn->prepare("INSERT INTO experiments (code_name, title, page_url, image_url, is_active) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssi", $code_name, $title, $page_url, $image_path, $is_active);
     if ($stmt->execute()) {
-        $message = "🎉 تم إضافة التجربة الجديدة بنجاح وستظهر في منصة المختبرات فوراً!";
+        $message = "🎉 تم إضافة التجربة بنجاح!";
     } else {
         $message = "❌ فشل إضافة التجربة (تأكد من عدم تكرار كود التجربة)";
     }
@@ -130,18 +148,26 @@ $experiments = getAllExperiments();
         <!-- كارت إضافة تجربة جديدة -->
         <div class="card" style="margin-bottom: 28px; border-top: 4px solid var(--accent);">
             <div class="card-title" style="margin-bottom: 16px;"><i class="fas fa-plus-circle"></i> إضافة تجربة جديدة للمختبر</div>
-            <form method="POST" enctype="multipart/form-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; align-items: end;">
+            <form method="POST" enctype="multipart/form-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>عنوان التجربة</label>
-                    <input type="text" name="title" placeholder="مثال: الضغط والتسامي" required>
+                    <input type="text" name="title" placeholder="مثال: التسامي والتبخر" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>المعرف (Code Name)</label>
-                    <input type="text" name="code_name" placeholder="مثال: pressure_exp" required>
+                    <input type="text" name="code_name" placeholder="مثال: evaporation_exp" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label>رابط صفحة التجربة</label>
-                    <input type="text" name="page_url" placeholder="experiments/matter.php" value="experiments/matter.php">
+                    <label>رابط الصفحة (اختياري لقيد التنفيذ)</label>
+                    <input type="text" name="page_url" placeholder="experiments/ph_v2.php">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>حالة التجربة</label>
+                    <select name="is_active" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-family: 'Cairo'; font-weight: 700;">
+                        <option value="1">✅ نشطة ومتاحة للمعلمين</option>
+                        <option value="2" selected>🛠️ قيد التنفيذ (تشويق قريباً)</option>
+                        <option value="0">❌ معطلة ومخفية</option>
+                    </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>صورة التجربة (اختياري)</label>
@@ -158,9 +184,15 @@ $experiments = getAllExperiments();
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title"><?=htmlspecialchars($exp['title'])?></div>
-                        <a href="experiments.php?toggle=<?=$exp['id']?>" class="btn btn-toggle <?=$exp['is_active'] ? 'active' : ''?>">
-                            <?=$exp['is_active'] ? '✅ مفعلة' : '❌ متوقفة'?>
-                        </a>
+                        <div>
+                            <?php if ($exp['is_active'] == 1): ?>
+                                <span style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;"><i class="fas fa-check-circle"></i> متاحة</span>
+                            <?php elseif ($exp['is_active'] == 2): ?>
+                                <span style="background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;"><i class="fas fa-hammer"></i> قيد التنفيذ</span>
+                            <?php else: ?>
+                                <span style="background:#f1f5f9; color:#64748b; padding:4px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;"><i class="fas fa-ban"></i> معطلة</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
                     <form method="POST" enctype="multipart/form-data">
@@ -170,13 +202,25 @@ $experiments = getAllExperiments();
                             <input type="text" name="title" value="<?=htmlspecialchars($exp['title'])?>" required>
                         </div>
                         <div class="form-group">
+                            <label>رابط صفحة التجربة</label>
+                            <input type="text" name="page_url" value="<?=htmlspecialchars($exp['page_url'])?>">
+                        </div>
+                        <div class="form-group">
+                            <label>حالة التجربة</label>
+                            <select name="is_active" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-family: 'Cairo'; font-weight: 700;">
+                                <option value="1" <?=$exp['is_active'] == 1 ? 'selected' : ''?>>✅ نشطة ومتاحة</option>
+                                <option value="2" <?=$exp['is_active'] == 2 ? 'selected' : ''?>>🛠️ قيد التنفيذ (قريباً)</option>
+                                <option value="0" <?=$exp['is_active'] == 0 ? 'selected' : ''?>>❌ معطلة ومخفية</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>صورة المعاينة (اختياري)</label>
                             <input type="file" name="exp_image" accept="image/*">
                         </div>
                         <?php if ($exp['image_url']): ?>
                             <div style="margin-bottom:12px;"><img src="../<?=htmlspecialchars($exp['image_url'])?>" style="height:60px; border-radius:8px;"></div>
                         <?php endif; ?>
-                        <button type="submit" name="update_exp" class="btn"><i class="fas fa-save"></i> حفظ التعديلات</button>
+                        <button type="submit" name="update_exp" class="btn" style="width:100%;"><i class="fas fa-save"></i> حفظ التعديلات</button>
                     </form>
                 </div>
             <?php endforeach; ?>

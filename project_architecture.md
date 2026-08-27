@@ -34,7 +34,7 @@
 - **`admin/index.php`**: ملخص الإدارة والـ KPIs العامة.
 - **`admin/create_codes.php`**: التوليد الجماعي كروت الشحن (Batch Generation).
 - **`admin/manage_codes.php`**: البحث والتصدير لـ Excel/CSV ونسخ الأكواد للحافظة.
-- **`admin/experiments.php`**: إدارة وتفعيل وتعديل صور التجارب.
+- **`admin/experiments.php`**: إدارة وتفعيل وتعديل صور وروابط التجارب، وإضافة تجارب قيد التنفيذ تشويقية للمعلمين.
 - **`admin/packages.php`**: تعديل وإدارة مدة الباقات بالشهور.
 - **`admin/system_freeze.php`**: إدارة تجميد الاشتراكات في الإجازات الدراسية.
 - **`admin/statistics.php`**: تقارير تفاعل المعلمين الأكثر استخداماً والسجلات.
