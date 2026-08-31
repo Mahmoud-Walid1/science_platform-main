@@ -38,9 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
     }
 }
 
+// Auto sync title for photosynthesis_elementary in database
+@mysqli_query($conn, "UPDATE experiments SET title = 'رحلة غذاء النبات ونموه' WHERE code_name IN ('photosynthesis_elementary', 'photosynthesis-elementary') AND title != 'رحلة غذاء النبات ونموه'");
+
 $experiments = mysqli_query($conn, "SELECT id, code_name, title, page_url, image_url, is_active FROM experiments ORDER BY id ASC");
 $exps_list = [];
 while ($row = mysqli_fetch_assoc($experiments)) {
+    if ($row['code_name'] === 'photosynthesis_elementary' || $row['code_name'] === 'photosynthesis-elementary') {
+        $row['title'] = 'رحلة غذاء النبات ونموه';
+    }
     $exps_list[] = $row;
 }
 
