@@ -4,11 +4,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// بيانات الاتصال بقاعدة بيانات Hostinger
-define('DB_HOST', 'localhost');
-define('DB_USER', 'u860574850_user1_labs1');
-define('DB_PASS', 'S511511_s');
-define('DB_NAME', 'u860574850_user1_labs1');
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require_once __DIR__ . '/config.local.php';
+} else {
+    // بيانات الاتصال بقاعدة بيانات Hostinger
+    define('DB_HOST', 'localhost');
+    define('DB_USER', 'u860574850_user1_labs1');
+    define('DB_PASS', 'S511511_s');
+    define('DB_NAME', 'u860574850_user1_labs1');
+}
 
 // الاتصال بقاعدة البيانات
 $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
