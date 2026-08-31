@@ -117,7 +117,8 @@ INSERT INTO `experiments` (`id`, `code_name`, `title`, `page_url`, `is_active`) 
 (4, 'newton_laws', 'قوانين نيوتن للحركة', 'experiments/newton.php', 1),
 (5, 'light_prism', 'تحليل الضوء بالمنشور', 'experiments/prism.php', 1),
 (6, 'mixture_separation', 'فصل المخاليط', 'experiments/separation_v2.php', 1),
-(7, 'ph_measurement', 'قياس الأس الهيدروجيني (pH)', 'experiments/ph_v2.php', 1)
+(7, 'ph_measurement', 'قياس الأس الهيدروجيني (pH)', 'experiments/ph_v2.php', 1),
+(8, 'photosynthesis_factors', 'العوامل المؤثرة على البناء الضوئي', 'experiments/photosynthesis_factors.php', 1)
 ON DUPLICATE KEY UPDATE `id`=`id`;
 
 -- --------------------------------------------------------
