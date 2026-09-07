@@ -39,9 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
 }
 
 $experiments = mysqli_query($conn, "SELECT id, code_name, title, page_url, image_url, is_active FROM experiments ORDER BY id ASC");
-$exps_list = [];
+$active_exps = [];
+$coming_exps = [];
 while ($row = mysqli_fetch_assoc($experiments)) {
-    $exps_list[] = $row;
+    if ($row['is_active'] == 1) {
+        $active_exps[] = $row;
+    } else {
+        $coming_exps[] = $row;
+    }
 }
 
 // جلب باقات الشراء المتاحة
@@ -384,11 +389,11 @@ function getExpVisuals($code_name, $title) {
             </div>
         </div>
 
-        <!-- SECTION HEADER & SEARCH -->
+        <!-- SECTION 1: ACTIVE EXPERIMENTS -->
         <div class="section-bar">
             <div class="section-title">
                 <i class="fas fa-vials" style="color: var(--accent);"></i>
-                <span>مكتبة التجارب العلمية المتاحة</span>
+                <span>مكتبة التجارب العلمية المتاحة (<?=count($active_exps)?>)</span>
             </div>
 
             <div class="search-wrap">
@@ -397,43 +402,56 @@ function getExpVisuals($code_name, $title) {
             </div>
         </div>
 
-        <!-- EXPERIMENTS GRID (ICON CARDS) -->
+        <!-- ACTIVE EXPERIMENTS GRID -->
         <div class="exp-grid" id="expGrid">
-            <?php foreach ($exps_list as $exp): ?>
-                <?php 
-                    $visuals = getExpVisuals($exp['code_name'], $exp['title']); 
-                ?>
-                <?php if ($exp['is_active'] == 1): ?>
-                    <?php if ($is_subscribed): ?>
-                        <a href="<?=htmlspecialchars($exp['page_url'])?>" class="exp-card exp-item-card">
-                            <div class="card-top">
-                                <div class="exp-icon-box" style="background: <?=$visuals['bg']?>; color: <?=$visuals['color']?>;">
-                                    <i class="<?=$visuals['icon']?>"></i>
-                                </div>
-                                <span class="exp-badge-active"><i class="fas fa-check"></i> متاح</span>
+            <?php foreach ($active_exps as $exp): ?>
+                <?php $visuals = getExpVisuals($exp['code_name'], $exp['title']); ?>
+                <?php if ($is_subscribed): ?>
+                    <a href="<?=htmlspecialchars($exp['page_url'])?>" class="exp-card exp-item-card">
+                        <div class="card-top">
+                            <div class="exp-icon-box" style="background: <?=$visuals['bg']?>; color: <?=$visuals['color']?>;">
+                                <i class="<?=$visuals['icon']?>"></i>
                             </div>
-                            <div class="exp-card-name"><?=htmlspecialchars($exp['title'])?></div>
-                            <div class="card-bottom">
-                                <span>تشغيل التجربة الآن</span>
-                                <i class="fas fa-arrow-left"></i>
-                            </div>
-                        </a>
-                    <?php else: ?>
-                        <div class="exp-card disabled exp-item-card" title="يلزم شحن كود الاشتراك لتشغيل التجربة">
-                            <div class="card-top">
-                                <div class="exp-icon-box" style="background: #f1f5f9; color: #94a3b8;">
-                                    <i class="<?=$visuals['icon']?>"></i>
-                                </div>
-                                <span class="exp-badge-lock"><i class="fas fa-lock"></i> كود مطلوب</span>
-                            </div>
-                            <div class="exp-card-name"><?=htmlspecialchars($exp['title'])?></div>
-                            <div class="card-bottom" style="color: #dc2626;">
-                                <span>يلزم شحن الاشتراك</span>
-                                <i class="fas fa-lock"></i>
-                            </div>
+                            <span class="exp-badge-active"><i class="fas fa-check"></i> متاح</span>
                         </div>
-                    <?php endif; ?>
-                <?php elseif ($exp['is_active'] == 2): ?>
+                        <div class="exp-card-name"><?=htmlspecialchars($exp['title'])?></div>
+                        <div class="card-bottom">
+                            <span>تشغيل التجربة الآن</span>
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                    </a>
+                <?php else: ?>
+                    <div class="exp-card disabled exp-item-card" title="يلزم شحن كود الاشتراك لتشغيل التجربة">
+                        <div class="card-top">
+                            <div class="exp-icon-box" style="background: #f1f5f9; color: #94a3b8;">
+                                <i class="<?=$visuals['icon']?>"></i>
+                            </div>
+                            <span class="exp-badge-lock"><i class="fas fa-lock"></i> كود مطلوب</span>
+                        </div>
+                        <div class="exp-card-name"><?=htmlspecialchars($exp['title'])?></div>
+                        <div class="card-bottom" style="color: #dc2626;">
+                            <span>يلزم شحن الاشتراك</span>
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if (!empty($coming_exps)): ?>
+        <!-- SECTION 2: COMING SOON / UNDER DEVELOPMENT EXPERIMENTS -->
+        <div class="section-bar" style="margin-top: 48px; border-top: 1px dashed #cbd5e1; padding-top: 28px;">
+            <div class="section-title" style="color: #b45309;">
+                <i class="fas fa-hourglass-half" style="color: #f59e0b;"></i>
+                <span>تجارب قيد التطوير والإنتاج (قريباً) (<?=count($coming_exps)?>)</span>
+            </div>
+        </div>
+
+        <!-- COMING SOON EXPERIMENTS GRID -->
+        <div class="exp-grid" id="comingGrid">
+            <?php foreach ($coming_exps as $exp): ?>
+                <?php $visuals = getExpVisuals($exp['code_name'], $exp['title']); ?>
+                <?php if ($exp['is_active'] == 2): ?>
                     <div class="exp-card coming-soon exp-item-card" title="هذه التجربة قيد التطوير والإنتاج وستتاح للمعلمين قريباً!">
                         <div class="card-top">
                             <div class="exp-icon-box" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706;">
@@ -463,6 +481,7 @@ function getExpVisuals($code_name, $title) {
                 <?php endif; ?>
             <?php endforeach; ?>
         </div>
+        <?php endif; ?>
 
     </div>
 

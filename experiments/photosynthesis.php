@@ -1808,6 +1808,9 @@ $js_v  = file_exists('../js/experiments/photosynthesis/app.js') ? filemtime('../
     </script>
     <script src="../js/watermark.js?v=<?=time()?>"></script>
 
+    <!-- 3D Engine Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- Clean Architecture Modular Engines -->
     <script src="../js/experiments/photosynthesis/audioManager.js?v=<?= $js_v ?>"></script>
     <script src="../js/experiments/photosynthesis/spectroEngine.js?v=<?= $js_v ?>"></script>
