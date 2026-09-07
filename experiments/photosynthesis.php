@@ -1217,7 +1217,12 @@ $js_v  = file_exists('../js/experiments/photosynthesis/app.js') ? filemtime('../
 
                         <!-- Spectrum Slider Box (Exact LabXchange Layout) -->
                         <div class="spectrum-slider-card">
-                            <div class="spectrum-title">الطول الموجي: <span id="sliderCurrentValPhp" style="color:#0284c7; font-weight:900;">350 nm</span> | Wavelength</div>
+                            <div class="spectrum-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <div>الطول الموجي: <span id="sliderCurrentValPhp" style="color:#0284c7; font-weight:900;">350 nm</span> | Wavelength</div>
+                                <button type="button" class="btn-quick-615" onclick="window.photosynthesisLab.setWavelength615()" style="background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 0.84rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(16,185,129,0.35); transition: transform 0.15s, background 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+                                    <i class="fas fa-bolt" style="color: #fef08a;"></i> ضبط مباشر (615 nm)
+                                </button>
+                            </div>
                             <div class="spectrum-dark-viewport">
                                 <div class="spectrum-scale-labels">
                                     <span>350</span>

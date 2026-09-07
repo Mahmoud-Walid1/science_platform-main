@@ -153,6 +153,10 @@ class ModalManager {
         const wlDisplay = document.getElementById('modalSpecWavelength') || document.getElementById('modalSpecWavelengthPhp');
         const sliderVal = document.getElementById('sliderCurrentVal') || document.getElementById('sliderCurrentValPhp');
         const svgWl = document.getElementById('svg_spec_wl_display');
+        const sliderInput1 = document.getElementById('wavelengthSliderInputPhp');
+        const sliderInput2 = document.getElementById('wavelengthSliderInput');
+        if (sliderInput1 && sliderInput1.value != numVal) sliderInput1.value = numVal;
+        if (sliderInput2 && sliderInput2.value != numVal) sliderInput2.value = numVal;
         if (wlDisplay) wlDisplay.textContent = numVal;
         if (sliderVal) sliderVal.textContent = `${numVal} nm`;
         if (svgWl) {

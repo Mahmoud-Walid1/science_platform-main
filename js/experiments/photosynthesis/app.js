@@ -4575,6 +4575,13 @@ document.addEventListener('DOMContentLoaded', () => {
         onSpecSlotClick: () => experimentEngine.onSpecSlotClick(),
         insertCuvetteIntoChamber: (id, el) => experimentEngine.insertCuvetteIntoChamber(id, el),
         handleWavelengthChange: (val) => experimentEngine.modalManager.handleWavelengthChange(val),
+        setWavelength615: () => {
+            const slider1 = document.getElementById('wavelengthSliderInputPhp');
+            const slider2 = document.getElementById('wavelengthSliderInput');
+            if (slider1) slider1.value = 615;
+            if (slider2) slider2.value = 615;
+            experimentEngine.modalManager.handleWavelengthChange(615);
+        },
         openPipetteVolumeModal: () => experimentEngine.openPipetteVolModal(),
         closePipetteVolumeModal: () => experimentEngine.closePipetteVolModal(),
         checkTubeColorChoice: (tubeNum, color, btn) => {
