@@ -49,8 +49,11 @@ $available_packages = mysqli_query($conn, "SELECT name, duration_months, store_u
 
 // تعيين الأيقونات والألوان المميزة للتجارب
 function getExpVisuals($code_name, $title) {
+    if ($code_name === 'photosynthesis_factors' || strpos($title, 'العوامل المؤثرة') !== false) {
+        return ['icon' => 'fas fa-sun-plant-wilt', 'bg' => 'linear-gradient(135deg, #ecfdf5, #a7f3d0)', 'color' => '#047857'];
+    }
     if (strpos($code_name, 'photosynthesis') !== false || strpos($title, 'البناء الضوئي') !== false) {
-        return ['icon' => 'fas fa-seedling', 'bg' => 'linear-gradient(135deg, #dcfce7, #bbf7d0)', 'color' => '#15803d'];
+        return ['icon' => 'fas fa-leaf', 'bg' => 'linear-gradient(135deg, #dcfce7, #86efac)', 'color' => '#15803d'];
     }
     if (strpos($code_name, 'matter') !== false || strpos($title, 'المادة') !== false) {
         return ['icon' => 'fas fa-atom', 'bg' => 'linear-gradient(135deg, #e0f2fe, #bae6fd)', 'color' => '#0284c7'];
