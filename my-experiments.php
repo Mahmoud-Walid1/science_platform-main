@@ -49,6 +49,9 @@ $available_packages = mysqli_query($conn, "SELECT name, duration_months, store_u
 
 // تعيين الأيقونات والألوان المميزة للتجارب
 function getExpVisuals($code_name, $title) {
+    if ($code_name === 'photosynthesis_elementary' || strpos($title, 'نمو النبات') !== false) {
+        return ['icon' => 'fas fa-sun', 'bg' => 'linear-gradient(135deg, #fef9c3, #86efac)', 'color' => '#16a34a'];
+    }
     if ($code_name === 'photosynthesis_factors' || strpos($title, 'العوامل المؤثرة') !== false) {
         return ['icon' => 'fas fa-sun-plant-wilt', 'bg' => 'linear-gradient(135deg, #ecfdf5, #a7f3d0)', 'color' => '#047857'];
     }

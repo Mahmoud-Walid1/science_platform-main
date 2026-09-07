@@ -13,7 +13,7 @@ $user_name = $_SESSION['user']['name'] ?? $_SESSION['user_name'] ?? 'معلم م
 $user_contact = $_SESSION['user']['whatsappNumber'] ?? $_SESSION['user']['phone'] ?? $_SESSION['user']['email'] ?? '';
 
 // Check experiment active state in database
-$exp_active = mysqli_fetch_assoc(mysqli_query($conn, "SELECT is_active FROM experiments WHERE code_name = 'photosynthesis_elementary' OR code_name = 'photosynthesis-elementary'"))['is_active'] ?? 1;
+$exp_active = mysqli_fetch_assoc(mysqli_query($conn, "SELECT is_active FROM experiments WHERE code_name = 'photosynthesis_elementary' OR id = 10"))['is_active'] ?? 1;
 if (!$exp_active) {
     header("Location: ../my-experiments.php?msg=experiment_disabled");
     exit();
@@ -173,7 +173,13 @@ $js_v  = file_exists('../js/experiments/photosynthesis_elementary/app.js') ? fil
         </main>
     </div>
 
-    <!-- Global Watermark -->
+    <!-- Watermark for Teacher Screens -->
+    <script>
+        window.WATERMARK_USER = {
+            name: <?=json_encode($user_name)?>,
+            contact: <?=json_encode($user_contact)?>
+        };
+    </script>
     <script src="../js/watermark.js?v=<?= time() ?>"></script>
 
     <!-- Clean Architecture ES6 Modules Entry Point -->

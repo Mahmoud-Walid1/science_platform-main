@@ -119,7 +119,8 @@ INSERT INTO `experiments` (`id`, `code_name`, `title`, `page_url`, `is_active`) 
 (6, 'mixture_separation', 'فصل المخاليط', 'experiments/separation_v2.php', 1),
 (7, 'ph_measurement', 'قياس الأس الهيدروجيني (pH)', 'experiments/ph_v2.php', 1),
 (8, 'photosynthesis_factors', 'العوامل المؤثرة على البناء الضوئي', 'experiments/photosynthesis_factors.php', 1),
-(9, 'photosynthesis', 'تجربة البناء الضوئي التفاعلية', 'experiments/photosynthesis.php', 1)
+(9, 'photosynthesis', 'تجربة البناء الضوئي التفاعلية', 'experiments/photosynthesis.php', 1),
+(10, 'photosynthesis_elementary', 'رحلة نمو النبات 3D (البناء الضوئي)', 'experiments/photosynthesis_elementary.php', 1)
 ON DUPLICATE KEY UPDATE `id`=`id`;
 
 -- --------------------------------------------------------
