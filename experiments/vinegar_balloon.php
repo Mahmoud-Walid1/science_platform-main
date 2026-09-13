@@ -20,7 +20,7 @@ if (!$exp_active) {
     exit();
 }
 
-$css_v = file_exists('../css/vinegar_balloon.css') ? filemtime('../css/vinegar_balloon.css') : time();
+$css_v = time();
 $js_v  = time();
 ?>
 <!DOCTYPE html>

@@ -262,13 +262,15 @@ class DragDropEngine {
 
     moveFunnelToBottle() {
         const funnelEl = document.getElementById('tableFunnelContainer');
-        const bottleMouth = document.getElementById('targetBottleMouth') || document.getElementById('centralBottleContainer');
-        if (funnelEl && bottleMouth) {
+        const bottleEl = document.getElementById('centralBottleContainer');
+        if (funnelEl && bottleEl) {
             const fHome = this.getUntransformedRect(funnelEl);
-            const bRect = bottleMouth.getBoundingClientRect();
+            const bRect = bottleEl.getBoundingClientRect();
 
+            // فوهة الزجاجة: المركز الأفقي
             const targetX = bRect.left + bRect.width / 2;
-            const targetY = bRect.top + 30;
+            // إدخال ساق القمع داخل عنق الزجاجة الزجاجية بدقة طبيعية
+            const targetY = bRect.top + 80;
 
             const stemTipHomeX = fHome.left + fHome.width / 2;
             const stemTipHomeY = fHome.top + fHome.height * 0.94;
@@ -291,7 +293,8 @@ class DragDropEngine {
             const blRect = balloonEl.getBoundingClientRect();
 
             const targetX = blRect.left + blRect.width / 2;
-            const targetY = blRect.top + 20;
+            // فوهة البالون المفرغ: إدخال ساق القمع داخل فوهة البالون
+            const targetY = blRect.top + 45;
 
             const stemTipHomeX = fHome.left + fHome.width / 2;
             const stemTipHomeY = fHome.top + fHome.height * 0.94;
