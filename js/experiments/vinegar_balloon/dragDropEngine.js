@@ -270,7 +270,7 @@ class DragDropEngine {
             // فوهة الزجاجة: المركز الأفقي
             const targetX = bRect.left + bRect.width / 2;
             // إدخال ساق القمع داخل عنق الزجاجة الزجاجية بدقة طبيعية
-            const targetY = bRect.top + 80;
+            const targetY = bRect.top + 160;
 
             const stemTipHomeX = fHome.left + fHome.width / 2;
             const stemTipHomeY = fHome.top + fHome.height * 0.94;
@@ -562,7 +562,7 @@ class DragDropEngine {
 
         soundManager.playPourPowder(0.7);
 
-        // ملء الملعقة بالمسحوق فوراً وبشكل بارز، وتركها في مكانها محملة بالمسحوق
+        // ملء الملعقة بالمسحوق فوراً وبشكل بارز، ثم متابعة السكب مباشرة في البالون
         setTimeout(() => {
             this.state.sodaOnSpoon = true;
             const spoonEl = document.getElementById('tableSpoonContainer');
@@ -571,6 +571,18 @@ class DragDropEngine {
             }
             soundManager.playClick();
             this.notifyState();
+
+            // انتقال انسيابي مباشر لسكب الملعقة داخل البالون وتعبئته فوراً
+            if (!this.state.sodaInBalloon) {
+                setTimeout(() => {
+                    if (this.state.funnelLocation !== 'balloon') {
+                        this.moveFunnelToBalloon();
+                        setTimeout(() => { this.executeSodaScoop(); }, 400);
+                    } else {
+                        this.executeSodaScoop();
+                    }
+                }, 450);
+            }
         }, 350);
     }
 
