@@ -963,6 +963,49 @@ body {
     color: #0369a1 !important;
 }
 
+/* Floating Guide Dock Hidden State */
+.floating-guide-dock.is-collapsed,
+.floating-guide-dock.is-hidden {
+    display: none !important;
+}
+
+/* Floating Guide Reopen Pill (Visible when guide dock is completely hidden) */
+.floating-guide-reopen-pill {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    z-index: 70;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid #38bdf8;
+    color: #0284c7;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 7px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(2, 132, 199, 0.25);
+    transition: all 0.2s ease;
+}
+
+.floating-guide-reopen-pill:hover {
+    background: #0284c7;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+}
+
+.header-icon-btn.active-guide-hidden {
+    background: #e0f2fe;
+    color: #0284c7;
+    border-color: #38bdf8;
+}
+
 .guide-dock-header {
     display: flex;
     align-items: center;

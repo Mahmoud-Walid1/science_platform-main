@@ -8,7 +8,7 @@
 class VariableManager {
     constructor() {
         this.vinegarVolume = 100; // mL
-        this.bakingSodaSpoons = 2; // scoops (~5g each)
+        this.bakingSodaSpoons = 1; // scoop (~5g)
         this.listeners = [];
     }
 

@@ -116,7 +116,7 @@ class DragDropEngine {
         const clientX = e.type === 'touchend' && e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
         const clientY = e.type === 'touchend' && e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
 
-        const matchedTarget = this.checkDropTarget(clientX, clientY, draggedEl.dataset.tool);
+        const matchedTarget = this.checkDropTarget(clientX, clientY, draggedEl.dataset.tool, draggedEl);
         this.clearSnapTargets();
 
         let handled = false;
@@ -125,51 +125,63 @@ class DragDropEngine {
         }
 
         if (!handled) {
-            // العودة للموضع الذي بدأ منه السحب بسلاسة
-            draggedEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            draggedEl.style.transform = `translate(${this.initialTranslateX}px, ${this.initialTranslateY}px)`;
-            setTimeout(() => {
-                draggedEl.style.transition = '';
-            }, 300);
+            if (draggedEl.dataset.tool === 'funnel') {
+                this.returnFunnelToBench();
+                soundManager.playClick();
+                this.notifyState();
+            } else {
+                // العودة للموضع الذي بدأ منه السحب بسلاسة
+                draggedEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                draggedEl.style.transform = `translate(${this.initialTranslateX}px, ${this.initialTranslateY}px)`;
+                setTimeout(() => {
+                    draggedEl.style.transition = '';
+                }, 300);
+            }
         }
     }
 
-    checkDropTarget(x, y, toolType) {
-        // Proximity detection for bottle mouth (radius 110px)
-        const bottleMouth = document.getElementById('targetBottleMouth') || document.getElementById('centralBottleContainer');
-        if (bottleMouth) {
-            const rect = bottleMouth.getBoundingClientRect();
-            const targetCenterX = rect.left + rect.width / 2;
-            const targetCenterY = rect.top + 35;
-            const dist = Math.hypot(x - targetCenterX, y - targetCenterY);
-            if (dist < 110) {
-                return 'bottleMouth';
+    checkDropTarget(x, y, toolType, draggedEl) {
+        const draggedRect = draggedEl ? draggedEl.getBoundingClientRect() : null;
+
+        const isHit = (targetEl, radius = 160) => {
+            if (!targetEl) return false;
+            const targetRect = targetEl.getBoundingClientRect();
+            // 1. التحقق من القرب من المركز بنصف قطر واسع ومرن
+            const tCenterX = targetRect.left + targetRect.width / 2;
+            const tCenterY = targetRect.top + targetRect.height / 2;
+            if (Math.hypot(x - tCenterX, y - tCenterY) < radius) {
+                return true;
             }
+            // 2. التحقق من تقاطع الصناديق المحيطة (Bounding Box Overlap) لضمان الإسقاط حتى لو كان الماوس على طرف الأداة
+            if (draggedRect) {
+                const overlapX = Math.max(0, Math.min(draggedRect.right, targetRect.right) - Math.max(draggedRect.left, targetRect.left));
+                const overlapY = Math.max(0, Math.min(draggedRect.bottom, targetRect.bottom) - Math.max(draggedRect.top, targetRect.top));
+                if (overlapX > 15 && overlapY > 15) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        // 1. فوهة ومجسم الزجاجة (لاستقبال القمع أو سكب الخل أو تثبيت البالون)
+        const bottleMouth = document.getElementById('targetBottleMouth');
+        const bottleHousing = document.getElementById('centralBottleContainer');
+        if (isHit(bottleMouth, 180) || isHit(bottleHousing, 140)) {
+            return 'bottleMouth';
         }
 
-        // Proximity detection for balloon mouth (radius 110px)
-        const balloonMouth = document.getElementById('targetBalloonMouth') || document.getElementById('tableBalloonContainer');
-        if (balloonMouth) {
-            const rect = balloonMouth.getBoundingClientRect();
-            const targetCenterX = rect.left + rect.width / 2;
-            const targetCenterY = rect.top + 30;
-            const dist = Math.hypot(x - targetCenterX, y - targetCenterY);
-            if (dist < 110) {
-                return 'balloonMouth';
-            }
+        // 2. فوهة ومجسم البالون على الطاولة (لاستقبال القمع أولاً أو تفريغ الملعقة)
+        const balloonMouth = document.getElementById('targetBalloonMouth');
+        const balloonHousing = document.getElementById('tableBalloonContainer');
+        if (isHit(balloonMouth, 180) || isHit(balloonHousing, 140)) {
+            return 'balloonMouth';
         }
 
-        // Proximity detection for soda bowl (radius 130px)
+        // 3. وعاء بيكربونات الصوديوم (لغرف المسحوق بالملعقة)
         if (toolType === 'spoon') {
             const bowl = document.getElementById('tableSodaBowlContainer');
-            if (bowl) {
-                const rect = bowl.getBoundingClientRect();
-                const targetCenterX = rect.left + rect.width / 2;
-                const targetCenterY = rect.top + rect.height / 2;
-                const dist = Math.hypot(x - targetCenterX, y - targetCenterY);
-                if (dist < 130) {
-                    return 'sodaBowl';
-                }
+            if (isHit(bowl, 150)) {
+                return 'sodaBowl';
             }
         }
 
@@ -223,7 +235,7 @@ class DragDropEngine {
             const bRect = bottleMouth.getBoundingClientRect();
 
             const deltaX = (bRect.left + bRect.width / 2) - (fBase.left + fBase.width / 2);
-            const deltaY = (bRect.top + 18) - fBase.top;
+            const deltaY = (bRect.top + 20) - (fBase.top + fBase.height);
 
             funnelEl.style.zIndex = '40';
             funnelEl.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
@@ -240,7 +252,7 @@ class DragDropEngine {
             const blRect = balloonEl.getBoundingClientRect();
 
             const deltaX = (blRect.left + blRect.width / 2) - (fBase.left + fBase.width / 2);
-            const deltaY = (blRect.top - 65) - fBase.top;
+            const deltaY = (blRect.top + 25) - (fBase.top + fBase.height);
 
             funnelEl.style.zIndex = '40';
             funnelEl.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
@@ -536,34 +548,32 @@ class DragDropEngine {
         setTimeout(() => {
             if (scoopAnim) scoopAnim.classList.remove('active-pouring');
             
-            // زيادة عدد الملاعق المضافة
-            this.state.sodaSpoonsAdded = (this.state.sodaSpoonsAdded || 0) + 1;
-            const needed = variableManager.sodaSpoons || 2;
-            this.state.sodaSpoonsNeeded = needed;
+            // ملعقة واحدة تكفي تماماً وتملأ البالون بالمسحوق
+            this.state.sodaSpoonsAdded = 1;
+            this.state.sodaInBalloon = true;
+            this.state.sodaOnSpoon = false;
 
-            // إظهار مسحوق البيكربونات مستقراً داخل قاع البالون
+            // إفراغ الملعقة وإعادتها لموضعها الأصلي على الطاولة
+            if (spoonEl) {
+                spoonEl.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                spoonEl.style.transform = 'translate(0px, 0px) rotate(0deg) scale(1)';
+                spoonEl.innerHTML = APPARATUS_SVGS.spoon(false);
+                setTimeout(() => { spoonEl.style.zIndex = ''; }, 500);
+            }
+
+            // إظهار مسحوق البيكربونات الأبيض داخل قاع البالون المفرغ
+            const balloonGraphic = document.getElementById('tableBalloonGraphic');
+            if (balloonGraphic) {
+                balloonGraphic.innerHTML = APPARATUS_SVGS.balloon('deflated', 1.0, true);
+            }
             const powderFill = document.getElementById('balloonPowderFill');
             if (powderFill) powderFill.style.display = 'block';
 
-            // تفريغ الملعقة وإرجاعها لمكانها الأصلي
-            this.state.sodaOnSpoon = false;
-            if (spoonEl) {
-                spoonEl.innerHTML = APPARATUS_SVGS.spoon(false);
-                spoonEl.style.transition = 'transform 0.6s ease';
-                spoonEl.style.transform = 'translate(0px, 0px) rotate(0deg) scale(1)';
-                setTimeout(() => { spoonEl.style.zIndex = ''; }, 600);
-            }
+            // إعادة القمع إلى مكانه على طاولة المختبر
+            this.returnFunnelToBench();
 
-            if (this.state.sodaSpoonsAdded >= needed) {
-                // اكتملت الملاعق المطلوبة!
-                this.returnFunnelToBench();
-                this.state.sodaInBalloon = true;
-                this.state.step = this.state.vinegarInBottle ? 3 : 1;
-                soundManager.playSuccess();
-            } else {
-                // بقيت ملاعق أخرى للإضافة
-                soundManager.playClick();
-            }
+            this.state.step = this.state.vinegarInBottle ? 3 : 1;
+            soundManager.playSuccess();
 
             this.notifyState();
         }, 1500);
@@ -600,10 +610,15 @@ class DragDropEngine {
             sodaInBalloon: false,
             sodaOnSpoon: false,
             sodaSpoonsAdded: 0,
-            sodaSpoonsNeeded: variableManager.sodaSpoons || 2,
+            sodaSpoonsNeeded: 1,
             balloonAttached: false,
             reactionDone: false
         };
+
+        const balloonGraphic = document.getElementById('tableBalloonGraphic');
+        if (balloonGraphic) {
+            balloonGraphic.innerHTML = APPARATUS_SVGS.balloon('deflated', 1.0, false);
+        }
 
         const powderFill = document.getElementById('balloonPowderFill');
         if (powderFill) powderFill.style.display = 'none';

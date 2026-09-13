@@ -57,6 +57,9 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
             <button class="header-icon-btn" id="btnToggleAudio" title="كتم / تشغيل المؤثرات الصوتية">
                 <i class="fas fa-volume-up"></i>
             </button>
+            <button class="header-icon-btn" id="btnHeaderToggleGuide" onclick="window.toggleGuideDock(event)" title="إظهار / إخفاء شريط التعليمات">
+                <i class="fas fa-lightbulb"></i>
+            </button>
             <button class="header-icon-btn" id="btnHeaderHelp" title="دليل التجربة">
                 <i class="fas fa-question"></i>
             </button>
@@ -95,6 +98,11 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
                     </div>
                 </div>
             </div>
+
+            <!-- Reopen Floating Guide Pill (Visible only when guide is hidden) -->
+            <button type="button" class="floating-guide-reopen-pill" id="btnReopenGuide" onclick="window.toggleGuideDock(event)" title="إظهار بطاقة التعليمات">
+                <i class="fas fa-lightbulb"></i> <span>إظهار التعليمات</span>
+            </button>
 
             <div class="stage-workspace-content" id="stageWorkspace">
                 
@@ -275,9 +283,9 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
                 <div class="slider-row">
                     <div class="slider-label">
                         <span>ملاعق البيكربونات:</span>
-                        <span id="valSodaSpoons">2 ملاعق</span>
+                        <span id="valSodaSpoons">1 ملعقة</span>
                     </div>
-                    <input type="range" min="1" max="3" step="1" value="2" class="lab-slider" id="sliderSodaSpoons">
+                    <input type="range" min="1" max="3" step="1" value="1" class="lab-slider" id="sliderSodaSpoons">
                 </div>
 
                 <div class="co2-badge" id="co2YieldBadge">حجم الغاز المتوقع: ~0.85 لتر (معامل: ×1.2)</div>
@@ -361,7 +369,7 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
     </script>
     <script src="../js/watermark.js?v=<?=time()?>"></script>
 
-    <!-- Inline Safe Fallback for Floating Guide Toggle -->
+    <!-- Direct & Rock-Solid Floating Guide Toggle Script -->
     <script>
         window.toggleGuideDock = function(e) {
             if (e) {
@@ -369,14 +377,22 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
                 e.stopPropagation();
             }
             var dock = document.getElementById('labFloatingGuide');
-            var icon = document.getElementById('toggleGuideIcon');
-            var label = document.getElementById('toggleGuideLabel');
-            var btn = document.getElementById('btnToggleGuideDock');
+            var reopenBtn = document.getElementById('btnReopenGuide');
+            var headerBtn = document.getElementById('btnHeaderToggleGuide');
             if (!dock) return;
-            var isCollapsed = dock.classList.toggle('is-collapsed');
-            if (icon) icon.className = isCollapsed ? 'fas fa-eye' : 'fas fa-eye-slash';
-            if (label) label.textContent = isCollapsed ? 'إظهار التعليمات' : 'إخفاء التعليمات';
-            if (btn) btn.title = isCollapsed ? 'إظهار شريط التعليمات' : 'إخفاء شريط التعليمات';
+
+            var isCurrentlyHidden = (dock.style.display === 'none' || dock.classList.contains('is-hidden') || dock.classList.contains('is-collapsed'));
+            if (isCurrentlyHidden) {
+                dock.style.display = 'block';
+                dock.classList.remove('is-hidden', 'is-collapsed');
+                if (reopenBtn) reopenBtn.style.display = 'none';
+                if (headerBtn) headerBtn.classList.remove('active-guide-hidden');
+            } else {
+                dock.style.display = 'none';
+                dock.classList.add('is-hidden', 'is-collapsed');
+                if (reopenBtn) reopenBtn.style.display = 'inline-flex';
+                if (headerBtn) headerBtn.classList.add('active-guide-hidden');
+            }
         };
     </script>
 

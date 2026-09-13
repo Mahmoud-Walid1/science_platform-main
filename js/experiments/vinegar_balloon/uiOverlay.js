@@ -48,9 +48,8 @@ class UIOverlay {
 
     bindFloatingGuide() {
         const toggleBtn = document.getElementById('btnToggleGuideDock');
-        const dock = document.getElementById('labFloatingGuide');
-        const icon = document.getElementById('toggleGuideIcon');
-        const label = document.getElementById('toggleGuideLabel');
+        const reopenBtn = document.getElementById('btnReopenGuide');
+        const headerBtn = document.getElementById('btnHeaderToggleGuide');
 
         const doToggle = (e) => {
             if (e) {
@@ -58,40 +57,33 @@ class UIOverlay {
                 e.stopPropagation();
             }
             soundManager.playClick();
+            const dock = document.getElementById('labFloatingGuide');
+            const rBtn = document.getElementById('btnReopenGuide');
+            const hBtn = document.getElementById('btnHeaderToggleGuide');
             if (!dock) return;
 
-            const isCollapsed = dock.classList.toggle('is-collapsed');
-            if (isCollapsed) {
-                if (icon) icon.className = 'fas fa-eye';
-                if (label) label.textContent = 'إظهار التعليمات';
-                if (toggleBtn) toggleBtn.title = 'إظهار شريط التعليمات';
+            const isCurrentlyHidden = (dock.style.display === 'none' || dock.classList.contains('is-hidden') || dock.classList.contains('is-collapsed'));
+            if (isCurrentlyHidden) {
+                dock.style.display = 'block';
+                dock.classList.remove('is-hidden', 'is-collapsed');
+                if (rBtn) rBtn.style.display = 'none';
+                if (hBtn) hBtn.classList.remove('active-guide-hidden');
             } else {
-                if (icon) icon.className = 'fas fa-eye-slash';
-                if (label) label.textContent = 'إخفاء التعليمات';
-                if (toggleBtn) toggleBtn.title = 'إخفاء شريط التعليمات';
+                dock.style.display = 'none';
+                dock.classList.add('is-hidden', 'is-collapsed');
+                if (rBtn) rBtn.style.display = 'inline-flex';
+                if (hBtn) hBtn.classList.add('active-guide-hidden');
             }
         };
 
-        if (toggleBtn) {
-            toggleBtn.onclick = doToggle;
-        }
-
-        // إتاحة النقر على الشارة العائمة المصغرة لإعادة فتح التعليمات بالكامل
-        if (dock) {
-            dock.addEventListener('click', (e) => {
-                if (dock.classList.contains('is-collapsed')) {
-                    doToggle(e);
-                }
-            });
-        }
-
+        if (toggleBtn) toggleBtn.onclick = doToggle;
+        if (reopenBtn) reopenBtn.onclick = doToggle;
+        if (headerBtn) headerBtn.onclick = doToggle;
         window.toggleGuideDock = doToggle;
     }
 
     updateStep(stepState) {
         const { vinegarInBottle, sodaInBalloon, balloonAttached, reactionDone } = stepState;
-        const added = stepState.sodaSpoonsAdded || 0;
-        const needed = stepState.sodaSpoonsNeeded || 2;
 
         let stepNum = 1;
         let title = '';
@@ -107,11 +99,11 @@ class UIOverlay {
                 title = '2. وضع القمع في البالون';
                 desc = 'تم سكب الخل بنجاح! الآن اسحب القمع وضعه في عنق البالون المفرغ على الطاولة.';
             } else if (!stepState.sodaOnSpoon) {
-                title = `2. غرف مسحوق البيكربونات (${added}/${needed})`;
-                desc = `اسحب الملعقة إلى صحن البيكربونات لملئها بالمسحوق (ملعقة ${added + 1} من ${needed}).`;
+                title = '2. غرف مسحوق البيكربونات بالملعقة';
+                desc = 'اسحب الملعقة إلى صحن البيكربونات لملئها بمسحوق بيكربونات الصوديوم.';
             } else {
-                title = `2. تفريغ المسحوق في البالون (${added + 1}/${needed})`;
-                desc = 'اسحب الملعقة المحملة بالمسحوق إلى قمع البالون لتفريغها داخله.';
+                title = '2. تفريغ المسحوق في البالون';
+                desc = 'اسحب الملعقة المحملة بالمسحوق إلى قمع البالون لتفريغها داخله وتجهيز البالون.';
             }
         } else if (!vinegarInBottle && sodaInBalloon) {
             stepNum = 1;
