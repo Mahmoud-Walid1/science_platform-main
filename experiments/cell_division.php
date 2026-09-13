@@ -44,6 +44,18 @@ $js_v  = file_exists('../js/experiments/cell_division/app.js') ? filemtime('../j
 </head>
 <body>
 
+    <!-- Fullscreen Mobile Landscape Rotation Warning Overlay -->
+    <div class="rotate-device-overlay" id="rotateOverlay">
+        <div class="rotate-card">
+            <div class="phone-anim-icon">
+                <i class="fas fa-mobile-screen-button"></i>
+                <i class="fas fa-rotate-right rotate-arrow"></i>
+            </div>
+            <h2>يرجى تدوير شاشة الهاتف 📱</h2>
+            <p>للحصول على أفضل تجربة تفاعلية للمختبر، يرجى تحويل الهاتف إلى وضع العرض الأفقي (Landscape Mode)</p>
+        </div>
+    </div>
+
     <!-- Header & Brand Bar -->
     <header class="lab-header-v2" id="labHeader">
         <a href="../my-experiments.php" class="lab-brand-v2">

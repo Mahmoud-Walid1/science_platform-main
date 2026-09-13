@@ -92,8 +92,20 @@ export class AnnotationEngine {
         this.canvas.addEventListener('mousemove', moveDraw);
         this.canvas.addEventListener('mouseup', endDraw);
 
-        this.canvas.addEventListener('touchstart', startDraw);
-        this.canvas.addEventListener('touchmove', moveDraw);
+        this.canvas.addEventListener('touchstart', (e) => {
+            if (this.activeTool !== 'laser') {
+                if (e.cancelable) e.preventDefault();
+                startDraw(e);
+            }
+        }, { passive: false });
+
+        this.canvas.addEventListener('touchmove', (e) => {
+            if (this.isDrawing && this.activeTool !== 'laser') {
+                if (e.cancelable) e.preventDefault();
+                moveDraw(e);
+            }
+        }, { passive: false });
+
         this.canvas.addEventListener('touchend', endDraw);
     }
 

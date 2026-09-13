@@ -688,8 +688,20 @@ export class PrepTableEngine {
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onUp);
 
-        canvas.addEventListener('touchstart', onDown);
-        window.addEventListener('touchmove', onMove);
+        canvas.addEventListener('touchstart', (e) => {
+            if (this.slideGroup && this.prepState === 'preparing') {
+                if (e.cancelable) e.preventDefault();
+                onDown(e);
+            }
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (this.isDraggingSlide) {
+                if (e.cancelable) e.preventDefault();
+                onMove(e);
+            }
+        }, { passive: false });
+
         window.addEventListener('touchend', onUp);
     }
 

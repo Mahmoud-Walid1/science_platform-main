@@ -23,9 +23,10 @@ export class SpotlightEngine {
 
         window.addEventListener('touchmove', (e) => {
             if (this.active && e.touches.length > 0) {
+                if (e.cancelable) e.preventDefault();
                 this.setPosition(e.touches[0].clientX, e.touches[0].clientY);
             }
-        });
+        }, { passive: false });
     }
 
     setPosition(x, y) {
