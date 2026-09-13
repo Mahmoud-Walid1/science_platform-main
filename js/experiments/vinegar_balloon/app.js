@@ -25,8 +25,9 @@ class VinegarBalloonApp {
         // رسم الأدوات الأولية
         this.renderInitialApparatus();
 
-        // الاستماع لتغيرات سحب وتفاعل الأدوات
+        // الاستماع لتغيرات سحب وتفاعل الأدوات وتفعيل الحالة الأولية
         dragDropEngine.subscribe((state) => this.onStateChange(state));
+        this.onStateChange(dragDropEngine.state);
 
         // ربط متحكمات الكميات (Variable Manager)
         this.bindVariableControls();
@@ -190,8 +191,15 @@ class VinegarBalloonApp {
     }
 }
 
-// تشغيل التطبيق عند اكتمال تحميل الـ DOM
-document.addEventListener('DOMContentLoaded', () => {
+// تشغيل التطبيق بأمان تام سواء كان الـ DOM مكتمل التحميل مسبقاً أو قيد التحميل
+function bootstrapApp() {
     const app = new VinegarBalloonApp();
     app.init();
-});
+    window.vinegarBalloonApp = app;
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrapApp);
+} else {
+    bootstrapApp();
+}

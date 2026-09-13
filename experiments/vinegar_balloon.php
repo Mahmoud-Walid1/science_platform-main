@@ -83,20 +83,15 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
                         <div class="guide-step-pill" id="floatingGuideStepPill">
                             <i class="fas fa-tasks"></i> <span id="floatingGuideStepText">الخطوة 1 من 4</span>
                         </div>
-                        <h2 class="guide-dock-title" id="floatingGuideTitle">1. إضافة الخل إلى الزجاجة</h2>
-                        <button type="button" class="btn-toggle-guide" id="btnToggleGuideDock" title="إخفاء أو إظهار شريط التعليمات">
+                        <h2 class="guide-dock-title" id="floatingGuideTitle">1. تحضير المواد المتفاعلة (الخل أو البيكربونات)</h2>
+                        <button type="button" class="btn-toggle-guide" id="btnToggleGuideDock" onclick="window.toggleGuideDock(event)" title="إخفاء أو إظهار شريط التعليمات">
                             <i class="fas fa-eye-slash" id="toggleGuideIcon"></i> <span id="toggleGuideLabel">إخفاء التعليمات</span>
                         </button>
                     </div>
                     <div class="guide-dock-body" id="floatingGuideBody">
                         <p class="guide-dock-desc" id="floatingGuideDesc">
-                            اسحب القمع وضعه على فوهة الزجاجة، ثم اسكب كمية الخل عبر القمع.
+                            يمكنك البدء بوضع القمع على الزجاجة وسكب الخل، أو وضع القمع في البالون وغرف البيكربونات بالملعقة بحرية تامة.
                         </p>
-                        <div class="guide-dock-actions">
-                            <button type="button" class="guide-action-btn" id="btnFloatingAction">
-                                <i class="fas fa-play"></i> <span id="floatingActionLabel">اسكب الخل عبر القمع</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -229,14 +224,14 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
                 </div>
 
                 <div class="current-step-box">
-                    <div class="current-step-title" id="currentStepTitle">1. إضافة الخل إلى الزجاجة</div>
+                    <div class="current-step-title" id="currentStepTitle">1. تحضير المواد المتفاعلة</div>
                     <div class="current-step-desc" id="currentStepDesc">
-                        اسحب القمع وضعه على فوهة الزجاجة، ثم اسكب كمية الخل عبر القمع.
+                        اسحب القمع وضعه على الزجاجة أو البالون لبدء تجهيز التجربة بحرية.
                     </div>
                 </div>
 
-                <button type="button" class="btn-main-action" id="btnMainAction">
-                    <i class="fas fa-play"></i> اسكب الخل عبر القمع
+                <button type="button" class="btn-main-action" id="btnMainAction" style="display: none;">
+                    <i class="fas fa-flask"></i> <span id="mainActionLabel">ابدأ التفاعل الكيميائي</span>
                 </button>
             </div>
 
@@ -365,6 +360,25 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
         };
     </script>
     <script src="../js/watermark.js?v=<?=time()?>"></script>
+
+    <!-- Inline Safe Fallback for Floating Guide Toggle -->
+    <script>
+        window.toggleGuideDock = function(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var dock = document.getElementById('labFloatingGuide');
+            var icon = document.getElementById('toggleGuideIcon');
+            var label = document.getElementById('toggleGuideLabel');
+            var btn = document.getElementById('btnToggleGuideDock');
+            if (!dock) return;
+            var isCollapsed = dock.classList.toggle('is-collapsed');
+            if (icon) icon.className = isCollapsed ? 'fas fa-eye' : 'fas fa-eye-slash';
+            if (label) label.textContent = isCollapsed ? 'إظهار التعليمات' : 'إخفاء التعليمات';
+            if (btn) btn.title = isCollapsed ? 'إظهار شريط التعليمات' : 'إخفاء شريط التعليمات';
+        };
+    </script>
 
     <!-- Main Application Entry Point (Modular ES Modules) -->
     <script type="module" src="../js/experiments/vinegar_balloon/app.js?v=<?=$js_v?>"></script>

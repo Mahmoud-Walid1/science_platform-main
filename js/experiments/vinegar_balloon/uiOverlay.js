@@ -51,118 +51,136 @@ class UIOverlay {
         const dock = document.getElementById('labFloatingGuide');
         const icon = document.getElementById('toggleGuideIcon');
         const label = document.getElementById('toggleGuideLabel');
-        const floatActionBtn = document.getElementById('btnFloatingAction');
 
-        if (toggleBtn && dock) {
-            toggleBtn.addEventListener('click', (e) => {
+        const doToggle = (e) => {
+            if (e) {
+                e.preventDefault();
                 e.stopPropagation();
-                soundManager.playClick();
-                const isCollapsed = dock.classList.toggle('is-collapsed');
-                if (isCollapsed) {
-                    if (icon) icon.className = 'fas fa-eye';
-                    if (label) label.textContent = 'إظهار التعليمات';
-                    toggleBtn.title = 'إظهار شريط التعليمات';
-                } else {
-                    if (icon) icon.className = 'fas fa-eye-slash';
-                    if (label) label.textContent = 'إخفاء التعليمات';
-                    toggleBtn.title = 'إخفاء شريط التعليمات';
+            }
+            soundManager.playClick();
+            if (!dock) return;
+
+            const isCollapsed = dock.classList.toggle('is-collapsed');
+            if (isCollapsed) {
+                if (icon) icon.className = 'fas fa-eye';
+                if (label) label.textContent = 'إظهار التعليمات';
+                if (toggleBtn) toggleBtn.title = 'إظهار شريط التعليمات';
+            } else {
+                if (icon) icon.className = 'fas fa-eye-slash';
+                if (label) label.textContent = 'إخفاء التعليمات';
+                if (toggleBtn) toggleBtn.title = 'إخفاء شريط التعليمات';
+            }
+        };
+
+        if (toggleBtn) {
+            toggleBtn.onclick = doToggle;
+        }
+
+        // إتاحة النقر على الشارة العائمة المصغرة لإعادة فتح التعليمات بالكامل
+        if (dock) {
+            dock.addEventListener('click', (e) => {
+                if (dock.classList.contains('is-collapsed')) {
+                    doToggle(e);
                 }
             });
         }
 
-        if (floatActionBtn) {
-            floatActionBtn.addEventListener('click', () => {
-                const mainBtn = document.getElementById('btnMainAction');
-                if (mainBtn) mainBtn.click();
-            });
-        }
+        window.toggleGuideDock = doToggle;
     }
 
     updateStep(stepState) {
-        const stepNum = stepState.step;
+        const { vinegarInBottle, sodaInBalloon, balloonAttached, reactionDone } = stepState;
+        const added = stepState.sodaSpoonsAdded || 0;
+        const needed = stepState.sodaSpoonsNeeded || 2;
+
+        let stepNum = 1;
         let title = '';
         let desc = '';
-        let btnText = '';
 
-        if (stepNum === 1) {
-            title = '1. إضافة الخل إلى الزجاجة';
-            desc = 'اسحب القمع وضعه على فوهة الزجاجة، ثم اسكب كمية الخل عبر القمع.';
-            btnText = 'اسكب الخل عبر القمع';
-        } else if (stepNum === 2) {
-            const added = stepState.sodaSpoonsAdded || 0;
-            const needed = stepState.sodaSpoonsNeeded || 2;
+        if (!vinegarInBottle && !sodaInBalloon) {
+            stepNum = 1;
+            title = '1. تحضير المواد المتفاعلة (الخل أو البيكربونات)';
+            desc = 'اسحب القمع وضعه على الزجاجة لسكب الخل، أو ضعه على البالون لغرف البيكربونات بحرية تامة.';
+        } else if (vinegarInBottle && !sodaInBalloon) {
+            stepNum = 2;
             if (stepState.funnelLocation !== 'balloon') {
                 title = '2. وضع القمع في البالون';
-                desc = 'اسحب القمع وضعه في عنق البالون المفرغ على الطاولة لصب المسحوق.';
-                btnText = 'ضع القمع في البالون';
+                desc = 'تم سكب الخل بنجاح! الآن اسحب القمع وضعه في عنق البالون المفرغ على الطاولة.';
             } else if (!stepState.sodaOnSpoon) {
                 title = `2. غرف مسحوق البيكربونات (${added}/${needed})`;
-                desc = `اسحب الملعقة إلى وعاء البيكربونات لملئها بالمسحوق (ملعقة ${added + 1} من ${needed}).`;
-                btnText = `اغرف الملعقة (${added + 1} من ${needed})`;
+                desc = `اسحب الملعقة إلى صحن البيكربونات لملئها بالمسحوق (ملعقة ${added + 1} من ${needed}).`;
             } else {
-                title = `2. وضع المسحوق في البالون (${added + 1}/${needed})`;
-                desc = `اسحب الملعقة المحملة بالمسحوق إلى قمع البالون لتفريغها.`;
-                btnText = `فرغ الملعقة في البالون`;
+                title = `2. تفريغ المسحوق في البالون (${added + 1}/${needed})`;
+                desc = 'اسحب الملعقة المحملة بالمسحوق إلى قمع البالون لتفريغها داخله.';
             }
-        } else if (stepNum === 3) {
+        } else if (!vinegarInBottle && sodaInBalloon) {
+            stepNum = 1;
+            title = '1. إضافة الخل إلى الزجاجة';
+            desc = 'تمت تعبئة البالون بالمسحوق بنجاح! الآن اسحب القمع وضعه على الزجاجة ثم اسكب كمية الخل عبر القمع.';
+        } else if (!balloonAttached) {
+            stepNum = 3;
             title = '3. تثبيت البالون على فوهة الزجاجة';
-            desc = 'اسحب البالون وثبته على فوهة الزجاجة دون سكب المسحوق حتى يستقر بإحكام.';
-            btnText = stepState.balloonAttached ? 'ابدأ التفاعل الكيميائي' : 'ثبت البالون على الزجاجة';
-        } else if (stepNum === 4) {
-            if (!stepState.reactionDone) {
-                title = '4. فوران التفاعل وتصاعد الغاز';
-                desc = 'ارفع البالون أو اضغط زر "ابدأ التفاعل" لتسقط البيكربونات في الخل وتشاهد انطلاق الغاز!';
-                btnText = 'جاري التفاعل...';
-            } else {
-                title = 'اكتمل التفاعل وتمدد البالون بالغاز!';
-                desc = 'تفاعل حمض الأسيتيك مع بيكربونات الصوديوم وأنتج غاز ثاني أكسيد الكربون (CO₂) مسبباً انتفاخ البالون.';
-                btnText = 'إعادة التجربة';
-            }
+            desc = 'المواد جاهزة! اسحب البالون وثبته على فوهة الزجاجة دون سكب المسحوق حتى يستقر بإحكام.';
+        } else if (!reactionDone) {
+            stepNum = 4;
+            title = '4. بدء التفاعل الكيميائي وتصاعد الغاز';
+            desc = 'انقر على البالون أو اضغط "ابدأ التفاعل" لسكب البيكربونات في الخل ومشاهدة فوران الغاز وانتفاخ البالون!';
+        } else {
+            stepNum = 4;
+            title = 'اكتمل التفاعل وتمدد البالون بالغاز!';
+            desc = 'تفاعل حمض الأسيتيك مع بيكربونات الصوديوم ونتج غاز ثاني أكسيد الكربون (CO₂) مسبباً تمدد وانتفاخ البالون.';
         }
 
-        // تحديث دوائر الـ Stepper
-        for (let i = 1; i <= 4; i++) {
-            const circle = document.getElementById(`stepCircle${i}`);
-            if (circle) {
-                circle.classList.remove('active', 'completed');
-                if (i < stepNum) {
-                    circle.classList.add('completed');
-                } else if (i === stepNum) {
-                    circle.classList.add('active');
-                }
-            }
+        // تحديث دوائر الـ Stepper الأربعة
+        const s1 = document.getElementById('stepCircle1');
+        const s2 = document.getElementById('stepCircle2');
+        const s3 = document.getElementById('stepCircle3');
+        const s4 = document.getElementById('stepCircle4');
+
+        if (s1) {
+            s1.className = 'step-circle' + (vinegarInBottle ? ' completed' : (!sodaInBalloon ? ' active' : ''));
+        }
+        if (s2) {
+            s2.className = 'step-circle' + (sodaInBalloon ? ' completed' : (vinegarInBottle ? ' active' : ''));
+        }
+        if (s3) {
+            s3.className = 'step-circle' + (balloonAttached ? ' completed' : (vinegarInBottle && sodaInBalloon ? ' active' : ''));
+        }
+        if (s4) {
+            s4.className = 'step-circle' + (reactionDone ? ' completed' : (balloonAttached ? ' active' : ''));
         }
 
-        // تحديث النصوص في الشريط الجانبي
+        // تحديث نصوص الشريط الجانبي
         const titleEl = document.getElementById('currentStepTitle');
         const descEl = document.getElementById('currentStepDesc');
         const actionBtn = document.getElementById('btnMainAction');
 
         if (titleEl) titleEl.innerText = title;
         if (descEl) descEl.innerText = desc;
+
         if (actionBtn) {
-            actionBtn.innerText = btnText;
-            if (stepNum === 3 && stepState.balloonAttached) {
-                actionBtn.classList.remove('disabled');
-                actionBtn.classList.add('ready-pulse');
-            } else if (stepNum === 4 && stepState.reactionDone) {
-                actionBtn.classList.add('completed-btn');
-                actionBtn.classList.remove('ready-pulse');
+            if (balloonAttached && !reactionDone) {
+                actionBtn.style.display = 'inline-flex';
+                actionBtn.className = 'btn-main-action ready-pulse';
+                actionBtn.innerHTML = '<i class="fas fa-flask"></i> ابدأ التفاعل الكيميائي';
+            } else if (reactionDone) {
+                actionBtn.style.display = 'inline-flex';
+                actionBtn.className = 'btn-main-action completed-btn';
+                actionBtn.innerHTML = '<i class="fas fa-sync-alt"></i> إعادة التجربة';
             } else {
-                actionBtn.classList.remove('ready-pulse', 'completed-btn');
+                // إخفاء الزر أثناء خطوات السكب والتحضير لأن المعلم والطلاب يقومون بها بالسحب التفاعلي المباشر
+                actionBtn.style.display = 'none';
             }
         }
 
-        // تحديث النصوص في شريط التعليمات العائم
+        // تحديث نصوص شريط التعليمات العائم
         const floatPill = document.getElementById('floatingGuideStepText');
         const floatTitle = document.getElementById('floatingGuideTitle');
         const floatDesc = document.getElementById('floatingGuideDesc');
-        const floatActionLabel = document.getElementById('floatingActionLabel');
 
         if (floatPill) floatPill.innerText = `الخطوة ${stepNum} من 4`;
         if (floatTitle) floatTitle.innerText = title;
         if (floatDesc) floatDesc.innerText = desc;
-        if (floatActionLabel) floatActionLabel.innerText = btnText;
     }
 
     bindActionBtn() {
@@ -171,28 +189,9 @@ class UIOverlay {
             btn.addEventListener('click', () => {
                 soundManager.playClick();
                 const state = dragDropEngine.state;
-                if (state.step === 1 && !state.vinegarInBottle) {
-                    if (dragDropEngine.state.funnelLocation !== 'bottle') {
-                        dragDropEngine.moveFunnelToBottle();
-                        setTimeout(() => { dragDropEngine.executeVinegarPour(); }, 400);
-                    } else {
-                        dragDropEngine.executeVinegarPour();
-                    }
-                } else if (state.step === 2 && !state.sodaInBalloon) {
-                    if (dragDropEngine.state.funnelLocation !== 'balloon') {
-                        dragDropEngine.moveFunnelToBalloon();
-                        dragDropEngine.notifyState();
-                    } else if (!dragDropEngine.state.sodaOnSpoon) {
-                        dragDropEngine.executeScoopFromBowl();
-                    } else {
-                        dragDropEngine.executeSodaScoop();
-                    }
-                } else if (state.step === 3 && state.balloonAttached) {
+                if (state.balloonAttached && !state.reactionDone) {
                     dragDropEngine.triggerReaction();
-                } else if (state.step === 3 && !state.balloonAttached) {
-                    dragDropEngine.state.balloonAttached = true;
-                    dragDropEngine.notifyState();
-                } else if (state.step === 4 && state.reactionDone) {
+                } else if (state.reactionDone) {
                     const resetBtn = document.getElementById('btnResetExperiment');
                     if (resetBtn) resetBtn.click();
                 }

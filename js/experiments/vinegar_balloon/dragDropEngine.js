@@ -147,14 +147,14 @@ class DragDropEngine {
             }
         }
 
-        // Proximity detection for balloon mouth (radius 85px to prevent false triggers)
+        // Proximity detection for balloon mouth (radius 110px)
         const balloonMouth = document.getElementById('targetBalloonMouth') || document.getElementById('tableBalloonContainer');
         if (balloonMouth) {
             const rect = balloonMouth.getBoundingClientRect();
             const targetCenterX = rect.left + rect.width / 2;
             const targetCenterY = rect.top + 30;
             const dist = Math.hypot(x - targetCenterX, y - targetCenterY);
-            if (dist < 85) {
+            if (dist < 110) {
                 return 'balloonMouth';
             }
         }
@@ -262,15 +262,24 @@ class DragDropEngine {
     }
 
     handleSuccessfulDrop(toolType, targetId) {
-        // الخطوة 1: وضع القمع في الزجاجة
-        if (toolType === 'funnel' && !this.state.vinegarInBottle) {
-            this.moveFunnelToBottle();
-            soundManager.playClick();
-            this.notifyState();
-            return true;
+        // 1. القمع: حرية كاملة في وضعه إما على الزجاجة أو في عنق البالون أولاً
+        if (toolType === 'funnel') {
+            if (targetId === 'bottleMouth' && !this.state.vinegarInBottle) {
+                this.moveFunnelToBottle();
+                soundManager.playClick();
+                this.notifyState();
+                return true;
+            } else if (targetId === 'balloonMouth' && !this.state.sodaInBalloon) {
+                this.moveFunnelToBalloon();
+                soundManager.playClick();
+                this.notifyState();
+                return true;
+            }
+            return false;
         }
-        // الخطوة 1: سكب الخل داخل القمع في الزجاجة
-        else if (toolType === 'vinegar' && targetId === 'bottleMouth' && !this.state.vinegarInBottle) {
+
+        // 2. سكب الخل داخل الزجاجة (يمكن أن يتم أولاً أو بعد تجهيز البالون)
+        if (toolType === 'vinegar' && targetId === 'bottleMouth' && !this.state.vinegarInBottle) {
             if (this.state.funnelLocation !== 'bottle') {
                 this.moveFunnelToBottle();
                 this.notifyState();
@@ -280,36 +289,57 @@ class DragDropEngine {
             }
             return true;
         }
-        // الخطوة 2: وضع القمع في البالون
-        else if (toolType === 'funnel' && this.state.vinegarInBottle && !this.state.sodaInBalloon) {
-            this.moveFunnelToBalloon();
-            soundManager.playClick();
-            this.notifyState();
-            return true;
-        }
-        // الخطوة 2: غرف البيكربونات بالملعقة من وعاء البيكربونات
-        else if (toolType === 'spoon' && targetId === 'sodaBowl' && !this.state.sodaInBalloon) {
+
+        // 3. غرف البيكربونات بالملعقة من وعاء البيكربونات
+        if (toolType === 'spoon' && targetId === 'sodaBowl' && !this.state.sodaInBalloon) {
             this.executeScoopFromBowl();
             return true;
         }
-        // الخطوة 2: سكب البيكربونات بالملعقة داخل القمع في البالون
-        else if (toolType === 'spoon' && targetId === 'balloonMouth' && !this.state.sodaInBalloon) {
-            if (this.state.sodaOnSpoon && this.state.funnelLocation === 'balloon') {
-                this.executeSodaScoop();
+
+        // 4. سكب البيكربونات بالملعقة داخل القمع في البالون
+        if (toolType === 'spoon' && targetId === 'balloonMouth' && !this.state.sodaInBalloon) {
+            if (this.state.sodaOnSpoon) {
+                if (this.state.funnelLocation !== 'balloon') {
+                    this.moveFunnelToBalloon();
+                    setTimeout(() => { this.executeSodaScoop(); }, 400);
+                } else {
+                    this.executeSodaScoop();
+                }
                 return true;
             }
             return false;
         }
-        // الخطوة 3: تثبيت البالون على فوهة الزجاجة
-        else if (toolType === 'balloon' && targetId === 'bottleMouth' && this.state.sodaInBalloon) {
-            this.state.balloonAttached = true;
-            this.state.step = 3;
-            soundManager.playClick();
-            this.notifyState();
-            return true;
+
+        // 5. تثبيت البالون على فوهة الزجاجة (يشترط تجهيز الاثنين: البيكربونات والخل)
+        if (toolType === 'balloon' && targetId === 'bottleMouth') {
+            if (this.state.sodaInBalloon && this.state.vinegarInBottle) {
+                return this.attachBalloonToBottle();
+            } else {
+                soundManager.playClick();
+                return false;
+            }
         }
 
         return false;
+    }
+
+    attachBalloonToBottle() {
+        if (this.state.balloonAttached) return true;
+        this.state.balloonAttached = true;
+        this.state.step = 4; // الانتقال لمرحلة التفاعل
+        soundManager.playClick();
+
+        const activeBalloonSlot = document.getElementById('activeBalloonSlot');
+        const tableBalloon = document.getElementById('tableBalloonContainer');
+
+        if (tableBalloon) tableBalloon.style.display = 'none';
+        if (activeBalloonSlot) {
+            activeBalloonSlot.style.display = 'block';
+            activeBalloonSlot.innerHTML = APPARATUS_SVGS.balloon('hanging', 1.0, true);
+        }
+
+        this.notifyState();
+        return true;
     }
 
     executeVinegarPour() {
@@ -433,7 +463,7 @@ class DragDropEngine {
                         }
 
                         this.state.vinegarInBottle = true;
-                        this.state.step = 2;
+                        this.state.step = this.state.sodaInBalloon ? 3 : 2;
                         soundManager.playSuccess();
                         this.notifyState();
                     }, 350);
@@ -528,7 +558,7 @@ class DragDropEngine {
                 // اكتملت الملاعق المطلوبة!
                 this.returnFunnelToBench();
                 this.state.sodaInBalloon = true;
-                this.state.step = 3;
+                this.state.step = this.state.vinegarInBottle ? 3 : 1;
                 soundManager.playSuccess();
             } else {
                 // بقيت ملاعق أخرى للإضافة
