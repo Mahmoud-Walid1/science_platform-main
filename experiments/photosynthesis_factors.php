@@ -322,11 +322,11 @@ $js_v  = file_exists('../js/experiments/photosynthesis_factors/app.js') ? filemt
                         <table class="data-table" id="audusDataTable">
                             <thead>
                                 <tr>
-                                    <th>المسافة (cm)</th>
-                                    <th>الشدة النسبيية (1/d²)</th>
-                                    <th>الحرارة (°C)</th>
-                                    <th>الحجم المجمع (mm³)</th>
-                                    <th>المعدل (mm³/min)</th>
+                                    <th>&rlm;المسافة (&rlm;cm&rlm;)&rlm;</th>
+                                    <th>&rlm;الشدة النسبية (&rlm;1/d²&rlm;)&rlm;</th>
+                                    <th>&rlm;الحرارة (&rlm;°C&rlm;)&rlm;</th>
+                                    <th>&rlm;الحجم المجمع (&rlm;mm³&rlm;)&rlm;</th>
+                                    <th>&rlm;المعدل (&rlm;mm³/min&rlm;)&rlm;</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -246,8 +246,9 @@ body {
 /* Simulation Grid Layout */
 .sim-grid {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 1fr 1fr;
     gap: 24px;
+    width: 100%;
 }
 
 @media (max-width: 1100px) {
@@ -265,6 +266,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .card-bar {
@@ -502,6 +508,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
     padding: 12px;
     height: 220px;
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* Sub-Exp 2: Hydrogencarbonate Test Tubes Rack */
@@ -543,7 +554,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border-top: none;
     border-radius: 0 0 36px 36px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     background: rgba(255, 255, 255, 0.6);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.9);
 }
@@ -605,31 +616,37 @@ input[type="range"]::-webkit-slider-thumb:hover {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    z-index: 5;
+    z-index: 12;
 }
 
 .foil-wrap {
     position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #cbd5e1 100%);
-    box-shadow: inset 0 0 15px rgba(15, 23, 42, 0.3);
-    z-index: 10;
+    top: -6px;
+    left: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 10px);
+    background: linear-gradient(135deg, rgba(241, 245, 249, 0.72) 0%, rgba(148, 163, 184, 0.72) 50%, rgba(203, 213, 225, 0.72) 100%);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(1.5px);
+    border: 2px solid #94a3b8;
+    border-radius: 10px 10px 42px 42px;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 .foil-wrap::after {
-    content: '🛡️ ألومنيوم';
+    content: '🛡️ غطاء ألومنيوم';
     font-size: 0.75rem;
     font-weight: 800;
-    color: #1e293b;
-    background: rgba(255, 255, 255, 0.7);
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.92);
     padding: 3px 6px;
     border-radius: 6px;
-    border: 1px solid #94a3b8;
+    border: 1px solid #64748b;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .tube-label-badge {
@@ -820,7 +837,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .spectro-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
 }
 

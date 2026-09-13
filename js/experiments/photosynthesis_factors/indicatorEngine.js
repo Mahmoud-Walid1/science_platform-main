@@ -46,11 +46,11 @@ export class IndicatorEngine {
                     ` : ''}
                     <div class="tube-liquid" id="tubeLiquid-${tube.id}"></div>
                     <div class="tube-bubble-container" id="tubeBubbles-${tube.id}"></div>
-                    ${tube.isFoil ? '<div class="foil-wrap"></div>' : ''}
                     <div class="tube-contents">
                         ${tube.hasPlant ? '<i class="fas fa-leaf" style="color: #22c55e; font-size: 2.0rem; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.25));"></i>' : ''}
                         ${tube.hasSnail ? '<span style="font-size: 1.8rem; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.25));">🐌</span>' : ''}
                     </div>
+                    ${tube.isFoil ? '<div class="foil-wrap"></div>' : ''}
                 </div>
                 <div class="tube-label-badge">${tube.name}</div>
                 <div class="tube-live-metrics" id="tubeMetrics-${tube.id}">

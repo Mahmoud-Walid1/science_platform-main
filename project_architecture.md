@@ -170,3 +170,6 @@
   - `controlsUI.js`: إدارة أزرار التحكم الثلاثية (منخفض / متوسط / مرتفع) وزر إعادة ضبط التجربة.
   - `soundManager.js`: المؤثرات الصوتية للأطفال وتغذية النقر والماء والفقاعات عبر Web Audio API.
   - `app.js`: المنسق الرئيسي وحلقة المحاكاة السريعة (60 FPS Game Loop).
+- **`experiments/photosynthesis_factors.php`**: تجربة العوامل المؤثرة على البناء الضوئي (المستوى المتقدم/المتوسط)، تتضمن 3 محاكاة (أقراص أوراق السبانخ الطافية، أنابيب اختبار كاشف بيكربونات الهيدروجين الـ 4، ومانوميتر أودوم أودس).
+- **`css/photosynthesis_factors.css`**: التنسيق البصري المتناسق بالثيم الفاتح الموحد للمنصة، يتضمن التجاوب المرن للوحة التحليلات والجرافات ورسم أنبوب الألومنيوم الشفاف المعدني (`foil-wrap`).
+- **`js/experiments/photosynthesis_factors/`**: موديول التجربة المفتت بنمط Clean Architecture (`app.js`, `chartManager.js`, `indicatorEngine.js`, `leafDiskEngine.js`, `audusEngine.js`, `soundManager.js`, `quizEngine.js`).
