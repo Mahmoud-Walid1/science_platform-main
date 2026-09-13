@@ -21,7 +21,7 @@ if (!$exp_active) {
 }
 
 $css_v = file_exists('../css/vinegar_balloon.css') ? filemtime('../css/vinegar_balloon.css') : time();
-$js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('../js/experiments/vinegar_balloon/app.js') : time();
+$js_v  = time();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">

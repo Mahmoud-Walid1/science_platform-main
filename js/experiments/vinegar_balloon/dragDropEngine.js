@@ -23,7 +23,7 @@ class DragDropEngine {
             sodaInBalloon: false,
             sodaOnSpoon: false,
             sodaSpoonsAdded: 0,
-            sodaSpoonsNeeded: 2,
+            sodaSpoonsNeeded: 1,
             balloonAttached: false,
             reactionDone: false
         };
@@ -147,25 +147,47 @@ class DragDropEngine {
 
         const candidates = [];
 
-        // 1. فوهة ومجسم البالون على الطاولة (لاستقبال القمع أولاً أو تفريغ الملعقة)
+        // 1. فوهة ومجسم البالون على الطاولة، وكذلك القمع إذا كان مثبتاً في البالون
         const balloonEl = document.getElementById('tableBalloonContainer');
+        const funnelEl = document.getElementById('tableFunnelContainer');
+        const isFunnelOnBalloon = (this.state.funnelLocation === 'balloon');
+
         if (balloonEl && balloonEl.style.display !== 'none') {
             const bRect = balloonEl.getBoundingClientRect();
             const bCenterX = bRect.left + bRect.width / 2;
             const bCenterY = bRect.top + 25; // التركيز على فوهة البالون العليا
-            const distMouse = Math.hypot(x - bCenterX, y - bCenterY);
-            const distCenter = Math.hypot(dragCenterX - bCenterX, dragCenterY - bCenterY);
-            const dist = Math.min(distMouse, distCenter);
+            let distMouse = Math.hypot(x - bCenterX, y - bCenterY);
+            let distCenter = Math.hypot(dragCenterX - bCenterX, dragCenterY - bCenterY);
+            let dist = Math.min(distMouse, distCenter);
+
+            // إذا كان القمع مثبتاً في البالون، نقيس المسافة أيضاً لقمة القمع (مكان تفريغ الملعقة)
+            if (isFunnelOnBalloon && funnelEl) {
+                const fRect = funnelEl.getBoundingClientRect();
+                const fCenterX = fRect.left + fRect.width / 2;
+                const fCenterY = fRect.top + 20;
+                const distFunnel = Math.min(
+                    Math.hypot(x - fCenterX, y - fCenterY),
+                    Math.hypot(dragCenterX - fCenterX, dragCenterY - fCenterY)
+                );
+                dist = Math.min(dist, distFunnel);
+            }
 
             let isOverlap = false;
             if (draggedRect) {
                 const overlapX = Math.max(0, Math.min(draggedRect.right, bRect.right) - Math.max(draggedRect.left, bRect.left));
                 const overlapY = Math.max(0, Math.min(draggedRect.bottom, bRect.bottom) - Math.max(draggedRect.top, bRect.top));
                 if (overlapX > 5 && overlapY > 5) isOverlap = true;
+
+                if (isFunnelOnBalloon && funnelEl) {
+                    const fRect = funnelEl.getBoundingClientRect();
+                    const fOverlapX = Math.max(0, Math.min(draggedRect.right, fRect.right) - Math.max(draggedRect.left, fRect.left));
+                    const fOverlapY = Math.max(0, Math.min(draggedRect.bottom, fRect.bottom) - Math.max(draggedRect.top, fRect.top));
+                    if (fOverlapX > 5 && fOverlapY > 5) isOverlap = true;
+                }
             }
 
-            if (dist < 150 || isOverlap) {
-                candidates.push({ id: 'balloonMouth', dist: isOverlap ? Math.min(dist, 30) : dist });
+            if (dist < 160 || isOverlap) {
+                candidates.push({ id: 'balloonMouth', dist: isOverlap ? Math.min(dist, 25) : dist });
             }
         }
 
@@ -333,16 +355,26 @@ class DragDropEngine {
 
         // 4. سكب البيكربونات بالملعقة داخل القمع في البالون
         if (toolType === 'spoon' && targetId === 'balloonMouth' && !this.state.sodaInBalloon) {
-            if (this.state.sodaOnSpoon) {
+            if (!this.state.sodaOnSpoon) {
+                // إذا سحب المستخدم الملعقة مباشرة للبالون، نقوم بالغرف الذكي ثم السكب فوراً لضمان عدم توقف التجربة
+                this.executeScoopFromBowl();
+                setTimeout(() => {
+                    if (this.state.funnelLocation !== 'balloon') {
+                        this.moveFunnelToBalloon();
+                        setTimeout(() => { this.executeSodaScoop(); }, 400);
+                    } else {
+                        this.executeSodaScoop();
+                    }
+                }, 400);
+            } else {
                 if (this.state.funnelLocation !== 'balloon') {
                     this.moveFunnelToBalloon();
                     setTimeout(() => { this.executeSodaScoop(); }, 400);
                 } else {
                     this.executeSodaScoop();
                 }
-                return true;
             }
-            return false;
+            return true;
         }
 
         // 5. تثبيت البالون على فوهة الزجاجة (يشترط تجهيز الاثنين: البيكربونات والخل)

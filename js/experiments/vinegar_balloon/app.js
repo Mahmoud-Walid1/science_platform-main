@@ -4,14 +4,14 @@
  * Clean Architecture
  */
 
-import { soundManager } from './soundManager.js';
-import { APPARATUS_SVGS } from './apparatus.js';
-import { labScene } from './labScene.js';
-import { reactionEngine } from './reactionEngine.js';
-import { dragDropEngine } from './dragDropEngine.js';
-import { variableManager } from './variableManager.js';
-import { quizEngine } from './quizEngine.js';
-import { uiOverlay } from './uiOverlay.js';
+import { soundManager } from './soundManager.js?v=2.5';
+import { APPARATUS_SVGS } from './apparatus.js?v=2.5';
+import { labScene } from './labScene.js?v=2.5';
+import { reactionEngine } from './reactionEngine.js?v=2.5';
+import { dragDropEngine } from './dragDropEngine.js?v=2.5';
+import { variableManager } from './variableManager.js?v=2.5';
+import { quizEngine } from './quizEngine.js?v=2.5';
+import { uiOverlay } from './uiOverlay.js?v=2.5';
 
 class VinegarBalloonApp {
     init() {
@@ -166,7 +166,7 @@ class VinegarBalloonApp {
         if (sodaSlider && valSoda) {
             sodaSlider.addEventListener('input', (e) => {
                 const val = parseInt(e.target.value, 10);
-                valSoda.innerText = `${val} ملاعق`;
+                valSoda.innerText = val === 1 ? '1 ملعقة' : `${val} ملاعق`;
                 variableManager.setSoda(val);
                 dragDropEngine.state.sodaSpoonsNeeded = val;
                 this.updateGasYieldDisplay(co2Badge);

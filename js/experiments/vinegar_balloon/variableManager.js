@@ -22,6 +22,10 @@ class VariableManager {
         this.notify();
     }
 
+    setSoda(val) {
+        this.setSodaSpoons(val);
+    }
+
     // حساب كمية الغاز المتولد وحجم انتفاخ البالون
     // تفاعل: CH3COOH + NaHCO3 -> CH3COONa + H2O + CO2
     getCalculation() {
