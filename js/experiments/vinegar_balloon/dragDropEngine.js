@@ -142,50 +142,76 @@ class DragDropEngine {
 
     checkDropTarget(x, y, toolType, draggedEl) {
         const draggedRect = draggedEl ? draggedEl.getBoundingClientRect() : null;
+        const dragCenterX = draggedRect ? draggedRect.left + draggedRect.width / 2 : x;
+        const dragCenterY = draggedRect ? draggedRect.top + draggedRect.height / 2 : y;
 
-        const isHit = (targetEl, radius = 160) => {
-            if (!targetEl) return false;
-            const targetRect = targetEl.getBoundingClientRect();
-            // 1. التحقق من القرب من المركز بنصف قطر واسع ومرن
-            const tCenterX = targetRect.left + targetRect.width / 2;
-            const tCenterY = targetRect.top + targetRect.height / 2;
-            if (Math.hypot(x - tCenterX, y - tCenterY) < radius) {
-                return true;
-            }
-            // 2. التحقق من تقاطع الصناديق المحيطة (Bounding Box Overlap) لضمان الإسقاط حتى لو كان الماوس على طرف الأداة
+        const candidates = [];
+
+        // 1. فوهة ومجسم البالون على الطاولة (لاستقبال القمع أولاً أو تفريغ الملعقة)
+        const balloonEl = document.getElementById('tableBalloonContainer');
+        if (balloonEl && balloonEl.style.display !== 'none') {
+            const bRect = balloonEl.getBoundingClientRect();
+            const bCenterX = bRect.left + bRect.width / 2;
+            const bCenterY = bRect.top + 25; // التركيز على فوهة البالون العليا
+            const distMouse = Math.hypot(x - bCenterX, y - bCenterY);
+            const distCenter = Math.hypot(dragCenterX - bCenterX, dragCenterY - bCenterY);
+            const dist = Math.min(distMouse, distCenter);
+
+            let isOverlap = false;
             if (draggedRect) {
-                const overlapX = Math.max(0, Math.min(draggedRect.right, targetRect.right) - Math.max(draggedRect.left, targetRect.left));
-                const overlapY = Math.max(0, Math.min(draggedRect.bottom, targetRect.bottom) - Math.max(draggedRect.top, targetRect.top));
-                if (overlapX > 15 && overlapY > 15) {
-                    return true;
-                }
+                const overlapX = Math.max(0, Math.min(draggedRect.right, bRect.right) - Math.max(draggedRect.left, bRect.left));
+                const overlapY = Math.max(0, Math.min(draggedRect.bottom, bRect.bottom) - Math.max(draggedRect.top, bRect.top));
+                if (overlapX > 5 && overlapY > 5) isOverlap = true;
             }
-            return false;
-        };
 
-        // 1. فوهة ومجسم الزجاجة (لاستقبال القمع أو سكب الخل أو تثبيت البالون)
-        const bottleMouth = document.getElementById('targetBottleMouth');
-        const bottleHousing = document.getElementById('centralBottleContainer');
-        if (isHit(bottleMouth, 180) || isHit(bottleHousing, 140)) {
-            return 'bottleMouth';
+            if (dist < 150 || isOverlap) {
+                candidates.push({ id: 'balloonMouth', dist: isOverlap ? Math.min(dist, 30) : dist });
+            }
         }
 
-        // 2. فوهة ومجسم البالون على الطاولة (لاستقبال القمع أولاً أو تفريغ الملعقة)
-        const balloonMouth = document.getElementById('targetBalloonMouth');
-        const balloonHousing = document.getElementById('tableBalloonContainer');
-        if (isHit(balloonMouth, 180) || isHit(balloonHousing, 140)) {
-            return 'balloonMouth';
+        // 2. فوهة ومجسم الزجاجة (لاستقبال القمع أو سكب الخل أو تثبيت البالون)
+        const bottleMouth = document.getElementById('targetBottleMouth');
+        const bottleHousing = document.getElementById('centralBottleContainer');
+        const bottleEl = bottleMouth || bottleHousing;
+        if (bottleEl) {
+            const btRect = bottleEl.getBoundingClientRect();
+            const btCenterX = btRect.left + btRect.width / 2;
+            const btCenterY = btRect.top + 45; // التركيز على فوهة الزجاجة العليا
+            const distMouse = Math.hypot(x - btCenterX, y - btCenterY);
+            const distCenter = Math.hypot(dragCenterX - btCenterX, dragCenterY - btCenterY);
+            const dist = Math.min(distMouse, distCenter);
+
+            let isOverlap = false;
+            if (draggedRect) {
+                const overlapX = Math.max(0, Math.min(draggedRect.right, btRect.right) - Math.max(draggedRect.left, btRect.left));
+                const overlapY = Math.max(0, Math.min(draggedRect.bottom, btRect.bottom) - Math.max(draggedRect.top, btRect.top));
+                if (overlapX > 5 && overlapY > 5) isOverlap = true;
+            }
+
+            if (dist < 150 || isOverlap) {
+                candidates.push({ id: 'bottleMouth', dist: isOverlap ? Math.min(dist, 30) : dist });
+            }
         }
 
         // 3. وعاء بيكربونات الصوديوم (لغرف المسحوق بالملعقة)
         if (toolType === 'spoon') {
             const bowl = document.getElementById('tableSodaBowlContainer');
-            if (isHit(bowl, 150)) {
-                return 'sodaBowl';
+            if (bowl) {
+                const bwRect = bowl.getBoundingClientRect();
+                const bwCenterX = bwRect.left + bwRect.width / 2;
+                const bwCenterY = bwRect.top + bwRect.height / 2;
+                const dist = Math.hypot(x - bwCenterX, y - bwCenterY);
+                if (dist < 140) {
+                    candidates.push({ id: 'sodaBowl', dist: dist });
+                }
             }
         }
 
-        return null;
+        if (candidates.length === 0) return null;
+
+        // فرز المرشحين تصاعدياً حسب المسافة واختيار الأقرب بدقة للمكان المقصود
+        candidates.sort((a, b) => a.dist - b.dist);
+        return candidates[0].id;
     }
 
     highlightSnapTargets(toolType) {
@@ -196,46 +222,37 @@ class DragDropEngine {
         // No visible circles
     }
 
-    getBaseRect(el) {
-        let tx = 0, ty = 0;
-        if (window.getComputedStyle) {
-            const style = window.getComputedStyle(el);
-            const transform = style.transform || style.webkitTransform;
-            if (transform && transform !== 'none') {
-                try {
-                    const matrix = new DOMMatrix(transform);
-                    tx = matrix.m41;
-                    ty = matrix.m42;
-                } catch (e) {
-                    const match = transform.match(/matrix.*\((.+)\)/);
-                    if (match) {
-                        const parts = match[1].split(',').map(s => parseFloat(s.trim()));
-                        if (parts.length >= 6) {
-                            tx = parts[4];
-                            ty = parts[5];
-                        }
-                    }
-                }
-            }
-        }
+    getUntransformedRect(el) {
+        if (!el) return { left: 0, top: 0, width: 0, height: 0 };
+        const prevTransform = el.style.transform;
+        const prevTransition = el.style.transition;
+        el.style.transform = 'none';
+        el.style.transition = 'none';
         const rect = el.getBoundingClientRect();
-        return {
-            left: rect.left - tx,
-            top: rect.top - ty,
-            width: rect.width,
-            height: rect.height
-        };
+        el.style.transform = prevTransform;
+        el.style.transition = prevTransition;
+        return rect;
+    }
+
+    getBaseRect(el) {
+        return this.getUntransformedRect(el);
     }
 
     moveFunnelToBottle() {
         const funnelEl = document.getElementById('tableFunnelContainer');
         const bottleMouth = document.getElementById('targetBottleMouth') || document.getElementById('centralBottleContainer');
         if (funnelEl && bottleMouth) {
-            const fBase = this.getBaseRect(funnelEl);
+            const fHome = this.getUntransformedRect(funnelEl);
             const bRect = bottleMouth.getBoundingClientRect();
 
-            const deltaX = (bRect.left + bRect.width / 2) - (fBase.left + fBase.width / 2);
-            const deltaY = (bRect.top + 20) - (fBase.top + fBase.height);
+            const targetX = bRect.left + bRect.width / 2;
+            const targetY = bRect.top + 30;
+
+            const stemTipHomeX = fHome.left + fHome.width / 2;
+            const stemTipHomeY = fHome.top + fHome.height * 0.94;
+
+            const deltaX = targetX - stemTipHomeX;
+            const deltaY = targetY - stemTipHomeY;
 
             funnelEl.style.zIndex = '40';
             funnelEl.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
@@ -248,11 +265,17 @@ class DragDropEngine {
         const funnelEl = document.getElementById('tableFunnelContainer');
         const balloonEl = document.getElementById('tableBalloonContainer');
         if (funnelEl && balloonEl) {
-            const fBase = this.getBaseRect(funnelEl);
+            const fHome = this.getUntransformedRect(funnelEl);
             const blRect = balloonEl.getBoundingClientRect();
 
-            const deltaX = (blRect.left + blRect.width / 2) - (fBase.left + fBase.width / 2);
-            const deltaY = (blRect.top + 25) - (fBase.top + fBase.height);
+            const targetX = blRect.left + blRect.width / 2;
+            const targetY = blRect.top + 20;
+
+            const stemTipHomeX = fHome.left + fHome.width / 2;
+            const stemTipHomeY = fHome.top + fHome.height * 0.94;
+
+            const deltaX = targetX - stemTipHomeX;
+            const deltaY = targetY - stemTipHomeY;
 
             funnelEl.style.zIndex = '40';
             funnelEl.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
