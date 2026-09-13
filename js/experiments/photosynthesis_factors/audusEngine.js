@@ -124,7 +124,7 @@ export class AudusEngine {
         }
 
         let csv = '\uFEFF'; // UTF-8 BOM for Excel Arabic support
-        csv += 'رقم القراءة,المسافة (cm),شدة الضوء (1/d²),درجة الحرارة (°C),تركيز CO2 (%),الحجم المجمع (mm³),معدل البناء الضوئي (mm³/min)\n';
+        csv += '\u200Fرقم القراءة,المسافة (\u200Fcm\u200F),شدة الضوء (\u200F1/d²\u200F),درجة الحرارة (\u200F°C\u200F),تركيز CO2 (%),الحجم المجمع (\u200Fmm³\u200F),معدل البناء الضوئي (\u200Fmm³/min\u200F)\n';
 
         this.recordedData.forEach(row => {
             csv += `${row.id},${row.distanceCm},${row.invD2},${row.tempC},${row.co2Conc},${row.volumeMm3},${row.rate}\n`;

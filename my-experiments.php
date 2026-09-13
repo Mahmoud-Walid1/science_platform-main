@@ -54,6 +54,9 @@ $available_packages = mysqli_query($conn, "SELECT name, duration_months, store_u
 
 // تعيين الأيقونات والألوان المميزة للتجارب
 function getExpVisuals($code_name, $title) {
+    if ($code_name === 'cell_division' || strpos($code_name, 'division') !== false || strpos($title, 'انقسام') !== false) {
+        return ['icon' => 'fas fa-dna', 'bg' => 'linear-gradient(135deg, #ede9fe, #c4b5fd)', 'color' => '#6d28d9'];
+    }
     if ($code_name === 'photosynthesis_elementary' || strpos($title, 'نمو النبات') !== false) {
         return ['icon' => 'fas fa-sun', 'bg' => 'linear-gradient(135deg, #fef9c3, #86efac)', 'color' => '#16a34a'];
     }

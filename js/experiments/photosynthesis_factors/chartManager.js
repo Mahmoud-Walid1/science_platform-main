@@ -34,14 +34,14 @@ export class ChartManager {
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        title: { display: true, text: 'الزمن (ثانية)', color: '#002855', font: { weight: 'bold' } },
+                        title: { display: true, text: '\u200Fالزمن (\u200Fثانية\u200F)\u200F', color: '#002855', font: { weight: 'bold' } },
                         ticks: { color: '#475569' },
                         grid: { color: '#e2e8f0' }
                     },
                     y: {
                         min: 0,
                         max: 10,
-                        title: { display: true, text: 'عدد الأقراص (0 - 10)', color: '#002855', font: { weight: 'bold' } },
+                        title: { display: true, text: '\u200Fعدد الأقراص (\u200F0 - 10\u200F)\u200F', color: '#002855', font: { weight: 'bold' } },
                         ticks: { color: '#475569', stepSize: 1 },
                         grid: { color: '#e2e8f0' }
                     }
@@ -79,18 +79,18 @@ export class ChartManager {
             data: {
                 labels: [0, 15, 30, 45, 60, 75, 90, 105, 120],
                 datasets: [
-                    { label: 'أنبوب 1 (ضابطة)', data: [450, 450, 450, 450, 450, 450, 450, 450, 450], borderColor: '#ef4444', borderWidth: 2 },
-                    { label: 'أنبوب 2 (نبات + ضوء)', data: [450, 380, 310, 250, 200, 160, 130, 110, 100], borderColor: '#8b5cf6', borderWidth: 2.5 },
-                    { label: 'أنبوب 3 (نبات + ظلام)', data: [450, 520, 600, 680, 750, 810, 860, 900, 940], borderColor: '#d97706', borderWidth: 2.5 },
-                    { label: 'أنبوب 4 (نبات + حلزون)', data: [450, 460, 470, 465, 460, 455, 450, 450, 450], borderColor: '#0284c7', borderWidth: 2.5 }
+                    { label: '\u200Fأنبوب 1 (\u200Fضابطة\u200F)\u200F', data: [450, 450, 450, 450, 450, 450, 450, 450, 450], borderColor: '#ef4444', borderWidth: 2 },
+                    { label: '\u200Fأنبوب 2 (\u200Fنبات + ضوء\u200F)\u200F', data: [450, 380, 310, 250, 200, 160, 130, 110, 100], borderColor: '#8b5cf6', borderWidth: 2.5 },
+                    { label: '\u200Fأنبوب 3 (\u200Fنبات + ظلام\u200F)\u200F', data: [450, 520, 600, 680, 750, 810, 860, 900, 940], borderColor: '#d97706', borderWidth: 2.5 },
+                    { label: '\u200Fأنبوب 4 (\u200Fنبات + حلزون\u200F)\u200F', data: [450, 460, 470, 465, 460, 455, 450, 450, 450], borderColor: '#0284c7', borderWidth: 2.5 }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: { title: { display: true, text: 'الزمن (دقيقة)', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } },
-                    y: { title: { display: true, text: 'تركيز CO2 (ppm)', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } }
+                    x: { title: { display: true, text: '\u200Fالزمن (\u200Fدقيقة\u200F)\u200F', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } },
+                    y: { title: { display: true, text: '\u200Fتركيز CO2 (\u200Fppm\u200F)\u200F', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } }
                 },
                 plugins: {
                     legend: { labels: { color: '#0f172a', font: { family: 'Cairo', size: 11, weight: 'bold' } } }
@@ -120,7 +120,7 @@ export class ChartManager {
             type: 'scatter',
             data: {
                 datasets: [{
-                    label: 'معدل البناء الضوئي مقابل شدة الضوء (1/d²)',
+                    label: '\u200Fمعدل البناء الضوئي مقابل شدة الضوء (\u200F1/d²\u200F)\u200F',
                     data: [],
                     borderColor: '#0284c7',
                     backgroundColor: '#0284c7',
@@ -133,8 +133,8 @@ export class ChartManager {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: { title: { display: true, text: 'شدة الضوء النسبية (1/d²)', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } },
-                    y: { title: { display: true, text: 'المعدل (mm³/min)', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } }
+                    x: { title: { display: true, text: '\u200Fشدة الضوء النسبية (\u200F1/d²\u200F)\u200F', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } },
+                    y: { title: { display: true, text: '\u200Fالمعدل (\u200Fmm³/min\u200F)\u200F', color: '#002855', font: { weight: 'bold' } }, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } }
                 },
                 plugins: {
                     legend: { labels: { color: '#0f172a', font: { family: 'Cairo', weight: 'bold' } } }
