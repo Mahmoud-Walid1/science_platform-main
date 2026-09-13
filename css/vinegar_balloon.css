@@ -1,0 +1,921 @@
+/*
+ * vinegar_balloon.css
+ * Photorealistic Laboratory Styling & Interactive Canvas
+ * UI/UX Pro Design System - Clean Architecture
+ */
+
+:root {
+    --bg-dark: #f8fafc;
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --navy-header: #ffffff;
+    --navy-sidebar: #ffffff;
+    --primary: #059669;
+    --primary-dark: #047857;
+    --primary-light: #d1fae5;
+    --accent-blue: #0284c7;
+    --accent-green: #059669;
+    --accent-green-hover: #047857;
+    --accent-amber: #d97706;
+    --lab-wall: #025078;
+    --lab-wall-dark: #013e5e;
+    --lab-bench: #97adbc;
+    --lab-cabinet: #7b94a3;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #0f172a;
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+    --radius-md: 12px;
+    --radius-lg: 18px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==================== Top Header ==================== */
+.lab-top-header {
+    height: 52px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 2px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    z-index: 100;
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.header-icon-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.header-reset-btn {
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+    transition: all 0.2s ease;
+}
+
+.header-reset-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.35);
+}
+
+.header-icon-btn.muted {
+    color: #ef4444;
+}
+
+.header-title-text {
+    font-size: 18px;
+    font-weight: 800;
+    color: #065f46;
+    letter-spacing: 0.3px;
+}
+
+/* ==================== Main Layout Grid ==================== */
+.lab-main-container {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    direction: ltr;
+    gap: 12px;
+    padding: 10px 14px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ==================== Left Sidebar (Tools & Materials) ==================== */
+.lab-sidebar-panel {
+    direction: rtl;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.sidebar-section-title {
+    background: #f1f5f9;
+    color: #0f172a;
+    text-align: center;
+    padding: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.sidebar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.tool-card-item {
+    background: #0f2942;
+    border-radius: 10px;
+    border: 1.5px solid #1e3a5f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    cursor: grab;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.tool-card-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35);
+    border-color: #38bdf8;
+    background: #15385b;
+}
+
+.tool-card-icon {
+    width: 48px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-card-icon svg {
+    max-width: 46px;
+    max-height: 56px;
+    width: auto;
+    height: auto;
+    display: block;
+}
+
+.apparatus-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.tool-card-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-top: 4px;
+    text-align: center;
+    width: 100%;
+    display: block;
+    line-height: 1.3;
+}
+
+.btn-reset-exp {
+    margin-top: auto;
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+    transition: all 0.2s ease;
+}
+
+.btn-reset-exp:hover {
+    background: #0369a1;
+    transform: scale(1.02);
+}
+
+/* ==================== Center Workspace & Lab Bench ==================== */
+.lab-center-stage {
+    background: #025078;
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Realistic Lab Room Backdrop (Matches Photosynthesis Wall) */
+.lab-backdrop-room {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, #025078 0%, #013e5e 100%);
+    z-index: 1;
+}
+
+/* Chemistry Shelves & Periodic table in distance (Matches Photosynthesis Bench) */
+.lab-bench-surface {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    background: linear-gradient(to bottom, #97adbc 0%, #7b94a3 55%, #5e7686 100%);
+    border-top: 4px solid #728c9b;
+    box-shadow: inset 0 4px 8px rgba(255, 255, 255, 0.25), 0 -4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+.bench-reflection-strip {
+    position: absolute;
+    top: 3px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+}
+
+/* Active Interactive Stage Container */
+.stage-workspace-content {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 20px;
+    transition: transform 0.2s ease-out;
+}
+
+/* Central Apparatus Area */
+.central-apparatus-zone {
+    position: relative;
+    width: 170px;
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0 35px;
+}
+
+.bottle-housing {
+    position: relative;
+    width: 150px;
+    height: 360px;
+}
+
+.bubbles-overlay-canvas {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    width: 120px;
+    height: 260px;
+    pointer-events: none;
+    z-index: 8;
+}
+
+/* Slots above the bottle for funnel and balloon */
+.bottle-funnel-slot {
+    position: absolute;
+    top: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85px;
+    height: 115px;
+    z-index: 12;
+    display: none;
+}
+
+.balloon-funnel-slot {
+    position: absolute;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75px;
+    height: 95px;
+    z-index: 15;
+    display: none;
+}
+
+.active-balloon-slot {
+    position: absolute;
+    top: -104px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 330px;
+    z-index: 14;
+    display: none;
+    cursor: pointer;
+    overflow: visible;
+}
+
+.balloon-hanging-svg,
+.balloon-svg {
+    overflow: visible !important;
+}
+
+/* Snap Target Indicators - Completely Invisible without any blue circle */
+.snap-target {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 25;
+    opacity: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    animation: none !important;
+}
+
+.snap-target.active-target,
+.snap-target.pulse {
+    opacity: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    animation: none !important;
+}
+
+#targetBottleMouth {
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 70px;
+}
+
+#targetBalloonMouth {
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 70px;
+}
+
+/* Interactive Workbench Items */
+.workbench-item {
+    position: absolute;
+    cursor: grab;
+    z-index: 10;
+    transition: filter 0.2s ease;
+}
+
+.workbench-item:hover {
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5));
+}
+
+.workbench-item.is-dragging {
+    cursor: grabbing;
+    z-index: 50 !important;
+    filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.4));
+}
+
+#tableVinegarContainer {
+    bottom: 30px;
+    left: 60px;
+    width: 90px;
+    height: 180px;
+}
+
+#tableFunnelContainer {
+    bottom: 40px;
+    left: 170px;
+    width: 80px;
+    height: 110px;
+}
+
+#tableSodaBowlContainer {
+    bottom: 25px;
+    right: 70px;
+    width: 140px;
+    height: 100px;
+}
+
+#tableSpoonContainer {
+    bottom: 30px;
+    right: 185px;
+    width: 110px;
+    height: 60px;
+}
+
+#tableBalloonContainer {
+    bottom: 35px;
+    right: 290px;
+    width: 95px;
+    height: 135px;
+    position: absolute;
+}
+
+.table-balloon-graphic {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    pointer-events: none;
+}
+
+/* Pouring Flow Animations */
+.pouring-stream {
+    position: absolute;
+    display: none;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.pouring-stream.active-pouring {
+    display: block;
+    animation: streamFlow 0.25s infinite linear;
+}
+
+@keyframes streamFlow {
+    0% {
+        opacity: 0.85;
+        transform: translateX(-50%) scaleX(0.92);
+        background-position: 0% 0%;
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(-50%) scaleX(1.08);
+        background-position: 0% 50%;
+    }
+    100% {
+        opacity: 0.85;
+        transform: translateX(-50%) scaleX(0.92);
+        background-position: 0% 100%;
+    }
+}
+
+#vinegarPourAnimation {
+    top: 85px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 145px;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(215, 238, 255, 0.9) 30%, 
+        rgba(186, 230, 253, 0.95) 70%, 
+        rgba(125, 211, 252, 0.85) 100%);
+    background-size: 100% 200%;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(186, 230, 253, 0.5);
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6));
+}
+
+.vinegar-volume-badge {
+    position: absolute;
+    top: 55%;
+    right: -20px;
+    transform: translateY(-50%);
+    background: #ffffff;
+    backdrop-filter: blur(8px);
+    border: 1.5px solid #0284c7;
+    color: #0284c7;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'Cairo', sans-serif;
+    padding: 4px 12px;
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), 0 0 10px rgba(2, 132, 199, 0.2);
+    pointer-events: none;
+    z-index: 25;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#sodaPourAnimation {
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 95px;
+    z-index: 18;
+    background: repeating-linear-gradient(to bottom, #ffffff, #ffffff 4px, transparent 4px, transparent 8px);
+}
+
+/* ==================== Right Panel (Steps & Quiz) ==================== */
+.lab-right-panel {
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}
+
+.panel-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    padding: 14px;
+    color: #0f172a;
+}
+
+/* Stepper Indicator */
+.stepper-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.stepper-header-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #065f46;
+}
+
+.stepper-circles {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.step-circle {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    background: #f8fafc;
+}
+
+.step-circle.active {
+    border-color: #059669;
+    background: #059669;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(5, 150, 105, 0.35);
+}
+
+.step-circle.completed {
+    border-color: #10b981;
+    background: #10b981;
+    color: #ffffff;
+}
+
+.step-divider-line {
+    width: 14px;
+    height: 2px;
+    background: #e2e8f0;
+}
+
+/* Current Step Box */
+.current-step-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+
+.current-step-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #065f46;
+    margin-bottom: 4px;
+}
+
+.current-step-desc {
+    font-size: 12px;
+    color: #334155;
+    line-height: 1.5;
+}
+
+/* Main Action Button */
+.btn-main-action {
+    width: 100%;
+    background: #059669;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+    transition: all 0.25s ease;
+}
+
+.btn-main-action:hover {
+    background: #047857;
+    transform: translateY(-1px);
+}
+
+.btn-main-action.ready-pulse {
+    animation: btnPulse 1.4s infinite ease-in-out;
+}
+
+.btn-main-action.completed-btn {
+    background: #0284c7;
+}
+
+@keyframes btnPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(5, 150, 105, 0.4); }
+    50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(5, 150, 105, 0.75); }
+}
+
+/* Observation Card */
+.observation-card-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #065f46;
+    margin-bottom: 4px;
+}
+
+.observation-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.obs-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.obs-option-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.obs-option-label:hover {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.obs-option-input {
+    margin-right: 8px;
+}
+
+.obs-option-label:has(.obs-option-input:checked) {
+    background: #ecfdf5;
+    border-color: #059669;
+    color: #065f46;
+}
+
+.obs-feedback {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    display: none;
+}
+
+.correct-feedback {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #166534;
+}
+
+.incorrect-feedback {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
+/* Reactant Quantities Experimenter Box */
+.quantities-box {
+    margin-top: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.quantities-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0369a1;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.slider-row {
+    margin-bottom: 8px;
+}
+
+.slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 4px;
+}
+
+.lab-slider {
+    width: 100%;
+    accent-color: #0284c7;
+    cursor: pointer;
+}
+
+.co2-badge {
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 6px;
+}
+
+/* ==================== Bottom Toolbar ==================== */
+.lab-bottom-toolbar {
+    height: 48px;
+    background: #ffffff;
+    border-top: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.bottom-tools-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.toolbar-btn {
+    background: none;
+    border: none;
+    color: #475569;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+}
+
+.toolbar-btn:hover {
+    color: #059669;
+}
+
+/* ==================== Modals ==================== */
+.lab-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.lab-modal-backdrop.open {
+    display: flex;
+}
+
+.lab-modal-card {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 480px;
+    padding: 20px;
+    color: var(--text-main);
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.student-notes-area {
+    width: 100%;
+    height: 140px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    color: #1e293b;
+    resize: none;
+    outline: none;
+}
+
+.student-notes-area:focus {
+    border-color: #0284c7;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 1024px) {
+    .lab-main-container {
+        grid-template-columns: 1fr 300px;
+    }
+}
+
+@media (max-width: 860px) {
+    .lab-main-container {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+    .lab-center-stage {
+        min-height: 420px;
+    }
+}

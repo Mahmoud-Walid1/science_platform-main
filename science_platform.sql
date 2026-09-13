@@ -121,7 +121,8 @@ INSERT INTO `experiments` (`id`, `code_name`, `title`, `page_url`, `is_active`) 
 (8, 'photosynthesis_factors', 'العوامل المؤثرة على البناء الضوئي', 'experiments/photosynthesis_factors.php', 1),
 (9, 'photosynthesis', 'تجربة البناء الضوئي التفاعلية', 'experiments/photosynthesis.php', 1),
 (10, 'photosynthesis_elementary', 'رحلة نمو النبات 3D (البناء الضوئي)', 'experiments/photosynthesis_elementary.php', 1),
-(11, 'cell_division', 'المجهر الافتراضي وانقسام الخلايا (وضع الشرح للمعلم)', 'experiments/cell_division.php', 1)
+(11, 'cell_division', 'المجهر الافتراضي وانقسام الخلايا (وضع الشرح للمعلم)', 'experiments/cell_division.php', 1),
+(12, 'chemical_change', 'دلائل حدوث التغير الكيميائي (تكوّن غاز)', 'experiments/vinegar_balloon.php', 1)
 ON DUPLICATE KEY UPDATE `id`=`id`;
 
 -- --------------------------------------------------------

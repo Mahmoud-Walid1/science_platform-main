@@ -54,6 +54,9 @@ $available_packages = mysqli_query($conn, "SELECT name, duration_months, store_u
 
 // تعيين الأيقونات والألوان المميزة للتجارب
 function getExpVisuals($code_name, $title) {
+    if (strpos($code_name, 'chemical_change') !== false || strpos($code_name, 'gas') !== false || strpos($code_name, 'vinegar') !== false || strpos($title, 'التغير الكيميائي') !== false || strpos($title, 'تكوّن غاز') !== false || strpos($title, 'الخل') !== false) {
+        return ['icon' => 'fas fa-wind', 'bg' => 'linear-gradient(135deg, #e0f2fe, #7dd3fc)', 'color' => '#0284c7'];
+    }
     if ($code_name === 'cell_division' || strpos($code_name, 'division') !== false || strpos($title, 'انقسام') !== false) {
         return ['icon' => 'fas fa-dna', 'bg' => 'linear-gradient(135deg, #ede9fe, #c4b5fd)', 'color' => '#6d28d9'];
     }
