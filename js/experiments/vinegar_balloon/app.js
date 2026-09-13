@@ -70,10 +70,10 @@ class VinegarBalloonApp {
             tableBalloon.innerHTML = APPARATUS_SVGS.balloon('deflated', 1.0);
         }
 
-        // ملعقة بيكربونات الصوديوم
+        // ملعقة بيكربونات الصوديوم (تبدأ فارغة تماماً ونظيفة)
         const spoonContainer = document.getElementById('tableSpoonContainer');
         if (spoonContainer) {
-            spoonContainer.innerHTML = APPARATUS_SVGS.spoon(true);
+            spoonContainer.innerHTML = APPARATUS_SVGS.spoon(false);
         }
 
         // زجاجة الخل
@@ -136,7 +136,7 @@ class VinegarBalloonApp {
                 activeBalloonSlot.style.display = 'block';
                 if (!state.reactionDone && state.step === 3) {
                     activeBalloonSlot.innerHTML = APPARATUS_SVGS.balloon('hanging');
-                } else if (state.step === 4 || state.reactionDone) {
+                } else if (state.step === 4 && state.reactionDone) {
                     activeBalloonSlot.innerHTML = APPARATUS_SVGS.balloon('upright', calc.scale);
                 }
             }
@@ -164,10 +164,12 @@ class VinegarBalloonApp {
 
         if (sodaSlider && valSoda) {
             sodaSlider.addEventListener('input', (e) => {
-                const val = e.target.value;
-                valSoda.innerText = `${val} ${val == 1 ? 'ملعقة' : 'ملاعق'}`;
-                variableManager.setSodaSpoons(val);
+                const val = parseInt(e.target.value, 10);
+                valSoda.innerText = `${val} ملاعق`;
+                variableManager.setSoda(val);
+                dragDropEngine.state.sodaSpoonsNeeded = val;
                 this.updateGasYieldDisplay(co2Badge);
+                uiOverlay.updateStep(dragDropEngine.state);
             });
         }
 

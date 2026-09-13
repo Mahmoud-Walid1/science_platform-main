@@ -76,6 +76,31 @@ $js_v  = file_exists('../js/experiments/vinegar_balloon/app.js') ? filemtime('..
                 <div class="bench-reflection-strip"></div>
             </div>
 
+            <!-- Floating Top Guidance Dock (UI/UX Pro Max) -->
+            <div class="floating-guide-dock" id="labFloatingGuide">
+                <div class="guide-dock-content">
+                    <div class="guide-dock-header">
+                        <div class="guide-step-pill" id="floatingGuideStepPill">
+                            <i class="fas fa-tasks"></i> <span id="floatingGuideStepText">الخطوة 1 من 4</span>
+                        </div>
+                        <h2 class="guide-dock-title" id="floatingGuideTitle">1. إضافة الخل إلى الزجاجة</h2>
+                        <button type="button" class="btn-toggle-guide" id="btnToggleGuideDock" title="إخفاء أو إظهار شريط التعليمات">
+                            <i class="fas fa-eye-slash" id="toggleGuideIcon"></i> <span id="toggleGuideLabel">إخفاء التعليمات</span>
+                        </button>
+                    </div>
+                    <div class="guide-dock-body" id="floatingGuideBody">
+                        <p class="guide-dock-desc" id="floatingGuideDesc">
+                            اسحب القمع وضعه على فوهة الزجاجة، ثم اسكب كمية الخل عبر القمع.
+                        </p>
+                        <div class="guide-dock-actions">
+                            <button type="button" class="guide-action-btn" id="btnFloatingAction">
+                                <i class="fas fa-play"></i> <span id="floatingActionLabel">اسكب الخل عبر القمع</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="stage-workspace-content" id="stageWorkspace">
                 
                 <!-- Table Items with Draggable capabilities -->

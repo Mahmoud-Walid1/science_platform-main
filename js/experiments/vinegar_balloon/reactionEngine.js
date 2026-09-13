@@ -97,10 +97,24 @@ class ReactionEngine {
             this.ctx.fill();
         }
 
-        // تحديث انتفاخ البالون تدريجياً مع تصاعد الغاز
+        // تحديث انتفاخ البالون تدريجياً مع تصاعد الغاز وفيزياء التمدد المرنة
         const calc = variableManager.getCalculation();
-        const startScale = 0.12;
-        const currentScale = startScale + (calc.scale - startScale) * Math.min(1.0, Math.pow(this.progress, 1.15));
+        const targetScale = calc.scale || 1.0;
+        
+        let scaleFactor;
+        if (this.progress < 0.85) {
+            // تمدد انسيابي متسارع مع توليد الغاز
+            const t = this.progress / 0.85;
+            scaleFactor = 0.88 * Math.pow(t, 1.35);
+        } else {
+            // ارتداد مطاطي ناعم (Elastic Settle) ليستقر البالون بانسيابية
+            const t = (this.progress - 0.85) / 0.15;
+            const damp = Math.exp(-3.2 * t);
+            const bounce = Math.sin(t * Math.PI * 3.0) * 0.04 * damp;
+            scaleFactor = 0.88 + 0.12 * t + bounce;
+        }
+
+        const currentScale = Math.max(0.02, targetScale * scaleFactor);
         
         const balloonSlot = document.getElementById('activeBalloonSlot');
         if (balloonSlot) {

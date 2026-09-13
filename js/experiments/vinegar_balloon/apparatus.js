@@ -152,8 +152,36 @@ export const APPARATUS_SVGS = {
             </svg>`;
         }
 
-        const rx = 55 * scale;
-        const ry = 62 * scale;
+        if (scale <= 0.06) {
+            return `
+            <svg class="apparatus-svg balloon-svg balloon-upright-empty" viewBox="0 0 240 330" width="100%" height="100%">
+                <defs>
+                    <radialGradient id="balloonLimpGrad" cx="35%" cy="30%" r="65%">
+                        <stop offset="0%" stop-color="#93c5fd" />
+                        <stop offset="30%" stop-color="#38bdf8" />
+                        <stop offset="70%" stop-color="#0284c7" />
+                        <stop offset="100%" stop-color="#0369a1" />
+                    </radialGradient>
+                    <filter id="balloonLimpShadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="rgba(3,105,161,0.3)" />
+                    </filter>
+                </defs>
+                <!-- ياقة عنق البالون على فوهة الزجاجة -->
+                <path d="M 108 260 L 132 260 L 128 274 L 112 274 Z" fill="#0284c7" stroke="#075985" stroke-width="2" />
+                <!-- كيس البالون المطاطي المفرغ رأسياً قبل وصول الغاز -->
+                <path d="M 112 260 C 112 240, 110 205, 114 175 C 116 160, 124 160, 126 175 C 130 205, 128 240, 128 260 Z" 
+                      fill="url(#balloonLimpGrad)" stroke="#0369a1" stroke-width="1.8" filter="url(#balloonLimpShadow)" />
+                <!-- ثنيات مطاطية مفرغة -->
+                <path d="M 118 180 C 117 210, 121 235, 120 255" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            </svg>`;
+        }
+
+        const normScale = Math.max(0, scale);
+        const rx = 10 + 50 * normScale;
+        const ry = 16 + 55 * normScale;
+        const neckW = Math.max(8, rx * 0.38);
+        const bulbCenterY = 245 - ry;
+
         return `
         <svg class="apparatus-svg balloon-svg" viewBox="0 0 240 330" width="100%" height="100%">
             <defs>
@@ -170,17 +198,17 @@ export const APPARATUS_SVGS = {
             </defs>
             <!-- ياقة عنق البالون على فوهة الزجاجة -->
             <path d="M 108 260 L 132 260 L 128 274 L 112 274 Z" fill="#0284c7" stroke="#075985" stroke-width="2" />
-            <path d="M 112 260 L 128 260 L ${120 + Math.max(8, rx * 0.35)} 235 L ${120 - Math.max(8, rx * 0.35)} 235 Z" fill="#0284c7" />
+            <path d="M 112 260 L 128 260 L ${120 + neckW} ${bulbCenterY + ry * 0.55} L ${120 - neckW} ${bulbCenterY + ry * 0.55} Z" fill="#0284c7" />
             <!-- جسم البالون المنتفخ تدريجياً لأعلى -->
-            <ellipse class="balloon-bulb-ellipse" cx="120" cy="${235 - ry}" rx="${Math.max(6, rx)}" ry="${Math.max(8, ry)}" 
+            <ellipse class="balloon-bulb-ellipse" cx="120" cy="${bulbCenterY}" rx="${rx}" ry="${ry}" 
                      fill="url(#blueBalloonGrad)" stroke="rgba(255,255,255,0.5)" stroke-width="2" filter="url(#balloonShadow)" />
-            <ellipse class="balloon-bulb-shine" cx="${120 - rx * 0.35}" cy="${(235 - ry) - ry * 0.35}" rx="${Math.max(2, rx * 0.28)}" ry="${Math.max(3, ry * 0.2)}" 
-                     fill="rgba(255,255,255,0.65)" transform="rotate(-25, ${120 - rx * 0.35}, ${(235 - ry) - ry * 0.35})" />
+            <ellipse class="balloon-bulb-shine" cx="${120 - rx * 0.35}" cy="${bulbCenterY - ry * 0.35}" rx="${Math.max(2, rx * 0.28)}" ry="${Math.max(3, ry * 0.2)}" 
+                     fill="rgba(255,255,255,0.65)" transform="rotate(-25, ${120 - rx * 0.35}, ${bulbCenterY - ry * 0.35})" />
         </svg>`;
     },
 
     // ملعقة مخبرية ستانلس ستيل مع أو بدون مسحوق
-    spoon: (hasPowder = true) => `
+    spoon: (hasPowder = false) => `
         <svg class="apparatus-svg spoon-svg" viewBox="0 0 160 80" width="100%" height="100%">
             <defs>
                 <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">

@@ -42,12 +42,83 @@ class UIOverlay {
         this.bindModals();
         this.bindBottomBar();
         this.bindActionBtn();
+        this.bindFloatingGuide();
         this.bindNotesStorage();
+    }
+
+    bindFloatingGuide() {
+        const toggleBtn = document.getElementById('btnToggleGuideDock');
+        const dock = document.getElementById('labFloatingGuide');
+        const icon = document.getElementById('toggleGuideIcon');
+        const label = document.getElementById('toggleGuideLabel');
+        const floatActionBtn = document.getElementById('btnFloatingAction');
+
+        if (toggleBtn && dock) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                soundManager.playClick();
+                const isCollapsed = dock.classList.toggle('is-collapsed');
+                if (isCollapsed) {
+                    if (icon) icon.className = 'fas fa-eye';
+                    if (label) label.textContent = 'إظهار التعليمات';
+                    toggleBtn.title = 'إظهار شريط التعليمات';
+                } else {
+                    if (icon) icon.className = 'fas fa-eye-slash';
+                    if (label) label.textContent = 'إخفاء التعليمات';
+                    toggleBtn.title = 'إخفاء شريط التعليمات';
+                }
+            });
+        }
+
+        if (floatActionBtn) {
+            floatActionBtn.addEventListener('click', () => {
+                const mainBtn = document.getElementById('btnMainAction');
+                if (mainBtn) mainBtn.click();
+            });
+        }
     }
 
     updateStep(stepState) {
         const stepNum = stepState.step;
-        const info = this.stepDescriptions[stepNum] || this.stepDescriptions[1];
+        let title = '';
+        let desc = '';
+        let btnText = '';
+
+        if (stepNum === 1) {
+            title = '1. إضافة الخل إلى الزجاجة';
+            desc = 'اسحب القمع وضعه على فوهة الزجاجة، ثم اسكب كمية الخل عبر القمع.';
+            btnText = 'اسكب الخل عبر القمع';
+        } else if (stepNum === 2) {
+            const added = stepState.sodaSpoonsAdded || 0;
+            const needed = stepState.sodaSpoonsNeeded || 2;
+            if (stepState.funnelLocation !== 'balloon') {
+                title = '2. وضع القمع في البالون';
+                desc = 'اسحب القمع وضعه في عنق البالون المفرغ على الطاولة لصب المسحوق.';
+                btnText = 'ضع القمع في البالون';
+            } else if (!stepState.sodaOnSpoon) {
+                title = `2. غرف مسحوق البيكربونات (${added}/${needed})`;
+                desc = `اسحب الملعقة إلى وعاء البيكربونات لملئها بالمسحوق (ملعقة ${added + 1} من ${needed}).`;
+                btnText = `اغرف الملعقة (${added + 1} من ${needed})`;
+            } else {
+                title = `2. وضع المسحوق في البالون (${added + 1}/${needed})`;
+                desc = `اسحب الملعقة المحملة بالمسحوق إلى قمع البالون لتفريغها.`;
+                btnText = `فرغ الملعقة في البالون`;
+            }
+        } else if (stepNum === 3) {
+            title = '3. تثبيت البالون على فوهة الزجاجة';
+            desc = 'اسحب البالون وثبته على فوهة الزجاجة دون سكب المسحوق حتى يستقر بإحكام.';
+            btnText = stepState.balloonAttached ? 'ابدأ التفاعل الكيميائي' : 'ثبت البالون على الزجاجة';
+        } else if (stepNum === 4) {
+            if (!stepState.reactionDone) {
+                title = '4. فوران التفاعل وتصاعد الغاز';
+                desc = 'ارفع البالون أو اضغط زر "ابدأ التفاعل" لتسقط البيكربونات في الخل وتشاهد انطلاق الغاز!';
+                btnText = 'جاري التفاعل...';
+            } else {
+                title = 'اكتمل التفاعل وتمدد البالون بالغاز!';
+                desc = 'تفاعل حمض الأسيتيك مع بيكربونات الصوديوم وأنتج غاز ثاني أكسيد الكربون (CO₂) مسبباً انتفاخ البالون.';
+                btnText = 'إعادة التجربة';
+            }
+        }
 
         // تحديث دوائر الـ Stepper
         for (let i = 1; i <= 4; i++) {
@@ -62,23 +133,36 @@ class UIOverlay {
             }
         }
 
-        // تحديث النصوص
+        // تحديث النصوص في الشريط الجانبي
         const titleEl = document.getElementById('currentStepTitle');
         const descEl = document.getElementById('currentStepDesc');
         const actionBtn = document.getElementById('btnMainAction');
 
-        if (titleEl) titleEl.innerText = info.title;
-        if (descEl) descEl.innerText = info.desc;
+        if (titleEl) titleEl.innerText = title;
+        if (descEl) descEl.innerText = desc;
         if (actionBtn) {
-            actionBtn.innerText = info.btnText;
+            actionBtn.innerText = btnText;
             if (stepNum === 3 && stepState.balloonAttached) {
                 actionBtn.classList.remove('disabled');
                 actionBtn.classList.add('ready-pulse');
-            } else if (stepNum === 4) {
+            } else if (stepNum === 4 && stepState.reactionDone) {
                 actionBtn.classList.add('completed-btn');
                 actionBtn.classList.remove('ready-pulse');
+            } else {
+                actionBtn.classList.remove('ready-pulse', 'completed-btn');
             }
         }
+
+        // تحديث النصوص في شريط التعليمات العائم
+        const floatPill = document.getElementById('floatingGuideStepText');
+        const floatTitle = document.getElementById('floatingGuideTitle');
+        const floatDesc = document.getElementById('floatingGuideDesc');
+        const floatActionLabel = document.getElementById('floatingActionLabel');
+
+        if (floatPill) floatPill.innerText = `الخطوة ${stepNum} من 4`;
+        if (floatTitle) floatTitle.innerText = title;
+        if (floatDesc) floatDesc.innerText = desc;
+        if (floatActionLabel) floatActionLabel.innerText = btnText;
     }
 
     bindActionBtn() {
@@ -108,6 +192,9 @@ class UIOverlay {
                 } else if (state.step === 3 && !state.balloonAttached) {
                     dragDropEngine.state.balloonAttached = true;
                     dragDropEngine.notifyState();
+                } else if (state.step === 4 && state.reactionDone) {
+                    const resetBtn = document.getElementById('btnResetExperiment');
+                    if (resetBtn) resetBtn.click();
                 }
             });
         }

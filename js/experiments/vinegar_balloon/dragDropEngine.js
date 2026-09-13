@@ -22,6 +22,8 @@ class DragDropEngine {
             vinegarInBottle: false,
             sodaInBalloon: false,
             sodaOnSpoon: false,
+            sodaSpoonsAdded: 0,
+            sodaSpoonsNeeded: 2,
             balloonAttached: false,
             reactionDone: false
         };
@@ -504,11 +506,16 @@ class DragDropEngine {
         setTimeout(() => {
             if (scoopAnim) scoopAnim.classList.remove('active-pouring');
             
+            // زيادة عدد الملاعق المضافة
+            this.state.sodaSpoonsAdded = (this.state.sodaSpoonsAdded || 0) + 1;
+            const needed = variableManager.sodaSpoons || 2;
+            this.state.sodaSpoonsNeeded = needed;
+
             // إظهار مسحوق البيكربونات مستقراً داخل قاع البالون
             const powderFill = document.getElementById('balloonPowderFill');
             if (powderFill) powderFill.style.display = 'block';
 
-            // تفريغ الملعقة وإرجاعها لمكانها الأصلي فقط بعد انتهاء المهمة
+            // تفريغ الملعقة وإرجاعها لمكانها الأصلي
             this.state.sodaOnSpoon = false;
             if (spoonEl) {
                 spoonEl.innerHTML = APPARATUS_SVGS.spoon(false);
@@ -517,12 +524,17 @@ class DragDropEngine {
                 setTimeout(() => { spoonEl.style.zIndex = ''; }, 600);
             }
 
-            // إرجاع القمع لمكانه على الطاولة فور انتهاء مهمته بالضبط مثل الملعقة والخل
-            this.returnFunnelToBench();
+            if (this.state.sodaSpoonsAdded >= needed) {
+                // اكتملت الملاعق المطلوبة!
+                this.returnFunnelToBench();
+                this.state.sodaInBalloon = true;
+                this.state.step = 3;
+                soundManager.playSuccess();
+            } else {
+                // بقيت ملاعق أخرى للإضافة
+                soundManager.playClick();
+            }
 
-            this.state.sodaInBalloon = true;
-            this.state.step = 3;
-            soundManager.playSuccess();
             this.notifyState();
         }, 1500);
     }
@@ -531,10 +543,10 @@ class DragDropEngine {
         if (!this.state.balloonAttached || this.state.reactionDone) return;
         this.state.step = 4;
 
-        // وضع البالون رأسياً لكن مفرغ تماماً وغير منفوخ في البداية
+        // وضع البالون رأسياً لكن مفرغ تماماً وغير منفوخ في البداية (Near zero scale)
         const activeBalloonSlot = document.getElementById('activeBalloonSlot');
         if (activeBalloonSlot) {
-            activeBalloonSlot.innerHTML = APPARATUS_SVGS.balloon('upright', 0.12);
+            activeBalloonSlot.innerHTML = APPARATUS_SVGS.balloon('upright', 0.04);
         }
 
         soundManager.playPourPowder(0.8);
@@ -557,6 +569,8 @@ class DragDropEngine {
             vinegarInBottle: false,
             sodaInBalloon: false,
             sodaOnSpoon: false,
+            sodaSpoonsAdded: 0,
+            sodaSpoonsNeeded: variableManager.sodaSpoons || 2,
             balloonAttached: false,
             reactionDone: false
         };
