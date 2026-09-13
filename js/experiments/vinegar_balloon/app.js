@@ -4,14 +4,14 @@
  * Clean Architecture
  */
 
-import { soundManager } from './soundManager.js?v=2.6';
-import { APPARATUS_SVGS } from './apparatus.js?v=2.6';
-import { labScene } from './labScene.js?v=2.6';
-import { reactionEngine } from './reactionEngine.js?v=2.6';
-import { dragDropEngine } from './dragDropEngine.js?v=2.6';
-import { variableManager } from './variableManager.js?v=2.6';
-import { quizEngine } from './quizEngine.js?v=2.6';
-import { uiOverlay } from './uiOverlay.js?v=2.6';
+import { soundManager } from './soundManager.js';
+import { APPARATUS_SVGS } from './apparatus.js';
+import { labScene } from './labScene.js';
+import { reactionEngine } from './reactionEngine.js';
+import { dragDropEngine } from './dragDropEngine.js';
+import { variableManager } from './variableManager.js';
+import { quizEngine } from './quizEngine.js';
+import { uiOverlay } from './uiOverlay.js';
 
 class VinegarBalloonApp {
     init() {

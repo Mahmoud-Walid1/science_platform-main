@@ -222,64 +222,88 @@ $js_v  = file_exists('../js/experiments/photosynthesis/app.js') ? filemtime('../
                     <div class="step-card locked" id="step_2d" data-step="2d">
                         <div class="step-indicator">د</div>
                         <div class="step-body">
-                            <strong>تقدير الألوان والـ pH:</strong> تفحّص لون كل أنبوب بعد الحضانة واختر لونه المرصود (أخضر / أصفر / أزرق):
-                            <div class="inline-tube-tests" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.02); border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;">
-                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 4px 0; border-bottom: 1px dashed #e2e8f0;">
-                                    <span style="font-size: 12.5px; font-weight: 800; color: #1e293b; min-width: 55px;"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 1</span>
-                                    <div class="color-choice-wrapper" data-tube="1" style="display: flex; gap: 4px;">
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(1, 'green', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a; display: inline-block;"></span> أخضر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(1, 'yellow', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #ca8a04; display: inline-block;"></span> أصفر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(1, 'blue', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span> أزرق
-                                        </button>
+                            <strong>تقدير الألوان والـ pH:</strong> تفحّص لون كل أنبوب بعد الحضانة وحرّك المؤشر لاختيار اللون الأقرب على مقياس كاشف BTB:
+                            <div class="inline-tube-sliders-card">
+                                <!-- أنبوب 1 -->
+                                <div class="tube-slider-item" data-tube="1">
+                                    <div class="tube-slider-header">
+                                        <span class="tube-slider-title"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 1 (ضوء فقط)</span>
+                                        <span class="tube-slider-badge" id="sidebar_ph_badge_1">حرّك المؤشر</span>
+                                    </div>
+                                    <div class="tube-slider-track-wrap">
+                                        <input type="range" class="tube-color-range" id="sidebar_slider_1" min="0" max="5" step="1" value="2" oninput="window.photosynthesisLab.onSliderChange(1, this.value, 'sidebar')">
+                                    </div>
+                                    <div class="tube-slider-ticks">
+                                        <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(1, 0, 'click')"></span>
+                                        <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(1, 1, 'click')"></span>
+                                        <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(1, 2, 'click')"></span>
+                                        <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(1, 3, 'click')"></span>
+                                        <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(1, 4, 'click')"></span>
+                                        <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(1, 5, 'click')"></span>
                                     </div>
                                 </div>
-                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 4px 0; border-bottom: 1px dashed #e2e8f0;">
-                                    <span style="font-size: 12.5px; font-weight: 800; color: #1e293b; min-width: 55px;"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 2</span>
-                                    <div class="color-choice-wrapper" data-tube="2" style="display: flex; gap: 4px;">
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(2, 'green', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a; display: inline-block;"></span> أخضر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(2, 'yellow', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #ca8a04; display: inline-block;"></span> أصفر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(2, 'blue', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span> أزرق
-                                        </button>
+
+                                <!-- أنبوب 2 -->
+                                <div class="tube-slider-item" data-tube="2">
+                                    <div class="tube-slider-header">
+                                        <span class="tube-slider-title"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 2 (نبات + ضوء)</span>
+                                        <span class="tube-slider-badge" id="sidebar_ph_badge_2">حرّك المؤشر</span>
+                                    </div>
+                                    <div class="tube-slider-track-wrap">
+                                        <input type="range" class="tube-color-range" id="sidebar_slider_2" min="0" max="5" step="1" value="4" oninput="window.photosynthesisLab.onSliderChange(2, this.value, 'sidebar')">
+                                    </div>
+                                    <div class="tube-slider-ticks">
+                                        <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(2, 0, 'click')"></span>
+                                        <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(2, 1, 'click')"></span>
+                                        <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(2, 2, 'click')"></span>
+                                        <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(2, 3, 'click')"></span>
+                                        <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(2, 4, 'click')"></span>
+                                        <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(2, 5, 'click')"></span>
                                     </div>
                                 </div>
-                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 4px 0; border-bottom: 1px dashed #e2e8f0;">
-                                    <span style="font-size: 12.5px; font-weight: 800; color: #1e293b; min-width: 55px;"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 3</span>
-                                    <div class="color-choice-wrapper" data-tube="3" style="display: flex; gap: 4px;">
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(3, 'green', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a; display: inline-block;"></span> أخضر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(3, 'yellow', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #ca8a04; display: inline-block;"></span> أصفر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(3, 'blue', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span> أزرق
-                                        </button>
+
+                                <!-- أنبوب 3 -->
+                                <div class="tube-slider-item" data-tube="3">
+                                    <div class="tube-slider-header">
+                                        <span class="tube-slider-title"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 3 (نبات + ظلام)</span>
+                                        <span class="tube-slider-badge" id="sidebar_ph_badge_3">حرّك المؤشر</span>
+                                    </div>
+                                    <div class="tube-slider-track-wrap">
+                                        <input type="range" class="tube-color-range" id="sidebar_slider_3" min="0" max="5" step="1" value="0" oninput="window.photosynthesisLab.onSliderChange(3, this.value, 'sidebar')">
+                                    </div>
+                                    <div class="tube-slider-ticks">
+                                        <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(3, 0, 'click')"></span>
+                                        <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(3, 1, 'click')"></span>
+                                        <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(3, 2, 'click')"></span>
+                                        <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(3, 3, 'click')"></span>
+                                        <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(3, 4, 'click')"></span>
+                                        <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(3, 5, 'click')"></span>
                                     </div>
                                 </div>
-                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 4px 0;">
-                                    <span style="font-size: 12.5px; font-weight: 800; color: #1e293b; min-width: 55px;"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 4</span>
-                                    <div class="color-choice-wrapper" data-tube="4" style="display: flex; gap: 4px;">
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(4, 'green', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a; display: inline-block;"></span> أخضر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(4, 'yellow', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #ca8a04; display: inline-block;"></span> أصفر
-                                        </button>
-                                        <button type="button" class="inline-color-btn" onclick="window.photosynthesisLab.selectNotebookColor(4, 'blue', this)" style="padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 3px;">
-                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span> أزرق
-                                        </button>
+
+                                <!-- أنبوب 4 -->
+                                <div class="tube-slider-item" data-tube="4">
+                                    <div class="tube-slider-header">
+                                        <span class="tube-slider-title"><i class="fas fa-vial" style="color: #64748b;"></i> أنبوب 4 (ظلام فقط)</span>
+                                        <span class="tube-slider-badge" id="sidebar_ph_badge_4">حرّك المؤشر</span>
+                                    </div>
+                                    <div class="tube-slider-track-wrap">
+                                        <input type="range" class="tube-color-range" id="sidebar_slider_4" min="0" max="5" step="1" value="2" oninput="window.photosynthesisLab.onSliderChange(4, this.value, 'sidebar')">
+                                    </div>
+                                    <div class="tube-slider-ticks">
+                                        <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(4, 0, 'click')"></span>
+                                        <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(4, 1, 'click')"></span>
+                                        <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(4, 2, 'click')"></span>
+                                        <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(4, 3, 'click')"></span>
+                                        <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(4, 4, 'click')"></span>
+                                        <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(4, 5, 'click')"></span>
                                     </div>
                                 </div>
+
+                                <!-- زر التأكيد والمتابعة الفورية -->
+                                <button type="button" id="btnConfirmSidebarSliders" class="btn-confirm-ph-sliders" onclick="window.photosynthesisLab.confirmPhEstimation()">
+                                    <i class="fas fa-check-circle"></i> تأكيد الألوان والمتابعة للخطوة التالية
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -940,101 +964,108 @@ $js_v  = file_exists('../js/experiments/photosynthesis/app.js') ? filemtime('../
                 <table style="width: 100%; border-collapse: collapse; font-family: 'Cairo', sans-serif; font-size: 13px; margin-bottom: 18px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: #f8fafc; color: #1e293b; border-bottom: 2px solid #e2e8f0;">
-                            <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; width: 18%;">الأنبوب</th>
-                            <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; width: 52%;">اختبار اللون المرصود</th>
-                            <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; width: 30%;">تقدير الرقم الهيدروجيني</th>
+                            <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; width: 22%;">الأنبوب</th>
+                            <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; width: 48%;">مقياس اللون المرصود (BTB)</th>
+                            <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; width: 30%;">التقدير والـ pH</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- أنبوب 1 -->
                         <tr>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 800; text-align: center; color: #0f172a;">
-                                <i class="fas fa-vial"></i> أنبوب 1
+                                <i class="fas fa-vial"></i> أنبوب 1<br><small style="color:#64748b; font-size:11px;">(ضوء فقط)</small>
                             </td>
-                            <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <div class="color-choice-wrapper" data-tube="1">
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(1, 'green', this)">
-                                        <span class="color-indicator-circle green"></span> أخضر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(1, 'yellow', this)">
-                                        <span class="color-indicator-circle yellow"></span> أصفر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(1, 'blue', this)">
-                                        <span class="color-indicator-circle blue"></span> أزرق
-                                    </button>
+                            <td class="notebook-slider-table-cell" style="border: 1px solid #e2e8f0;">
+                                <div class="tube-slider-track-wrap">
+                                    <input type="range" class="tube-color-range" id="modal_slider_1" min="0" max="5" step="1" value="2" oninput="window.photosynthesisLab.onSliderChange(1, this.value, 'modal')">
+                                </div>
+                                <div class="tube-slider-ticks">
+                                    <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(1, 0, 'click')"></span>
+                                    <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(1, 1, 'click')"></span>
+                                    <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(1, 2, 'click')"></span>
+                                    <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(1, 3, 'click')"></span>
+                                    <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(1, 4, 'click')"></span>
+                                    <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(1, 5, 'click')"></span>
                                 </div>
                             </td>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <span id="notebook_ph_badge_1" style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-weight: 900; background: #f1f5f9; color: #64748b;">
-                                    حدد اللون
+                                <span id="notebook_ph_badge_1" class="tube-slider-badge">
+                                    حرّك المؤشر
                                 </span>
                             </td>
                         </tr>
+
+                        <!-- أنبوب 2 -->
                         <tr>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 800; text-align: center; color: #0f172a;">
-                                <i class="fas fa-vial"></i> أنبوب 2
+                                <i class="fas fa-vial"></i> أنبوب 2<br><small style="color:#64748b; font-size:11px;">(نبات + ضوء)</small>
                             </td>
-                            <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <div class="color-choice-wrapper" data-tube="2">
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(2, 'green', this)">
-                                        <span class="color-indicator-circle green"></span> أخضر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(2, 'yellow', this)">
-                                        <span class="color-indicator-circle yellow"></span> أصفر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(2, 'blue', this)">
-                                        <span class="color-indicator-circle blue"></span> أزرق
-                                    </button>
+                            <td class="notebook-slider-table-cell" style="border: 1px solid #e2e8f0;">
+                                <div class="tube-slider-track-wrap">
+                                    <input type="range" class="tube-color-range" id="modal_slider_2" min="0" max="5" step="1" value="4" oninput="window.photosynthesisLab.onSliderChange(2, this.value, 'modal')">
+                                </div>
+                                <div class="tube-slider-ticks">
+                                    <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(2, 0, 'click')"></span>
+                                    <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(2, 1, 'click')"></span>
+                                    <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(2, 2, 'click')"></span>
+                                    <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(2, 3, 'click')"></span>
+                                    <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(2, 4, 'click')"></span>
+                                    <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(2, 5, 'click')"></span>
                                 </div>
                             </td>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <span id="notebook_ph_badge_2" style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-weight: 900; background: #f1f5f9; color: #64748b;">
-                                    حدد اللون
+                                <span id="notebook_ph_badge_2" class="tube-slider-badge">
+                                    حرّك المؤشر
                                 </span>
                             </td>
                         </tr>
+
+                        <!-- أنبوب 3 -->
                         <tr>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 800; text-align: center; color: #0f172a;">
-                                <i class="fas fa-vial"></i> أنبوب 3
+                                <i class="fas fa-vial"></i> أنبوب 3<br><small style="color:#64748b; font-size:11px;">(نبات + ظلام)</small>
                             </td>
-                            <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <div class="color-choice-wrapper" data-tube="3">
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(3, 'green', this)">
-                                        <span class="color-indicator-circle green"></span> أخضر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(3, 'yellow', this)">
-                                        <span class="color-indicator-circle yellow"></span> أصفر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(3, 'blue', this)">
-                                        <span class="color-indicator-circle blue"></span> أزرق
-                                    </button>
+                            <td class="notebook-slider-table-cell" style="border: 1px solid #e2e8f0;">
+                                <div class="tube-slider-track-wrap">
+                                    <input type="range" class="tube-color-range" id="modal_slider_3" min="0" max="5" step="1" value="0" oninput="window.photosynthesisLab.onSliderChange(3, this.value, 'modal')">
+                                </div>
+                                <div class="tube-slider-ticks">
+                                    <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(3, 0, 'click')"></span>
+                                    <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(3, 1, 'click')"></span>
+                                    <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(3, 2, 'click')"></span>
+                                    <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(3, 3, 'click')"></span>
+                                    <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(3, 4, 'click')"></span>
+                                    <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(3, 5, 'click')"></span>
                                 </div>
                             </td>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <span id="notebook_ph_badge_3" style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-weight: 900; background: #f1f5f9; color: #64748b;">
-                                    حدد اللون
+                                <span id="notebook_ph_badge_3" class="tube-slider-badge">
+                                    حرّك المؤشر
                                 </span>
                             </td>
                         </tr>
+
+                        <!-- أنبوب 4 -->
                         <tr>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: 800; text-align: center; color: #0f172a;">
-                                <i class="fas fa-vial"></i> أنبوب 4
+                                <i class="fas fa-vial"></i> أنبوب 4<br><small style="color:#64748b; font-size:11px;">(ظلام فقط)</small>
                             </td>
-                            <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <div class="color-choice-wrapper" data-tube="4">
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(4, 'green', this)">
-                                        <span class="color-indicator-circle green"></span> أخضر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(4, 'yellow', this)">
-                                        <span class="color-indicator-circle yellow"></span> أصفر
-                                    </button>
-                                    <button type="button" class="color-choice-btn" onclick="window.photosynthesisLab.selectNotebookColor(4, 'blue', this)">
-                                        <span class="color-indicator-circle blue"></span> أزرق
-                                    </button>
+                            <td class="notebook-slider-table-cell" style="border: 1px solid #e2e8f0;">
+                                <div class="tube-slider-track-wrap">
+                                    <input type="range" class="tube-color-range" id="modal_slider_4" min="0" max="5" step="1" value="2" oninput="window.photosynthesisLab.onSliderChange(4, this.value, 'modal')">
+                                </div>
+                                <div class="tube-slider-ticks">
+                                    <span class="tick-dot" style="background:#facc15;" title="أصفر pH 6.0" onclick="window.photosynthesisLab.onSliderChange(4, 0, 'click')"></span>
+                                    <span class="tick-dot" style="background:#84cc16;" title="أصفر مخضر pH 6.4" onclick="window.photosynthesisLab.onSliderChange(4, 1, 'click')"></span>
+                                    <span class="tick-dot" style="background:#16a34a;" title="أخضر pH 7.0" onclick="window.photosynthesisLab.onSliderChange(4, 2, 'click')"></span>
+                                    <span class="tick-dot" style="background:#06b6d4;" title="تيل pH 7.3" onclick="window.photosynthesisLab.onSliderChange(4, 3, 'click')"></span>
+                                    <span class="tick-dot" style="background:#2563eb;" title="أزرق pH 7.8" onclick="window.photosynthesisLab.onSliderChange(4, 4, 'click')"></span>
+                                    <span class="tick-dot" style="background:#7c3aed;" title="بنفسجي pH 10+" onclick="window.photosynthesisLab.onSliderChange(4, 5, 'click')"></span>
                                 </div>
                             </td>
                             <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                                <span id="notebook_ph_badge_4" style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-weight: 900; background: #f1f5f9; color: #64748b;">
-                                    حدد اللون
+                                <span id="notebook_ph_badge_4" class="tube-slider-badge">
+                                    حرّك المؤشر
                                 </span>
                             </td>
                         </tr>
@@ -1820,6 +1851,7 @@ $js_v  = file_exists('../js/experiments/photosynthesis/app.js') ? filemtime('../
     <script src="../js/experiments/photosynthesis/audioManager.js?v=<?= $js_v ?>"></script>
     <script src="../js/experiments/photosynthesis/spectroEngine.js?v=<?= $js_v ?>"></script>
     <script src="../js/experiments/photosynthesis/tubeEngine.js?v=<?= $js_v ?>"></script>
+    <script src="../js/experiments/photosynthesis/colorScaleSlider.js?v=<?= $js_v ?>"></script>
     <script src="../js/experiments/photosynthesis/modalManager.js?v=<?= $js_v ?>"></script>
     <script src="../js/experiments/photosynthesis/svgLabScene.js?v=<?= $js_v ?>"></script>
     <script src="../js/experiments/photosynthesis/svgDragDrop.js?v=<?= $js_v ?>"></script>

@@ -3323,6 +3323,16 @@ class ExperimentEngine {
     openNotebookModal() {
         const modal = document.getElementById('labNotebookModal');
         if (modal) modal.style.display = 'flex';
+
+        // مزامنة الألوان الحالية على السلايدر عند فتح النافذة
+        if (window.btbColorScaleSlider) {
+            [1, 2, 3, 4].forEach(n => {
+                const sel = window.btbColorScaleSlider.selections[n];
+                if (sel) {
+                    window.btbColorScaleSlider.setTubeSelection(n, sel.index, 'sync');
+                }
+            });
+        }
     }
 
     closeNotebookModal() {
@@ -3330,67 +3340,90 @@ class ExperimentEngine {
         if (modal) modal.style.display = 'none';
     }
 
-    selectNotebookColor(tubeNum, color, btn) {
-        this.notebookSelections[tubeNum] = color;
+    onSliderChange(tubeNum, stopIndex, source) {
+        if (!window.btbColorScaleSlider) return;
+        const stop = window.btbColorScaleSlider.setTubeSelection(tubeNum, stopIndex, source);
         if (this.audioManager) this.audioManager.playPipetteClick();
 
-        const wrapper = btn.closest('.color-choice-wrapper');
-        if (wrapper) {
-            wrapper.querySelectorAll('button').forEach(b => {
-                b.style.borderColor = '#cbd5e1';
-                b.style.background = '#ffffff';
-                b.style.color = '#1e293b';
-                b.style.boxShadow = 'none';
-            });
-        }
-        btn.style.borderColor = color === 'green' ? '#16a34a' : (color === 'yellow' ? '#ca8a04' : '#2563eb');
-        btn.style.background = color === 'green' ? '#dcfce7' : (color === 'yellow' ? '#fef9c3' : '#dbeafe');
-        btn.style.color = color === 'green' ? '#166534' : (color === 'yellow' ? '#854d0e' : '#1e40af');
-        btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+        this.notebookSelections[tubeNum] = stop.colorKey;
 
-        const badge = document.getElementById(`notebook_ph_badge_${tubeNum}`);
-        if (badge) {
-            if (color === 'green') {
-                badge.textContent = "pH ≈ 7.0 (متعادل)";
-                badge.style.background = "#ecfdf5";
-                badge.style.color = "#065f46";
-            } else if (color === 'yellow') {
-                badge.textContent = "pH ≈ 6.1 (حمضي)";
-                badge.style.background = "#fefce8";
-                badge.style.color = "#854d0e";
-            } else if (color === 'blue') {
-                badge.textContent = "pH ≈ 7.6 (قاعدي)";
-                badge.style.background = "#eff6ff";
-                badge.style.color = "#1e40af";
+        // تحديث حالة وزر التأكيد السريع
+        const confirmBtn = document.getElementById('btnConfirmSidebarSliders');
+        const validation = window.btbColorScaleSlider.validateScientificSelections();
+
+        if (confirmBtn) {
+            if (validation.valid) {
+                confirmBtn.style.background = 'linear-gradient(135deg, #16a34a, #15803d)';
+                confirmBtn.style.boxShadow = '0 0 12px rgba(22, 163, 74, 0.45)';
+                confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> تقديرات علمية دقيقة! المتابعة للخطوة (2هـ)';
+            } else {
+                confirmBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
+                confirmBtn.style.boxShadow = 'none';
+                confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الألوان الحالية والمتابعة للخطوة التالية';
             }
         }
 
-        // فحص تلقائي إذا تم تحديد ألوان الأنابيب الأربعة
-        const allSelected = [1, 2, 3, 4].every(num => !!this.notebookSelections[num]);
-        if (allSelected) {
-            this.markStepCompleted('2d');
-            if (this.currentStep === '2d') {
-                this.advanceStep('2e');
-                if (this.audioManager) this.audioManager.playChime();
-                this.uiOverlay.showToast("اكتمل تسجيل ألوان جميع الأنابيب بنجاح ✓ الآن اضبط حجم ماصة P1000 على 1,000 µl (الخطوة 2هـ)");
-            }
+        // الانتقال التلقائي الفوري إذا كانت التقديرات مطابقة علمياً
+        if (validation.valid && this.currentStep === '2d') {
+            this.confirmPhEstimationAuto();
         }
     }
 
-    saveNotebookNotes() {
-        const allSelected = [1, 2, 3, 4].every(num => !!this.notebookSelections[num]);
-        if (!allSelected) {
-            this.uiOverlay.showToast("يرجى تحديد اللون المرصود لجميع الأنابيب الأربعة أولاً!");
-            return;
+    confirmPhEstimationAuto() {
+        this.unlockAndAdvanceTo2e("اكتمل تسجيل ألوان جميع الأنابيب بنجاح ✓ الآن اضبط حجم ماصة P1000 على 1,000 µl (الخطوة 2هـ)");
+    }
+
+    unlockAndAdvanceTo2e(customToast) {
+        // ضمان وسم الخطوات السابقة في المرحلة الثانية كمكتملة
+        ['2a', '2b', '2c'].forEach(k => {
+            const c = document.getElementById(`step_${k}`);
+            if (c) {
+                c.classList.add('completed');
+                c.classList.remove('locked', 'active');
+                const ind = c.querySelector('.step-indicator');
+                if (ind && !ind.querySelector('.fa-check')) {
+                    ind.innerHTML = '<i class="fas fa-check check-icon" style="color: #ffffff;"></i>';
+                }
+            }
+        });
+
+        // وسم الخطوة 2d كمكتملة
+        const card2d = document.getElementById('step_2d');
+        if (card2d) {
+            card2d.classList.add('completed');
+            card2d.classList.remove('active', 'locked');
+            const ind = card2d.querySelector('.step-indicator');
+            if (ind && !ind.querySelector('.fa-check')) {
+                ind.innerHTML = '<i class="fas fa-check check-icon" style="color: #ffffff;"></i>';
+            }
         }
 
-        this.closeNotebookModal();
-        if (this.audioManager) this.audioManager.playChime();
-        this.uiOverlay.showToast("تم حفظ تقديرات الـ pH واختبارات الألوان بنجاح ✓");
-        this.markStepCompleted('2d');
-        if (this.currentStep === '2d') {
-            this.advanceStep('2e');
+        // فتح وتنشيط الخطوة 2e
+        const card2e = document.getElementById('step_2e');
+        if (card2e) {
+            card2e.classList.remove('locked');
+            card2e.classList.add('active');
         }
+
+        this.currentStep = '2e';
+        if (this.uiOverlay) {
+            this.uiOverlay.updateStepList('2e');
+        }
+
+        if (this.audioManager) this.audioManager.playChime();
+        this.uiOverlay.showToast(customToast || "✓ تم تأكيد تقدير الـ pH لجميع العينات بنجاح! انتقل الآن للخطوة 2هـ (ضبط حجم الماصة).");
+    }
+
+    selectNotebookColor(tubeNum, color, btn) {
+        // دعم التوافقية العكسية
+        const colorStopMap = { 'yellow': 0, 'green': 2, 'blue': 4 };
+        const idx = colorStopMap[color] !== undefined ? colorStopMap[color] : 2;
+        this.onSliderChange(tubeNum, idx, 'button');
+    }
+
+    saveNotebookNotes() {
+        this.closeNotebookModal();
+        this.unlockAndAdvanceTo2e("تم حفظ تقديرات الـ pH واختبارات الألوان بنجاح ✓ انتقل الآن لضبط حجم الماصة (2هـ)");
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -4552,6 +4585,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeNotebookModal: () => experimentEngine.closeNotebookModal(),
         saveNotebookNotes: () => experimentEngine.saveNotebookNotes(),
         selectNotebookColor: (tubeNum, col, btn) => experimentEngine.selectNotebookColor(tubeNum, col, btn),
+        onSliderChange: (tubeNum, val, source) => experimentEngine.onSliderChange(tubeNum, val, source),
         selectPipette: () => experimentEngine.selectPipette(),
         movePipetteToTube: (num) => experimentEngine.movePipetteToTube(num),
         pressPlungerFirstStop: (tubeNum) => experimentEngine.pressPlungerFirstStop(tubeNum),
@@ -4606,10 +4640,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         confirmPhEstimation: () => {
-            experimentEngine.uiOverlay.showToast("✓ تم تأكيد تقدير الـ pH لجميع العينات بنجاح.");
-            if (experimentEngine.currentStep === '2d') {
-                experimentEngine.advanceStep('2e');
-            }
+            experimentEngine.unlockAndAdvanceTo2e("✓ تم تأكيد تقدير الـ pH لجميع العينات بنجاح! انتقل الآن للخطوة 2هـ (ضبط حجم الماصة على 1,000 µl).");
         },
         openResultsSection: () => {
             const m = document.getElementById('resultsModal');

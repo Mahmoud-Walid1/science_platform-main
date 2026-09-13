@@ -45,6 +45,10 @@ class ReactionEngine {
         this.progress = 0;
         this.onCompleteCallback = onComplete;
 
+        if (!this.canvas || !this.ctx) {
+            this.init('bubblesCanvas');
+        }
+
         // حساب ارتفاع سطح السائل الفعلي بناءً على حجم الخل
         const calc = variableManager.getCalculation();
         const liquidH = calc.liquidHeightPx || 75;
@@ -142,9 +146,15 @@ class ReactionEngine {
         if (!this.isReacting) return;
         this.animId = requestAnimationFrame(() => this.animate());
 
-        const w = this.canvas.width;
-        const h = this.canvas.height;
-        this.ctx.clearRect(0, 0, w, h);
+        if (!this.canvas || !this.ctx) {
+            this.init('bubblesCanvas');
+        }
+
+        if (this.ctx && this.canvas) {
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            this.ctx.clearRect(0, 0, w, h);
+        }
 
         // تقدم التفاعل (4.2 ثانية تقريباً لدورة تفاعل غنية وممتعة)
         this.progress += 0.0042;
