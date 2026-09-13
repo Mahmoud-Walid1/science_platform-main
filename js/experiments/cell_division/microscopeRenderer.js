@@ -88,11 +88,18 @@ export class MicroscopeRenderer {
 
         stage.addEventListener('touchstart', (e) => {
             if (e.target.closest('button, input, aside, nav')) return;
-            if (e.touches.length > 0) startDrag(e.touches[0].clientX, e.touches[0].clientY);
-        });
+            if (e.touches.length > 0) {
+                if (e.cancelable) e.preventDefault();
+                startDrag(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
+
         window.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-        });
+            if (this.isDragging && e.touches.length > 0) {
+                if (e.cancelable) e.preventDefault();
+                moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
         window.addEventListener('touchend', endDrag);
     }
 

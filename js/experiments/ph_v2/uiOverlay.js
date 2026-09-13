@@ -77,7 +77,20 @@ export class UIOverlay {
                 if (this.phEngine) {
                     this.phEngine.lastProbeState = "OUT";
                 }
+                this.updatePowerBtnUI();
                 this.showToast("تم إعادة تهيئة أوراق عباد الشمس ومجس جهاز pH بنجاح!", "info");
+            });
+        }
+
+        // 3.b Dedicated HTML Power Button for pH Meter
+        const btnPower = document.getElementById('btnTogglePhPower');
+        if (btnPower && this.phMeter) {
+            btnPower.addEventListener('click', () => {
+                this.phMeter.togglePower();
+                if (this.phEngine) {
+                    this.phEngine.checkInteractions();
+                }
+                this.updatePowerBtnUI();
             });
         }
 
@@ -140,5 +153,19 @@ export class UIOverlay {
         this.toastTimeout = setTimeout(() => {
             toast.classList.remove('active');
         }, 3200);
+    }
+
+    updatePowerBtnUI() {
+        const btnPower = document.getElementById('btnTogglePhPower');
+        const txt = document.getElementById('powerBtnText');
+        if (btnPower && this.phMeter) {
+            if (this.phMeter.isOn) {
+                btnPower.classList.add('active');
+                if (txt) txt.innerText = "الجهاز يعمل (اضغط للإيقاف)";
+            } else {
+                btnPower.classList.remove('active');
+                if (txt) txt.innerText = "تشغيل جهاز pH Meter";
+            }
+        }
     }
 }

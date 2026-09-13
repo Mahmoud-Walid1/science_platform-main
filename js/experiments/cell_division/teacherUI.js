@@ -34,6 +34,55 @@ export class TeacherUI {
         let clickStartY = 0;
 
         if (stage) {
+            const handleCellSelection = (clientX, clientY) => {
+                const rect = stage.getBoundingClientRect();
+                const stageX = clientX - rect.left;
+                const stageY = clientY - rect.top;
+
+                const width = rect.width;
+                const height = rect.height;
+
+                const centerX = width / 2 + 100;
+                const centerY = height / 2;
+
+                const worldX = (stageX - centerX - this.microscope.panX) / this.microscope.zoom;
+                const worldY = (stageY - centerY - this.microscope.panY) / this.microscope.zoom;
+
+                const activeEngine = this.divisionType === 'mitosis' ? this.mitosis : this.meiosis;
+                const cellInfo = activeEngine.getCellAtWorldPos(worldX, worldY);
+
+                if (cellInfo && panelBody) {
+                    soundManager.playClick();
+
+                    // Smoothly glide camera lens to center on the clicked cell
+                    const cellWorldX = cellInfo.c * 100 + (Math.abs(cellInfo.r) % 2 === 0 ? 0 : 15);
+                    const cellWorldY = cellInfo.r * 55;
+                    const targetPanX = -cellWorldX * this.microscope.targetZoom;
+                    const targetPanY = -cellWorldY * this.microscope.targetZoom;
+                    this.microscope.glideTo(targetPanX, targetPanY, this.microscope.targetZoom);
+
+                    // Update Left Explanation Panel
+                    panelBody.innerHTML = `
+                        <div class="phase-badge-card">
+                            <div class="phase-badge-icon"><i class="fas ${cellInfo.icon}"></i></div>
+                            <div class="phase-badge-title">${cellInfo.title}</div>
+                        </div>
+                        <div class="phase-desc-box">
+                            <div class="phase-desc-text">${cellInfo.desc}</div>
+                        </div>
+                    `;
+
+                    // Synchronize Right Phase Preset Menu Button Highlight
+                    document.querySelectorAll('.phase-btn').forEach(btn => {
+                        if (btn.getAttribute('data-phase') === cellInfo.phase) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                }
+            };
+
             stage.addEventListener('mousedown', (e) => {
                 clickStartX = e.clientX;
                 clickStartY = e.clientY;
@@ -43,45 +92,25 @@ export class TeacherUI {
                 if (e.target.closest('button, input, aside, nav, .cell-explanation-panel')) return;
 
                 const dist = Math.hypot(e.clientX - clickStartX, e.clientY - clickStartY);
-                if (dist < 6) {
-                    const rect = stage.getBoundingClientRect();
-                    const stageX = e.clientX - rect.left;
-                    const stageY = e.clientY - rect.top;
+                if (dist < 10) {
+                    handleCellSelection(e.clientX, e.clientY);
+                }
+            });
 
-                    const width = rect.width;
-                    const height = rect.height;
+            stage.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    clickStartX = e.touches[0].clientX;
+                    clickStartY = e.touches[0].clientY;
+                }
+            });
 
-                    const centerX = width / 2 + 100;
-                    const centerY = height / 2;
-
-                    const worldX = (stageX - centerX - this.microscope.panX) / this.microscope.zoom;
-                    const worldY = (stageY - centerY - this.microscope.panY) / this.microscope.zoom;
-
-                    const activeEngine = this.divisionType === 'mitosis' ? this.mitosis : this.meiosis;
-                    const cellInfo = activeEngine.getCellAtWorldPos(worldX, worldY);
-
-                    if (cellInfo && panelBody) {
-                        soundManager.playClick();
-
-                        // Update Left Explanation Panel
-                        panelBody.innerHTML = `
-                            <div class="phase-badge-card">
-                                <div class="phase-badge-icon"><i class="fas ${cellInfo.icon}"></i></div>
-                                <div class="phase-badge-title">${cellInfo.title}</div>
-                            </div>
-                            <div class="phase-desc-box">
-                                <div class="phase-desc-text">${cellInfo.desc}</div>
-                            </div>
-                        `;
-
-                        // Synchronize Right Phase Preset Menu Button Highlight
-                        document.querySelectorAll('.phase-btn').forEach(btn => {
-                            if (btn.getAttribute('data-phase') === cellInfo.phase) {
-                                btn.classList.add('active');
-                            } else {
-                                btn.classList.remove('active');
-                            }
-                        });
+            stage.addEventListener('touchend', (e) => {
+                if (e.target.closest('button, input, aside, nav, .cell-explanation-panel')) return;
+                const changedTouch = e.changedTouches[0];
+                if (changedTouch) {
+                    const dist = Math.hypot(changedTouch.clientX - clickStartX, changedTouch.clientY - clickStartY);
+                    if (dist < 12) {
+                        handleCellSelection(changedTouch.clientX, changedTouch.clientY);
                     }
                 }
             });

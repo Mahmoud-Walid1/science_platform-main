@@ -43,8 +43,27 @@ export class SceneManager3D {
         // 6. Viewport-Pinned 3D Green Watering Can (Fixed Top-Left, Never Orbiting!)
         this.initViewportPinnedWateringCan();
 
-        // 7. Window Resize Listener
-        window.addEventListener('resize', () => this.onResize());
+        // 7. Window Resize & Orientation Listener
+        const handleResize = () => this.onResize();
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(handleResize, 50);
+            setTimeout(handleResize, 250);
+            setTimeout(handleResize, 500);
+        });
+        if (screen.orientation) {
+            screen.orientation.addEventListener('change', () => {
+                setTimeout(handleResize, 50);
+                setTimeout(handleResize, 250);
+                setTimeout(handleResize, 500);
+            });
+        }
+
+        // Native ResizeObserver for instant 0ms DOM element size tracking
+        if (window.ResizeObserver && this.container) {
+            this.resizeObserver = new ResizeObserver(() => this.onResize());
+            this.resizeObserver.observe(this.container);
+        }
     }
 
     initLightsAndFixedSun() {
@@ -225,13 +244,17 @@ export class SceneManager3D {
 
     onResize() {
         if (!this.container) return;
-        this.width = this.container.clientWidth;
-        this.height = this.container.clientHeight;
+        window.scrollTo(0, 0);
+
+        this.width = this.container.clientWidth || this.container.parentElement?.clientWidth || window.innerWidth;
+        this.height = this.container.clientHeight || this.container.parentElement?.clientHeight || window.innerHeight;
+
+        if (this.width <= 0 || this.height <= 0) return;
 
         this.camera.aspect = this.width / this.height;
         this.camera.updateProjectionMatrix();
 
-        this.renderer.setSize(this.width, this.height);
+        this.renderer.setSize(this.width, this.height, false);
     }
 
     getWorldCloudPosition() {

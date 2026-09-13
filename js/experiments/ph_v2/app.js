@@ -50,7 +50,8 @@ class PhApp {
             this.sceneManager,
             this.litmusPapers,
             this.phMeter,
-            this.phEngine
+            this.phEngine,
+            this.uiOverlay
         );
 
         // 8. Quiz and Observations Panel
@@ -74,6 +75,36 @@ class PhApp {
 
         // Start Three.js loops
         this.sceneManager.startLoop();
+
+        // Reliable Mobile Orientation Change Hard Reload
+        let initialIsPortrait = window.innerHeight > window.innerWidth || window.matchMedia("(orientation: portrait)").matches;
+
+        const triggerHardReloadOnLandscape = () => {
+            const isNowLandscape = (window.innerWidth > window.innerHeight) || window.matchMedia("(orientation: landscape)").matches;
+            if (initialIsPortrait && isNowLandscape) {
+                initialIsPortrait = false;
+                window.location.replace(window.location.href);
+            }
+        };
+
+        try {
+            const mql = window.matchMedia("(orientation: landscape)");
+            mql.addEventListener('change', (e) => {
+                if (e.matches && initialIsPortrait) {
+                    triggerHardReloadOnLandscape();
+                }
+            });
+        } catch (err) {}
+
+        window.addEventListener('orientationchange', () => {
+            setTimeout(triggerHardReloadOnLandscape, 100);
+            setTimeout(triggerHardReloadOnLandscape, 350);
+            setTimeout(triggerHardReloadOnLandscape, 700);
+        });
+
+        window.addEventListener('resize', () => {
+            setTimeout(triggerHardReloadOnLandscape, 150);
+        });
     }
 
     createBeakerLabelsDOM() {

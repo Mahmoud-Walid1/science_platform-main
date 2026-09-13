@@ -1173,3 +1173,136 @@ input[type="range"]::-webkit-slider-thumb:hover {
     padding: 3px 8px;
     border-radius: 6px;
 }
+
+/* ==========================================================================
+   FULLSCREEN MOBILE PORTRAIT ROTATION WARNING OVERLAY
+   ========================================================================== */
+.rotate-device-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    z-index: 999999;
+    color: #ffffff;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.rotate-card {
+    background: rgba(30, 41, 59, 0.85);
+    border: 2px solid rgba(56, 189, 248, 0.4);
+    border-radius: 28px;
+    padding: 32px 24px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(56, 189, 248, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: rotateCardFade 0.4s ease-out;
+}
+
+@keyframes rotateCardFade {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.phone-anim-icon {
+    position: relative;
+    font-size: 3.5rem;
+    color: #38bdf8;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rotate-arrow {
+    position: absolute;
+    font-size: 1.8rem;
+    color: #22c55e;
+    top: -5px;
+    right: -15px;
+    animation: spinRotate 2s infinite linear;
+}
+
+@keyframes spinRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.rotate-card h2 {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.rotate-card p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    font-weight: 600;
+    margin: 0;
+}
+
+@media screen and (max-width: 950px) and (orientation: portrait) {
+    .rotate-device-overlay {
+        display: flex !important;
+    }
+}
+
+/* ==========================================================================
+   OPTIMIZED COMPACT MOBILE LANDSCAPE HEADER & TAB BUTTONS
+   ========================================================================== */
+@media screen and (max-width: 900px) {
+    .lab-brand span {
+        display: none !important;
+    }
+}
+
+@media screen and (max-height: 600px), screen and (max-width: 950px) {
+    .lab-header {
+        padding: 4px 10px !important;
+        height: 44px !important;
+    }
+
+    .lab-brand {
+        font-size: 0.85rem !important;
+        gap: 6px !important;
+    }
+
+    .header-mode-switcher {
+        padding: 2px !important;
+        gap: 2px !important;
+        background: #cbd5e1 !important;
+        border-radius: 30px !important;
+    }
+
+    .tab-btn {
+        padding: 3px 8px !important;
+        font-size: 0.70rem !important;
+        gap: 4px !important;
+        border-radius: 20px !important;
+    }
+
+    .tab-btn i {
+        font-size: 0.75rem !important;
+    }
+
+    .exit-btn {
+        padding: 4px 10px !important;
+        font-size: 0.75rem !important;
+    }
+}

@@ -41,14 +41,52 @@ export class SceneManager {
         this.table.receiveShadow = true;
         this.scene.add(this.table);
 
-        // Bind Resize Event
-        window.addEventListener('resize', () => this.onWindowResize());
+        // Bind Resize & Orientation Change Events
+        const handleResize = () => this.onWindowResize();
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(handleResize, 50);
+            setTimeout(handleResize, 250);
+            setTimeout(handleResize, 500);
+        });
+        if (screen.orientation) {
+            screen.orientation.addEventListener('change', () => {
+                setTimeout(handleResize, 50);
+                setTimeout(handleResize, 250);
+                setTimeout(handleResize, 500);
+            });
+        }
+
+        // Native ResizeObserver for instant 0ms DOM element size tracking
+        if (window.ResizeObserver) {
+            const container = this.canvas.parentElement || this.canvas;
+            this.resizeObserver = new ResizeObserver(() => this.onWindowResize());
+            this.resizeObserver.observe(container);
+        }
     }
 
     onWindowResize() {
-        this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+        if (!this.canvas) return;
+        window.scrollTo(0, 0);
+
+        const container = this.canvas.parentElement || this.canvas;
+        const width = container.clientWidth || window.innerWidth;
+        const height = container.clientHeight || window.innerHeight;
+
+        if (width <= 0 || height <= 0) return;
+
+        const aspect = width / height;
+        this.camera.aspect = aspect;
+
+        // Dynamic FOV for short mobile landscape viewports
+        if (height < 500) {
+            this.camera.fov = Math.min(52, 45 * (1.3 / Math.min(aspect, 1.8)));
+        } else {
+            this.camera.fov = 45;
+        }
+
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+        this.renderer.setSize(width, height, false);
     }
 
     startLoop() {

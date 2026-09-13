@@ -40,6 +40,18 @@ $js_v  = file_exists('../js/experiments/ph_v2/app.js') ? filemtime('../js/experi
 </head>
 <body>
 
+    <!-- Fullscreen Mobile Landscape Rotation Warning Overlay -->
+    <div class="rotate-device-overlay" id="rotateOverlay">
+        <div class="rotate-card">
+            <div class="phone-anim-icon">
+                <i class="fas fa-mobile-screen-button"></i>
+                <i class="fas fa-rotate-right rotate-arrow"></i>
+            </div>
+            <h2>يرجى تدوير شاشة الهاتف 📱</h2>
+            <p>للحصول على أفضل تجربة تفاعلية للمختبر، يرجى تحويل الهاتف إلى وضع العرض الأفقي (Landscape Mode)</p>
+        </div>
+    </div>
+
     <!-- Header Navigation with Switcher -->
     <header class="lab-header-v2">
         <a href="../my-experiments.php" class="lab-brand-v2">
@@ -101,6 +113,11 @@ $js_v  = file_exists('../js/experiments/ph_v2/app.js') ? filemtime('../js/experi
                     <button class="ctrl-btn" id="btnResetCamera" title="العودة للمنظور الكامل"><i class="fas fa-expand"></i></button>
                 </div>
 
+                <!-- Dedicated HTML Power Button for pH Meter -->
+                <button type="button" class="ph-power-ui-btn" id="btnTogglePhPower">
+                    <i class="fas fa-power-off"></i> <span id="powerBtnText">تشغيل جهاز pH Meter</span>
+                </button>
+
                 <!-- Floating Digital pH Meter Reading HUD Badge -->
                 <div class="ph-digital-hud" id="phDigitalHud" style="display: none;">
                     <div class="hud-label"><i class="fas fa-bolt" style="color: #00ff66;"></i> قراءة الـ pH:</div>
@@ -110,7 +127,7 @@ $js_v  = file_exists('../js/experiments/ph_v2/app.js') ? filemtime('../js/experi
             </div>
 
             <!-- Scientific Overview & Explanation Card (Collapsible) -->
-            <div class="exp-summary-card" id="expSummaryCard">
+            <div class="exp-summary-card collapsed" id="expSummaryCard">
                 <div class="summary-header" id="summaryHeader">
                     <div class="summary-header-title">
                         <i class="fas fa-microscope"></i>
