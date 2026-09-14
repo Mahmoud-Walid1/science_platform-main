@@ -1,11 +1,11 @@
-import { SceneManager } from './sceneManager.js?v=3.5';
-import { MaterialsShelf } from './materialsShelf.js?v=3.5';
-import { Tools3D } from './tools3D.js?v=3.5';
-import { Beaker3D } from './beaker3D.js?v=3.5';
-import { PouringEngine } from './pouringEngine.js?v=3.5';
-import { DragControls3D } from './dragControls.js?v=3.5';
-import { SeparationEngine } from './separationEngine.js?v=3.5';
-import { UIOverlay } from './uiOverlay.js?v=3.5';
+import { SceneManager } from './sceneManager.js?v=4.0';
+import { MaterialsShelf } from './materialsShelf.js?v=4.0';
+import { Tools3D } from './tools3D.js?v=4.0';
+import { Beaker3D } from './beaker3D.js?v=4.0';
+import { PouringEngine } from './pouringEngine.js?v=4.0';
+import { DragControls3D } from './dragControls.js?v=4.0';
+import { SeparationEngine } from './separationEngine.js?v=4.0';
+import { UIOverlay } from './uiOverlay.js?v=4.0';
 
 class SeparationApp {
     constructor() {
