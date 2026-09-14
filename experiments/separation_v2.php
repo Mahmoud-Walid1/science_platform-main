@@ -19,7 +19,7 @@ if (!$exp_active) {
 }
 
 $css_v = file_exists('../css/separation_v2.css') ? filemtime('../css/separation_v2.css') : time();
-$js_v  = file_exists('../js/experiments/separation_v2/app.js') ? filemtime('../js/experiments/separation_v2/app.js') : time();
+$js_v  = time();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">

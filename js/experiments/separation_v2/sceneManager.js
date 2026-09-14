@@ -387,12 +387,12 @@ export class SceneManager {
         backWall.position.set(0, 4, -2.5);
         this.scene.add(backWall);
 
-        // 2. Dark Laboratory Slate Table (إردواز معملي كحلي داكن لإبراز الزجاج والشفافية)
+        // 2. Deep Slate / Dark Charcoal Table (إردواز كحلي داكن فاحم #0f172a لإبراز شفافية الزجاج)
         const tableGeo = new THREE.BoxGeometry(7.6, 0.22, 3.8);
         const tableMat = new THREE.MeshStandardMaterial({
-            color: 0x1e293b,
-            roughness: 0.35,
-            metalness: 0.15
+            color: 0x0f172a,
+            roughness: 0.28,
+            metalness: 0.18
         });
         const table = new THREE.Mesh(tableGeo, tableMat);
         table.position.set(0, -0.11, 0.2);
@@ -400,7 +400,7 @@ export class SceneManager {
         this.scene.add(table);
 
         const rimGeo = new THREE.BoxGeometry(7.62, 0.08, 0.06);
-        const rimMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.35, metalness: 0.1 });
+        const rimMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.25, metalness: 0.35 });
         const rim = new THREE.Mesh(rimGeo, rimMat);
         rim.position.set(0, -0.02, 2.11);
         this.scene.add(rim);
