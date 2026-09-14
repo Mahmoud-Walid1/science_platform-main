@@ -31,13 +31,13 @@ export class SingleBeaker3D {
     initBeakerMesh() {
         const beakerGeo = new THREE.CylinderGeometry(0.35, 0.32, 0.72, 36, 1, true);
         const glassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
+            color: 0xf8fafc,
             transparent: true,
-            opacity: 0.45,
-            roughness: 0.05,
-            metalness: 0.1,
-            transmission: 0.95,
-            thickness: 0.3,
+            opacity: 0.65,
+            roughness: 0.08,
+            metalness: 0.15,
+            transmission: 0.88,
+            thickness: 0.4,
             ior: 1.52,
             depthWrite: false
         });

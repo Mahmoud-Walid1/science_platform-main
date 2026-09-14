@@ -54,11 +54,33 @@ $available_packages = mysqli_query($conn, "SELECT name, duration_months, store_u
 
 // تعيين الأيقونات والألوان المميزة للتجارب
 function getExpVisuals($code_name, $title) {
+    // 1. أولوية عليا: تجربة انقسام الخلايا وتكاثرها (أيقونة بيولوجية متخصصة لانقسام وتخصر الخلية الميتوزي والميوزي)
+    if ($code_name === 'cell_division' || strpos($code_name, 'division') !== false || strpos($code_name, 'cell') !== false || strpos($title, 'انقسام') !== false || strpos($title, 'الخلايا') !== false || strpos($title, 'الخلية') !== false) {
+        $mitosis_svg = '<svg width="34" height="34" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <!-- الغشاء الخلوي المتخصر (Cytokinesis Cleaving Cell Membrane) -->
+            <path d="M 24,14.5 C 20.5,14.5 18,9 13.5,9 C 6.5,9 2,15 2,24 C 2,33 6.5,39 13.5,39 C 18,39 20.5,33.5 24,33.5 C 27.5,33.5 30,39 34.5,39 C 41.5,39 46,33 46,24 C 46,15 41.5,9 34.5,9 C 30,9 27.5,14.5 24,14.5 Z" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- نواتان وليدتان (Two Daughter Nuclei) -->
+            <circle cx="14" cy="24" r="5.2" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2 1.5"/>
+            <circle cx="34" cy="24" r="5.2" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2 1.5"/>
+            <!-- كروموسومات متكاثفة داخل كل نواة (Condensed Chromosomes) -->
+            <path d="M 12,22 L 16,26 M 16,22 L 12,26" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M 32,22 L 36,26 M 36,22 L 32,26" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <!-- خيوط المغزل في منطقة التخصر (Spindle Fibers across Cleavage Furrow) -->
+            <line x1="19.5" y1="21.5" x2="28.5" y2="21.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="1.5 1.5"/>
+            <line x1="19.5" y1="26.5" x2="28.5" y2="26.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="1.5 1.5"/>
+            <!-- مؤشرات انضغاط حلقة التخصر (Contractile Ring Marks) -->
+            <path d="M 24,6.5 L 24,11.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M 24,41.5 L 24,36.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>';
+        return [
+            'icon' => 'fas fa-dna',
+            'svg' => $mitosis_svg,
+            'bg' => 'linear-gradient(135deg, #ede9fe, #c4b5fd)',
+            'color' => '#6d28d9'
+        ];
+    }
     if (strpos($code_name, 'chemical_change') !== false || strpos($code_name, 'gas') !== false || strpos($code_name, 'vinegar') !== false || strpos($title, 'التغير الكيميائي') !== false || strpos($title, 'تكوّن غاز') !== false || strpos($title, 'الخل') !== false) {
         return ['icon' => 'fas fa-wind', 'bg' => 'linear-gradient(135deg, #e0f2fe, #7dd3fc)', 'color' => '#0284c7'];
-    }
-    if ($code_name === 'cell_division' || strpos($code_name, 'division') !== false || strpos($title, 'انقسام') !== false) {
-        return ['icon' => 'fas fa-dna', 'bg' => 'linear-gradient(135deg, #ede9fe, #c4b5fd)', 'color' => '#6d28d9'];
     }
     if ($code_name === 'photosynthesis_elementary' || strpos($title, 'نمو النبات') !== false) {
         return ['icon' => 'fas fa-sun', 'bg' => 'linear-gradient(135deg, #fef9c3, #86efac)', 'color' => '#16a34a'];
@@ -416,7 +438,11 @@ function getExpVisuals($code_name, $title) {
                     <a href="<?=htmlspecialchars($exp['page_url'])?>" class="exp-card exp-item-card">
                         <div class="card-top">
                             <div class="exp-icon-box" style="background: <?=$visuals['bg']?>; color: <?=$visuals['color']?>;">
-                                <i class="<?=$visuals['icon']?>"></i>
+                                <?php if (!empty($visuals['svg'])): ?>
+                                    <?=$visuals['svg']?>
+                                <?php else: ?>
+                                    <i class="<?=$visuals['icon']?>"></i>
+                                <?php endif; ?>
                             </div>
                             <span class="exp-badge-active"><i class="fas fa-check"></i> متاح</span>
                         </div>
@@ -430,7 +456,11 @@ function getExpVisuals($code_name, $title) {
                     <div class="exp-card disabled exp-item-card" title="يلزم شحن كود الاشتراك لتشغيل التجربة">
                         <div class="card-top">
                             <div class="exp-icon-box" style="background: #f1f5f9; color: #94a3b8;">
-                                <i class="<?=$visuals['icon']?>"></i>
+                                <?php if (!empty($visuals['svg'])): ?>
+                                    <?=$visuals['svg']?>
+                                <?php else: ?>
+                                    <i class="<?=$visuals['icon']?>"></i>
+                                <?php endif; ?>
                             </div>
                             <span class="exp-badge-lock"><i class="fas fa-lock"></i> كود مطلوب</span>
                         </div>

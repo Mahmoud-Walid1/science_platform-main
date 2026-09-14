@@ -146,12 +146,13 @@ export class Tools3D {
     buildFilterMesh(group) {
         const standMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.2 });
         const glassFunnelMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
+            color: 0xf8fafc,
             transparent: true,
-            opacity: 0.45,
-            roughness: 0.05,
-            transmission: 0.92,
-            thickness: 0.15,
+            opacity: 0.65,
+            roughness: 0.08,
+            metalness: 0.15,
+            transmission: 0.88,
+            thickness: 0.35,
             ior: 1.5,
             depthWrite: false
         });
@@ -296,12 +297,13 @@ export class Tools3D {
 
     buildSeparatoryFunnelMesh(group) {
         const glassMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
+            color: 0xf8fafc,
             transparent: true,
-            opacity: 0.45,
-            roughness: 0.05,
-            transmission: 0.92,
-            thickness: 0.15,
+            opacity: 0.65,
+            roughness: 0.08,
+            metalness: 0.15,
+            transmission: 0.88,
+            thickness: 0.35,
             ior: 1.5,
             depthWrite: false
         });
