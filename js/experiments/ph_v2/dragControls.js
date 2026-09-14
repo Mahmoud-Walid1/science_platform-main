@@ -2,11 +2,12 @@
 import * as THREE from 'three';
 
 export class DragControls3D {
-    constructor(sceneManager, litmusPapers, phMeter, phEngine) {
+    constructor(sceneManager, litmusPapers, phMeter, phEngine, uiOverlay) {
         this.sceneManager = sceneManager;
         this.litmusPapers = litmusPapers;
         this.phMeter = phMeter;
         this.phEngine = phEngine;
+        this.uiOverlay = uiOverlay;
 
         this.canvas = sceneManager.canvas;
         this.camera = sceneManager.camera;
@@ -20,23 +21,59 @@ export class DragControls3D {
     }
 
     bindEvents() {
-        this.canvas.addEventListener('pointerdown', (e) => this.onPointerDown(e));
-        this.canvas.addEventListener('pointermove', (e) => this.onPointerMove(e));
-        this.canvas.addEventListener('pointerup', () => this.onPointerUp());
+        this.canvas.style.touchAction = 'none';
+
+        const extractClientCoords = (e) => {
+            if (e.touches && e.touches.length > 0) {
+                return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+            }
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                return { clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY };
+            }
+            return { clientX: e.clientX, clientY: e.clientY };
+        };
+
+        const handleStart = (e) => {
+            const coords = extractClientCoords(e);
+            this.onPointerDown(coords.clientX, coords.clientY, e);
+        };
+
+        const handleMove = (e) => {
+            if (!this.draggedObject) return;
+            if (e.preventDefault && e.cancelable) e.preventDefault();
+            const coords = extractClientCoords(e);
+            this.onPointerMove(coords.clientX, coords.clientY);
+        };
+
+        const handleEnd = () => {
+            this.onPointerUp();
+        };
+
+        this.canvas.addEventListener('pointerdown', handleStart);
+        window.addEventListener('pointermove', handleMove);
+        window.addEventListener('pointerup', handleEnd);
+
+        // Mobile Touch Fallback Listeners
+        this.canvas.addEventListener('touchstart', handleStart, { passive: false });
+        window.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('touchend', handleEnd);
     }
 
-    onPointerDown(e) {
+    onPointerDown(clientX, clientY, rawEvent) {
         const rect = this.canvas.getBoundingClientRect();
-        this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        this.mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
 
-        // 1. Check for clicking the 3D Power Button on the pH Meter
-        if (this.phMeter.visible && this.phMeter.powerButtonMesh) {
-            const btnIntersects = this.raycaster.intersectObject(this.phMeter.powerButtonMesh);
+        // 1. Check for clicking the 3D pH Meter (Body, Screen, or Power Button)
+        if (this.phMeter.visible && this.phMeter.group) {
+            const btnIntersects = this.raycaster.intersectObject(this.phMeter.group, true);
             if (btnIntersects.length > 0) {
                 this.phMeter.togglePower();
+                if (this.uiOverlay) {
+                    this.uiOverlay.updatePowerBtnUI();
+                }
                 this.phEngine.checkInteractions();
                 return; // Click handled, do not drag
             }
@@ -60,7 +97,9 @@ export class DragControls3D {
             // Direct match for papers
             if (obj.name === "bluePaper" || obj.name === "redPaper") {
                 this.draggedObject = obj;
-                this.canvas.setPointerCapture(e.pointerId);
+                if (rawEvent && rawEvent.pointerId && this.canvas.setPointerCapture) {
+                    try { this.canvas.setPointerCapture(rawEvent.pointerId); } catch (err) {}
+                }
 
                 // Check if this was an active paper inside a box to replenish
                 const paperObj = this.litmusPapers.papers.find(p => p.mesh === obj || p.id === obj.userData?.id);
@@ -73,7 +112,9 @@ export class DragControls3D {
             while (obj && obj !== this.sceneManager.scene) {
                 if (obj.name === "electrodeGroup") {
                     this.draggedObject = obj;
-                    this.canvas.setPointerCapture(e.pointerId);
+                    if (rawEvent && rawEvent.pointerId && this.canvas.setPointerCapture) {
+                        try { this.canvas.setPointerCapture(rawEvent.pointerId); } catch (err) {}
+                    }
                     return;
                 }
                 obj = obj.parent;
@@ -81,12 +122,12 @@ export class DragControls3D {
         }
     }
 
-    onPointerMove(e) {
+    onPointerMove(clientX, clientY) {
         if (!this.draggedObject) return;
 
         const rect = this.canvas.getBoundingClientRect();
-        this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        this.mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
         

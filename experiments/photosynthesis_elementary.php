@@ -43,6 +43,18 @@ $js_v  = file_exists('../js/experiments/photosynthesis_elementary/app.js') ? fil
 </head>
 <body class="photosynthesis-elem-body">
 
+    <!-- Fullscreen Mobile Landscape Rotation Warning Overlay -->
+    <div class="rotate-device-overlay" id="rotateOverlay">
+        <div class="rotate-card">
+            <div class="phone-anim-icon">
+                <i class="fas fa-mobile-screen-button"></i>
+                <i class="fas fa-rotate-right rotate-arrow"></i>
+            </div>
+            <h2>يرجى تدوير شاشة الهاتف 📱</h2>
+            <p>للحصول على أفضل تجربة تفاعلية للمختبر، يرجى تحويل الهاتف إلى وضع العرض الأفقي (Landscape Mode)</p>
+        </div>
+    </div>
+
     <!-- Main Container -->
     <div class="photosynthesis-elem-container">
         

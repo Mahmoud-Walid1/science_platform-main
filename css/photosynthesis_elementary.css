@@ -33,20 +33,22 @@
     -webkit-user-select: none;
 }
 
-body {
+html, body {
     font-family: var(--font-cairo);
     background: #e2e8f0;
     color: var(--text-main);
     overflow: hidden;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    height: 100dvh;
+    width: 100%;
     margin: 0;
     padding: 0;
 }
 
 .photosynthesis-elem-container {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -257,14 +259,15 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 350px;
+    min-height: 0;
     display: flex;
+    overflow: hidden;
 }
 
 #webglContainer {
     width: 100%;
     height: 100%;
-    min-height: 350px;
+    min-height: 0;
     flex: 1;
     display: block;
 }
@@ -317,6 +320,7 @@ body {
 /* Bottom Controls Bar */
 .controls-bar {
     height: 120px;
+    flex-shrink: 0;
     background: #ffffff;
     border-top: 2px solid #cbd5e1;
     padding: 10px 16px;
@@ -466,4 +470,284 @@ body {
     font-size: 0.85rem;
     font-weight: 800;
     color: #334155;
+}
+
+/* ==========================================================================
+   FULLSCREEN MOBILE PORTRAIT ROTATION WARNING OVERLAY
+   ========================================================================== */
+.rotate-device-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    z-index: 999999;
+    color: #ffffff;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.rotate-card {
+    background: rgba(30, 41, 59, 0.85);
+    border: 2px solid rgba(56, 189, 248, 0.4);
+    border-radius: 28px;
+    padding: 32px 24px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(56, 189, 248, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: rotateCardFade 0.4s ease-out;
+}
+
+@keyframes rotateCardFade {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.phone-anim-icon {
+    position: relative;
+    font-size: 3.5rem;
+    color: #38bdf8;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rotate-arrow {
+    position: absolute;
+    font-size: 1.8rem;
+    color: #22c55e;
+    top: -5px;
+    right: -15px;
+    animation: spinRotate 2s infinite linear;
+}
+
+@keyframes spinRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.rotate-card h2 {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.rotate-card p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-lock-landscape {
+    margin-top: 10px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 16px;
+    font-family: var(--font-cairo);
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+    transition: all 0.25s ease;
+}
+
+.btn-lock-landscape:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(16, 185, 129, 0.5);
+}
+
+/* Force Orientation Overlay when Mobile in Portrait Mode */
+@media screen and (max-width: 950px) and (orientation: portrait) {
+    .rotate-device-overlay {
+        display: flex !important;
+    }
+}
+
+/* ==========================================================================
+   OPTIMIZED COMPACT MOBILE LANDSCAPE STYLES
+   ========================================================================== */
+@media screen and (max-height: 600px), screen and (orientation: landscape) and (max-width: 1280px) {
+    .lab-header {
+        height: 42px !important;
+        padding: 0 10px !important;
+    }
+
+    .brand-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.85rem !important;
+        border-radius: 6px !important;
+    }
+
+    .brand-text .main-title {
+        font-size: 0.85rem !important;
+    }
+
+    .reset-btn {
+        padding: 3px 8px !important;
+        font-size: 0.72rem !important;
+        border-radius: 8px !important;
+    }
+
+    .exit-btn {
+        padding: 3px 8px !important;
+        font-size: 0.72rem !important;
+        border-radius: 8px !important;
+    }
+
+    /* Rate Gauge Side Card in Mobile Landscape */
+    .rate-gauge-card {
+        left: 8px !important;
+        top: 8px !important;
+        transform: none !important;
+        padding: 6px 8px !important;
+        min-width: auto !important;
+        max-width: 110px !important;
+        border-radius: 14px !important;
+        gap: 4px !important;
+        z-index: 50 !important;
+        background: rgba(255, 255, 255, 0.88) !important;
+        backdrop-filter: blur(8px) !important;
+    }
+
+    .gauge-icon {
+        font-size: 0.95rem !important;
+    }
+
+    .gauge-title {
+        font-size: 0.68rem !important;
+    }
+
+    .gauge-bar-wrapper {
+        height: 75px !important;
+        gap: 4px !important;
+    }
+
+    .gauge-track {
+        width: 12px !important;
+    }
+
+    .gauge-pointer {
+        width: 18px !important;
+        height: 8px !important;
+        left: -3px !important;
+        border-radius: 4px !important;
+    }
+
+    .gauge-labels {
+        font-size: 0.65rem !important;
+    }
+
+    /* Minerals Key Card in Mobile Landscape */
+    .minerals-key-card {
+        top: 8px !important;
+        right: 8px !important;
+        padding: 6px 8px !important;
+        min-width: 110px !important;
+        max-height: 120px !important;
+        overflow-y: auto !important;
+        border-radius: 14px !important;
+        gap: 4px !important;
+        z-index: 50 !important;
+        background: rgba(255, 255, 255, 0.88) !important;
+        backdrop-filter: blur(8px) !important;
+    }
+
+    .key-header {
+        padding-bottom: 2px !important;
+        gap: 4px !important;
+    }
+
+    .key-icon {
+        font-size: 0.85rem !important;
+    }
+
+    .key-title {
+        font-size: 0.7rem !important;
+    }
+
+    .key-list {
+        gap: 2px !important;
+    }
+
+    .elem-badge {
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 0.62rem !important;
+    }
+
+    .elem-name {
+        font-size: 0.68rem !important;
+    }
+
+    /* Stage & WebGL Container in Mobile Landscape */
+    .stage-wrapper, #webglContainer {
+        min-height: 0 !important;
+        flex: 1 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+
+    /* Bottom Controls Bar in Mobile Landscape */
+    .controls-bar {
+        height: 56px !important;
+        flex-shrink: 0 !important;
+        padding: 3px 6px !important;
+        gap: 4px !important;
+    }
+
+    .ctrl-card {
+        padding: 2px 4px !important;
+        gap: 1px !important;
+        border-radius: 10px !important;
+        max-width: none !important;
+    }
+
+    .ctrl-header {
+        gap: 3px !important;
+    }
+
+    .ctrl-icon {
+        font-size: 0.85rem !important;
+    }
+
+    .ctrl-title {
+        font-size: 0.7rem !important;
+        font-weight: 800 !important;
+    }
+
+    .segmented-switch {
+        padding: 2px !important;
+        border-radius: 6px !important;
+        gap: 2px !important;
+    }
+
+    .switch-btn {
+        padding: 3px 2px !important;
+        font-size: 0.68rem !important;
+        font-weight: 800 !important;
+        border-radius: 4px !important;
+    }
 }
