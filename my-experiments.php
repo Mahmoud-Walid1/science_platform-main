@@ -38,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
     }
 }
 
-$experiments = mysqli_query($conn, "SELECT id, code_name, title, page_url, image_url, is_active FROM experiments ORDER BY id ASC");
+ensureExperimentsSchemaUpdated();
+$experiments = mysqli_query($conn, "SELECT id, code_name, title, page_url, image_url, is_active FROM experiments ORDER BY display_order ASC, id ASC");
 $active_exps = [];
 $coming_exps = [];
 while ($row = mysqli_fetch_assoc($experiments)) {

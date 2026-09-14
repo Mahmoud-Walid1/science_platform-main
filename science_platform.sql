@@ -105,24 +105,25 @@ CREATE TABLE IF NOT EXISTS `experiments` (
   `page_url` varchar(100) NOT NULL,
   `image_url` varchar(255) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT 1 COMMENT '1=نشطة, 0=معطلة, 2=قيد التنفيذ/قريباً',
+  `display_order` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `code_name` (`code_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `experiments` (`id`, `code_name`, `title`, `page_url`, `is_active`) VALUES
-(1, 'matter_states', 'حالات المادة', 'experiments/matter.php', 1),
-(2, 'electric_circuits', 'الدوائر الكهربائية', 'experiments/circuits.php', 1),
-(3, 'electromagnet', 'المغناطيس الكهربائي', 'experiments/magnet.php', 1),
-(4, 'newton_laws', 'قوانين نيوتن للحركة', 'experiments/newton.php', 1),
-(5, 'light_prism', 'تحليل الضوء بالمنشور', 'experiments/prism.php', 1),
-(6, 'mixture_separation', 'فصل المخاليط', 'experiments/separation_v2.php', 1),
-(7, 'ph_measurement', 'قياس الأس الهيدروجيني (pH)', 'experiments/ph_v2.php', 1),
-(8, 'photosynthesis_factors', 'العوامل المؤثرة على البناء الضوئي', 'experiments/photosynthesis_factors.php', 1),
-(9, 'photosynthesis', 'تجربة البناء الضوئي التفاعلية', 'experiments/photosynthesis.php', 1),
-(10, 'photosynthesis_elementary', 'رحلة نمو النبات 3D (البناء الضوئي)', 'experiments/photosynthesis_elementary.php', 1),
-(11, 'cell_division', 'المجهر الافتراضي وانقسام الخلايا (وضع الشرح للمعلم)', 'experiments/cell_division.php', 1),
-(12, 'chemical_change', 'دلائل حدوث التغير الكيميائي (تكوّن غاز)', 'experiments/vinegar_balloon.php', 1)
+INSERT INTO `experiments` (`id`, `code_name`, `title`, `page_url`, `is_active`, `display_order`) VALUES
+(1, 'matter_states', 'حالات المادة', 'experiments/matter.php', 1, 1),
+(2, 'electric_circuits', 'الدوائر الكهربائية', 'experiments/circuits.php', 1, 2),
+(3, 'electromagnet', 'المغناطيس الكهربائي', 'experiments/magnet.php', 1, 3),
+(4, 'newton_laws', 'قوانين نيوتن للحركة', 'experiments/newton.php', 1, 4),
+(5, 'light_prism', 'تحليل الضوء بالمنشور', 'experiments/prism.php', 1, 5),
+(6, 'mixture_separation', 'فصل المخاليط', 'experiments/separation_v2.php', 1, 6),
+(7, 'ph_measurement', 'قياس الأس الهيدروجيني (pH)', 'experiments/ph_v2.php', 1, 7),
+(8, 'photosynthesis_factors', 'العوامل المؤثرة على البناء الضوئي', 'experiments/photosynthesis_factors.php', 1, 8),
+(9, 'photosynthesis', 'تجربة البناء الضوئي التفاعلية', 'experiments/photosynthesis.php', 1, 9),
+(10, 'photosynthesis_elementary', 'رحلة نمو النبات 3D (البناء الضوئي)', 'experiments/photosynthesis_elementary.php', 1, 10),
+(11, 'cell_division', 'المجهر الافتراضي وانقسام الخلايا (وضع الشرح للمعلم)', 'experiments/cell_division.php', 1, 11),
+(12, 'chemical_change', 'دلائل حدوث التغير الكيميائي (تكوّن غاز)', 'experiments/vinegar_balloon.php', 1, 12)
 ON DUPLICATE KEY UPDATE `id`=`id`;
 
 -- --------------------------------------------------------

@@ -419,13 +419,33 @@ function getAllPackages($active_only = false) {
 }
 
 /**
- * جلب جميع التجارب
+ * التأكد الآلي من وجود عمود display_order في جدول التجارب وتعيين الترتيب الافتراضي
+ */
+function ensureExperimentsSchemaUpdated() {
+    global $conn;
+    if (!$conn) return;
+
+    static $checked = false;
+    if ($checked) return;
+    $checked = true;
+
+    // التحقق من وجود عمود display_order في جدول experiments
+    $col_check = $conn->query("SHOW COLUMNS FROM experiments LIKE 'display_order'");
+    if ($col_check && $col_check->num_rows === 0) {
+        $conn->query("ALTER TABLE experiments ADD COLUMN display_order INT DEFAULT 0 AFTER is_active");
+        $conn->query("UPDATE experiments SET display_order = id WHERE display_order = 0 OR display_order IS NULL");
+    }
+}
+
+/**
+ * جلب جميع التجارب مع ترتيب العرض المخصص
  */
 function getAllExperiments($active_only = false) {
     global $conn;
+    ensureExperimentsSchemaUpdated();
     $query = "SELECT * FROM experiments";
     if ($active_only) $query .= " WHERE is_active = 1";
-    $query .= " ORDER BY id ASC";
+    $query .= " ORDER BY display_order ASC, id ASC";
     $result = mysqli_query($conn, $query);
     return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 }

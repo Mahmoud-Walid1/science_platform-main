@@ -9,6 +9,26 @@ if (!file_exists($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
+// معالجة طلب إعادة ترتيب التجارب عبر AJAX
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'reorder_experiments') {
+    header('Content-Type: application/json; charset=utf-8');
+    $order = $_POST['order'] ?? [];
+    if (is_array($order) && !empty($order)) {
+        ensureExperimentsSchemaUpdated();
+        $stmt = $conn->prepare("UPDATE experiments SET display_order = ? WHERE id = ?");
+        foreach ($order as $index => $id) {
+            $order_num = $index + 1;
+            $exp_id = (int)$id;
+            $stmt->bind_param("ii", $order_num, $exp_id);
+            $stmt->execute();
+        }
+        echo json_encode(['success' => true, 'message' => 'تم حفظ الترتيب الجديد بنجاح!']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'بيانات الترتيب غير صحيحة']);
+    }
+    exit();
+}
+
 // تغيير حالة التجربة المباشر
 if (isset($_GET['status']) && isset($_GET['id'])) {
     $exp_id = (int)$_GET['id'];
@@ -123,6 +143,129 @@ $experiments = getAllExperiments();
         .form-group label { display: block; font-weight: 700; font-size: 0.85rem; color: #475569; margin-bottom: 6px; }
         .form-group input { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; }
         .msg { padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; background: #dcfce7; color: #166534; font-weight: 700; }
+
+        /* Reorder Controls & Card Styles */
+        .reorder-hint-banner {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            box-shadow: 0 2px 6px rgba(30, 64, 175, 0.05);
+        }
+        .card-reorder-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 6px 12px;
+            margin-bottom: 14px;
+            gap: 8px;
+        }
+        .drag-handle {
+            cursor: grab;
+            color: #64748b;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .drag-handle:hover {
+            color: var(--main);
+            background: #e2e8f0;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        .order-badge {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: #0f172a;
+            background: #e2e8f0;
+            padding: 2px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .order-badge strong {
+            color: var(--main);
+            font-size: 1.0rem;
+        }
+        .reorder-arrow-btns {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-arrow {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        .btn-arrow:hover {
+            background: var(--main);
+            color: #ffffff;
+            border-color: var(--main);
+            transform: translateY(-1px);
+        }
+        .card.exp-sortable-card {
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
+        }
+        .card.exp-sortable-card.dragging {
+            opacity: 0.4;
+            border: 2px dashed var(--accent);
+            transform: scale(0.98);
+        }
+        .card.exp-sortable-card.drag-over {
+            border-color: var(--accent);
+            box-shadow: 0 0 18px rgba(0, 168, 212, 0.4);
+            transform: translateY(-4px);
+        }
+        .reorder-toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-60px);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            box-shadow: 0 12px 28px rgba(16, 185, 129, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reorder-toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -180,9 +323,34 @@ $experiments = getAllExperiments();
             </form>
         </div>
 
-        <div class="grid">
-            <?php foreach ($experiments as $exp): ?>
-                <div class="card">
+        <!-- تنبيه وتعليمات إعادة الترتيب -->
+        <div class="reorder-hint-banner">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-arrows-up-down-left-right" style="font-size: 1.2rem; color: var(--accent);"></i>
+                <span><strong>إعادة ترتيب ظهور التجارب:</strong> يمكنك سحب وإفلات البطاقات بالماوس أو استخدام أزرار الأسهم (▲ / ▼)، ويتم حفظ الترتيب الجديد تلقائياً وفورياً.</span>
+            </div>
+            <span style="font-size: 0.85rem; color: #64748b; background: white; padding: 4px 12px; border-radius: 20px; border: 1px solid #cbd5e1;">حفظ تلقائي (Auto-Save)</span>
+        </div>
+
+        <div class="grid" id="experimentsGrid">
+            <?php foreach ($experiments as $idx => $exp): ?>
+                <div class="card exp-sortable-card" draggable="true" data-id="<?=$exp['id']?>">
+                    <!-- شريط أدوات التحكم في الترتيب -->
+                    <div class="card-reorder-toolbar">
+                        <div class="drag-handle" title="اسحب بالماوس أو اللمس لإعادة الترتيب">
+                            <i class="fas fa-grip-vertical"></i>
+                        </div>
+                        <span class="order-badge">الترتيب: #<strong class="order-num"><?=$idx + 1?></strong></span>
+                        <div class="reorder-arrow-btns">
+                            <button type="button" class="btn-arrow btn-up" title="تقديم للأعلى" onclick="moveCard(this, -1)">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                            <button type="button" class="btn-arrow btn-down" title="تأخير للأسفل" onclick="moveCard(this, 1)">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="card-header">
                         <div class="card-title"><?=htmlspecialchars($exp['title'])?></div>
                         <div>
@@ -227,5 +395,129 @@ $experiments = getAllExperiments();
             <?php endforeach; ?>
         </div>
     </div>
+
+    <!-- Floating Success Toast -->
+    <div id="reorderToast" class="reorder-toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="reorderToastText">تم حفظ الترتيب الجديد بنجاح!</span>
+    </div>
+
+    <!-- Interactive Drag & Drop Reorder Scripts -->
+    <script>
+    let draggedCard = null;
+
+    function initSortableCards() {
+        const grid = document.getElementById('experimentsGrid');
+        if (!grid) return;
+
+        const cards = grid.querySelectorAll('.exp-sortable-card');
+
+        cards.forEach(card => {
+            card.addEventListener('dragstart', (e) => {
+                // Don't drag if interacting with inputs or buttons
+                if (['INPUT', 'SELECT', 'BUTTON', 'TEXTAREA'].includes(e.target.tagName)) {
+                    e.preventDefault();
+                    return;
+                }
+                draggedCard = card;
+                card.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', card.dataset.id);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                cards.forEach(c => c.classList.remove('drag-over'));
+                draggedCard = null;
+                saveNewOrder();
+            });
+
+            card.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if (draggedCard && draggedCard !== card) {
+                    card.classList.add('drag-over');
+                }
+            });
+
+            card.addEventListener('dragleave', () => {
+                card.classList.remove('drag-over');
+            });
+
+            card.addEventListener('drop', (e) => {
+                e.preventDefault();
+                card.classList.remove('drag-over');
+                if (draggedCard && draggedCard !== card) {
+                    const rect = card.getBoundingClientRect();
+                    const next = (e.clientX - rect.left) / (rect.right - rect.left) < 0.5;
+                    grid.insertBefore(draggedCard, next ? card.nextSibling : card);
+                    updateOrderBadges();
+                }
+            });
+        });
+    }
+
+    function moveCard(button, direction) {
+        const card = button.closest('.exp-sortable-card');
+        const grid = document.getElementById('experimentsGrid');
+        if (!card || !grid) return;
+
+        if (direction === -1 && card.previousElementSibling) {
+            grid.insertBefore(card, card.previousElementSibling);
+            updateOrderBadges();
+            saveNewOrder();
+        } else if (direction === 1 && card.nextElementSibling) {
+            grid.insertBefore(card.nextElementSibling, card);
+            updateOrderBadges();
+            saveNewOrder();
+        }
+    }
+
+    function updateOrderBadges() {
+        const cards = document.querySelectorAll('#experimentsGrid .exp-sortable-card');
+        cards.forEach((card, idx) => {
+            const badge = card.querySelector('.order-num');
+            if (badge) badge.innerText = idx + 1;
+        });
+    }
+
+    function saveNewOrder() {
+        updateOrderBadges();
+        const cards = document.querySelectorAll('#experimentsGrid .exp-sortable-card');
+        const order = Array.from(cards).map(c => c.dataset.id);
+
+        const formData = new FormData();
+        formData.append('action', 'reorder_experiments');
+        order.forEach(id => formData.append('order[]', id));
+
+        fetch('experiments.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showReorderToast(data.message || 'تم حفظ الترتيب الجديد بنجاح!');
+            }
+        })
+        .catch(err => {
+            console.error('Error saving order:', err);
+        });
+    }
+
+    function showReorderToast(msg) {
+        const toast = document.getElementById('reorderToast');
+        const text = document.getElementById('reorderToastText');
+        if (!toast) return;
+        if (text) text.innerText = msg;
+        toast.classList.add('active');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+            toast.classList.remove('active');
+        }, 2800);
+    }
+
+    document.addEventListener('DOMContentLoaded', initSortableCards);
+    </script>
 </body>
 </html>
