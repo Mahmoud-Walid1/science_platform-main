@@ -123,7 +123,8 @@ INSERT INTO `experiments` (`id`, `code_name`, `title`, `page_url`, `is_active`, 
 (9, 'photosynthesis', 'تجربة البناء الضوئي التفاعلية', 'experiments/photosynthesis.php', 1, 9),
 (10, 'photosynthesis_elementary', 'رحلة نمو النبات 3D (البناء الضوئي)', 'experiments/photosynthesis_elementary.php', 1, 10),
 (11, 'cell_division', 'المجهر الافتراضي وانقسام الخلايا (وضع الشرح للمعلم)', 'experiments/cell_division.php', 1, 11),
-(12, 'chemical_change', 'دلائل حدوث التغير الكيميائي (تكوّن غاز)', 'experiments/vinegar_balloon.php', 1, 12)
+(12, 'chemical_change', 'دلائل حدوث التغير الكيميائي (تكوّن غاز)', 'experiments/vinegar_balloon.php', 1, 12),
+(13, 'blood_typing', 'تحديد فصائل الدم (ABO و Rh)', 'experiments/blood_typing.php', 1, 13)
 ON DUPLICATE KEY UPDATE `id`=`id`;
 
 -- --------------------------------------------------------

@@ -1,0 +1,2046 @@
+/* ==========================================================================
+   Virtual Laboratory: Blood Typing Simulation (ABO & Rh)
+   Authentic UI/UX Pro Theme - Fixed Viewport, Left Sidebar, Modal Notebook
+   ========================================================================== */
+
+:root {
+    /* Outer UI Colors (White & Light Green) */
+    --ui-page-bg: #f8fafc;
+    --ui-header-bg: #ffffff;
+    --ui-green-dark: #166534;
+    --ui-green-primary: #15803d;
+    --ui-green-light: #22c55e;
+    --ui-green-tint: #f0fdf4;
+    --ui-border-green: #86efac;
+    --ui-border-gray: #e2e8f0;
+    --ui-text-dark: #0f172a;
+    --ui-text-muted: #64748b;
+
+    /* Stage Lab Colors (Deep Teal LabXchange Bench) */
+    --lab-wall-teal: #004d5a;
+    --lab-shelf-dark: #0b2d37;
+    --lab-shelf-bracket: #1e4550;
+    --lab-counter-top: #2c4852;
+    --lab-counter-lip: #446875;
+    --lab-cabinet-body: #385663;
+    --lab-cabinet-seam: #253d47;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+}
+
+html, body {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden; /* Prevent entire page from scrolling */
+    background-color: var(--ui-page-bg);
+    color: var(--ui-text-dark);
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 1. Header (Fixed Height 58px) */
+.lab-top-navbar {
+    height: 58px;
+    background: var(--ui-header-bg);
+    color: var(--ui-text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    border-bottom: 2px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
+    z-index: 50;
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ui-green-primary);
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ui-green-dark);
+}
+
+.header-left-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.notebook-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    color: var(--ui-green-dark);
+    border: 1.5px solid var(--ui-border-green);
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.notebook-toggle-btn:hover {
+    background: #dcfce7;
+}
+
+.sample-switcher-pill {
+    display: flex;
+    align-items: center;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 3px 12px;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.switcher-btn {
+    background: none;
+    border: none;
+    color: var(--ui-green-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.switcher-btn:hover {
+    background: #e2e8f0;
+}
+
+.exit-btn-red {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff5f5;
+    color: #dc2626;
+    border: 1.5px solid #fca5a5;
+    padding: 5px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: all 0.2s;
+}
+
+.exit-btn-red:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+/* 2. Main Layout Grid (Sidebar on Left, Stage on Right in RTL) */
+.main-lab-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px; /* In RTL: first column (1fr) is right, second (340px) is left */
+    gap: 16px;
+    padding: 14px 20px;
+    flex: 1;
+    height: calc(100vh - 58px);
+    overflow: hidden;
+    transition: grid-template-columns 0.35s cubic-bezier(0.4, 0, 0.2, 1), gap 0.35s ease;
+}
+
+.main-lab-layout.sidebar-collapsed {
+    grid-template-columns: 1fr 52px;
+    gap: 12px;
+}
+
+/* 3. Sidebar (دليل التجربة) positioned on the LEFT */
+.sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    overflow: hidden;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
+    position: relative;
+}
+
+.sidebar-panel.collapsed {
+    align-items: center;
+}
+
+.sidebar-title-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--ui-green-dark);
+    flex-shrink: 0;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 6px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.sidebar-title-bar:hover {
+    background: rgba(0, 95, 78, 0.08);
+}
+
+.sidebar-hamburger-btn {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ui-green-dark);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.sidebar-title-bar:hover .sidebar-hamburger-btn,
+.sidebar-hamburger-btn:hover {
+    background: #f0fdf4;
+    border-color: var(--ui-green-primary);
+    color: var(--ui-green-primary);
+    transform: scale(1.06);
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.2);
+}
+
+.sidebar-panel.collapsed .sidebar-title-bar {
+    padding: 4px 0;
+    justify-content: center;
+    width: 100%;
+}
+
+.sidebar-panel.collapsed .sidebar-hamburger-btn {
+    background: #ffffff;
+    border-color: var(--ui-green-primary);
+    color: var(--ui-green-primary);
+    box-shadow: 0 2px 10px rgba(0, 77, 90, 0.18);
+    transform: rotate(180deg);
+}
+
+.sidebar-title-text {
+    white-space: nowrap;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.sidebar-panel.collapsed .sidebar-title-text {
+    opacity: 0;
+    transform: translateX(-15px);
+    pointer-events: none;
+    display: none;
+}
+
+.sidebar-tabs-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    background: #ffffff;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1.5px solid #e2e8f0;
+    flex-shrink: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease;
+    max-height: 100px;
+    overflow: hidden;
+}
+
+.sidebar-panel.collapsed .sidebar-tabs-row {
+    opacity: 0;
+    transform: translateX(-30px);
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    pointer-events: none;
+}
+
+.phase-tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 4px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ui-text-muted);
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.phase-tab-item .phase-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+}
+
+.phase-tab-item.active {
+    background: #f0fdf4;
+    border-color: var(--ui-green-primary);
+    color: var(--ui-green-dark);
+}
+
+.phase-tab-item.active .phase-num {
+    background: var(--ui-green-primary);
+    color: #ffffff;
+}
+
+.phase-tab-item.completed {
+    background: #f0fdf4 !important;
+    border-color: #16a34a !important;
+    color: #15803d !important;
+}
+
+.phase-tab-item.completed .phase-num {
+    background: #16a34a !important;
+    color: #ffffff !important;
+    font-weight: 800;
+}
+
+/* Steps List (The ONLY scrollable container!) */
+.steps-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    overflow-y: auto; /* Only this scrolls vertically! */
+    padding-left: 4px;
+    transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.35s ease, padding 0.35s ease;
+}
+
+.sidebar-panel.collapsed .steps-cards-list {
+    opacity: 0;
+    transform: translateX(-40px);
+    pointer-events: none;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.steps-cards-list::-webkit-scrollbar {
+    width: 6px;
+}
+.steps-cards-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.step-guide-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.step-guide-card.active {
+    border-color: var(--ui-green-primary);
+    background: #f0fdf4;
+    box-shadow: 0 4px 10px rgba(22, 101, 52, 0.08);
+}
+
+.step-guide-card.completed {
+    border-color: #86efac !important;
+    background: #f0fdf4 !important;
+}
+
+.step-guide-card.completed .step-letter-badge {
+    background: #16a34a !important;
+    color: #ffffff !important;
+}
+
+.step-guide-card.completed .step-card-header {
+    color: #15803d;
+}
+
+.step-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--ui-text-dark);
+}
+
+.step-letter-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.step-guide-card.active .step-letter-badge {
+    background: var(--ui-green-primary);
+    color: #ffffff;
+}
+
+.step-card-body {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--ui-text-muted);
+}
+
+.step-card-action-container {
+    margin-top: 8px;
+    width: 100%;
+}
+
+.step-notebook-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #0d766e 0%, #044e54 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(13, 118, 110, 0.28);
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    width: 100%;
+}
+
+.step-notebook-btn:hover {
+    background: linear-gradient(135deg, #0f8c83 0%, #066269 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(13, 118, 110, 0.38);
+}
+
+.step-notebook-btn:active {
+    transform: translateY(0);
+}
+
+.step-notebook-btn svg {
+    flex-shrink: 0;
+}
+
+.step-action-btn {
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.step-action-btn:hover {
+    background: #0369a1;
+}
+
+/* 4. Stage Card (Fixed size, fits viewport) */
+.stage-card {
+    background: var(--lab-wall-teal);
+    border: 2px solid #003842;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Top Banner inside stage */
+.stage-top-banner {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    right: 14px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.banner-step-pill {
+    background: #0d766e;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.banner-instruction-text {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+    flex: 1;
+}
+
+.banner-notebook-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1.5px solid #86efac;
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.banner-notebook-btn:hover {
+    background: #16a34a;
+    color: #ffffff;
+    border-color: #16a34a;
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+}
+
+/* Lab Workspace Stage */
+.lab-workspace-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--lab-wall-teal);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+/* Wall Reference Poster */
+.wall-reference-poster {
+    position: absolute;
+    top: 68px;
+    left: 20px;
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 8px 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 5;
+    max-width: 360px;
+}
+
+.poster-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #0f172a;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.poster-reagents-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.poster-reagent-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.poster-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid #64748b;
+}
+
+.poster-dot.blue { background: #2563eb; }
+.poster-dot.yellow { background: #eab308; }
+.poster-dot.clear { background: #ffffff; }
+
+/* Upper Shelf */
+.lab-upper-shelf {
+    position: absolute;
+    top: 155px;
+    left: 0;
+    width: 100%;
+    height: 34px;
+    background: var(--lab-shelf-dark);
+    border-bottom: 3px solid #163e4b;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.shelf-bracket {
+    width: 12px;
+    height: 100%;
+    background: var(--lab-shelf-bracket);
+}
+
+/* Lower Countertop & Cabinets */
+.lab-bench-area {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding-bottom: 22px;
+    z-index: 10;
+}
+
+.lab-countertop-slab {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 75px;
+    background: linear-gradient(180deg, #33535f 0%, #203943 35%, #15272e 100%);
+    border-top: 5px solid #4a7584;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.25), 
+                0 -6px 20px rgba(0, 0, 0, 0.4),
+                inset 0 -12px 24px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.lab-cabinet-unit {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 26px;
+    background: linear-gradient(180deg, #2b4550 0%, #1a2c33 100%);
+    border-top: 2.5px solid #132127;
+    z-index: 2;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+.cabinet-handle {
+    width: 50px;
+    height: 6px;
+    background: linear-gradient(90deg, #94a3b8 0%, #f8fafc 45%, #cbd5e1 75%, #64748b 100%);
+    border-radius: 3px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45), inset 0 1px 1px #ffffff;
+    border: 0.5px solid #475569;
+}
+
+/* Floating Object Labels */
+.obj-floating-label {
+    position: absolute;
+    top: -24px;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: #ffffff;
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    z-index: 25;
+}
+
+.reagents-rack .obj-floating-label,
+.rack-container .obj-floating-label,
+.micropipette-slot .obj-floating-label {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    text-align: center !important;
+}
+
+.tools-cluster > .obj-floating-label {
+    right: 20px !important;
+    left: auto !important;
+    transform: translateX(50%) !important;
+    text-align: center !important;
+}
+
+/* 3D Isometric Lab Equipments */
+.rack-container {
+    position: relative;
+    z-index: 15;
+    background: linear-gradient(150deg, #134e5e 0%, #0b2d37 100%);
+    border: 2px solid #226477;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    /* Isometric 3D depth and shadow */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45), 
+                0 4px 0 #07222a, 
+                -4px 8px 14px rgba(0, 0, 0, 0.35),
+                inset 0 1.5px 0 rgba(255, 255, 255, 0.3);
+    transform: perspective(700px) rotateX(4deg);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.rack-tubes-grid {
+    display: flex;
+    gap: 6px;
+    padding: 2px 2px;
+}
+
+/* 3D Isometric Glass Blood Tubes */
+.blood-tube-item {
+    width: 29px;
+    height: 114px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.25s ease;
+}
+
+.blood-tube-item:hover, .blood-tube-item.selected {
+    transform: translateY(-10px) scale(1.05);
+}
+
+.blood-tube-item.selected {
+    filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.95)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+}
+
+.blood-tube-item.tube-step-target {
+    transform: translateY(-12px) scale(1.06);
+    filter: drop-shadow(0 0 16px #22c55e) drop-shadow(0 0 28px rgba(34, 197, 94, 0.65)) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
+    animation: tubeTargetPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes tubeTargetPulse {
+    0%, 100% {
+        transform: translateY(-12px) scale(1.05);
+        filter: drop-shadow(0 0 14px #22c55e) drop-shadow(0 0 24px rgba(34, 197, 94, 0.6));
+    }
+    50% {
+        transform: translateY(-16px) scale(1.09);
+        filter: drop-shadow(0 0 20px #4ade80) drop-shadow(0 0 32px rgba(74, 222, 128, 0.85));
+    }
+}
+
+/* 3D Mauve/Purple Cap with Cylindrical Volume */
+.tube-cap-purple {
+    width: 26px;
+    height: 20px;
+    background: linear-gradient(90deg, #9333ea 0%, #c084fc 30%, #a855f7 60%, #7e22ce 100%);
+    border-radius: 5px 5px 2px 2px;
+    border: 1px solid #6b21a8;
+    box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), 
+                inset 0 -2px 3px rgba(0, 0, 0, 0.35),
+                0 3px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.tube-cap-purple::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 20%;
+    width: 25%;
+    height: 80%;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+    filter: blur(1px);
+    pointer-events: none;
+}
+
+/* 3D Glass Body with Specular Sheen & Thickness */
+.tube-glass-body {
+    width: 22px;
+    height: 94px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.12) 25%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.3) 80%, rgba(15, 23, 42, 0.35) 100%);
+    backdrop-filter: blur(2px);
+    border: 1.5px solid rgba(255, 255, 255, 0.65);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35), inset -2px 0 5px rgba(0, 0, 0, 0.25);
+}
+
+/* Specular glass reflection beam */
+.tube-glass-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 2px;
+    width: 3.5px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 100%);
+    border-radius: 2px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.tube-label {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    font-size: 0.72rem;
+    text-align: center;
+    color: #0f172a;
+    font-weight: 900;
+    background: rgba(255, 255, 255, 0.96);
+    padding: 1px 0;
+    line-height: 1.1;
+    border-top: 1px solid #cbd5e1;
+    border-bottom: 1px solid #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+.tube-blood-level {
+    height: 65%;
+    background: linear-gradient(90deg, #991b1b 0%, #ef4444 35%, #b91c1c 70%, #7f1d1d 100%);
+    border-radius: 0 0 12px 12px;
+    position: relative;
+    box-shadow: inset 0 3px 5px rgba(255, 255, 255, 0.3), inset 0 -3px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* Meniscus curve at the top of blood level */
+.tube-blood-level::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: #dc2626;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* 3D Isometric Reagents Dropper Bottles & Tiered Rack */
+.reagents-rack {
+    position: relative;
+    z-index: 15;
+    display: flex;
+    gap: 14px;
+    background: linear-gradient(150deg, #134e5e 0%, #0b2d37 100%);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 2px solid #226477;
+    margin-bottom: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45), 
+                0 4px 0 #07222a, 
+                -4px 8px 14px rgba(0, 0, 0, 0.35),
+                inset 0 1.5px 0 rgba(255, 255, 255, 0.3);
+    transform: perspective(700px) rotateX(4deg);
+    transition: all 0.3s ease;
+}
+
+.reagents-rack.reagents-step-target {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.85), 
+                0 4px 0 #0284c7,
+                inset 0 0 12px rgba(56, 189, 248, 0.4) !important;
+    animation: rackTargetPulse 1.6s infinite ease-in-out;
+}
+
+@keyframes rackTargetPulse {
+    0%, 100% {
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.7), 0 4px 0 #0284c7, inset 0 0 8px rgba(56, 189, 248, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 26px rgba(56, 189, 248, 1), 0 4px 0 #38bdf8, inset 0 0 16px rgba(56, 189, 248, 0.55);
+    }
+}
+
+/* 3D Reagent Slot Footprint inside Rack */
+.reagent-slot {
+    width: 50px;
+    height: 96px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.reagent-slot::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 4px;
+    right: 4px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* 3D Volumetric Bottles with Specular Highlights & Dropper Caps */
+.reagent-bottle {
+    width: 50px;
+    height: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    position: relative;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease;
+}
+
+.reagent-bottle:hover {
+    transform: scale(1.1) translateY(-6px);
+    filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.45));
+    cursor: grab;
+}
+
+.reagent-bottle.is-dragging-bottle {
+    cursor: grabbing !important;
+    position: fixed !important;
+    z-index: 9999 !important;
+    pointer-events: none !important;
+    transform: translate(-50%, -75%) scale(1.2) rotate(12deg) !important;
+    filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.65)) !important;
+    transition: none !important;
+}
+
+/* 3D Dropper Cap & Bulb */
+.reagent-bottle .dropper-cap {
+    width: 20px;
+    height: 24px;
+    border-radius: 6px 6px 2px 2px;
+    box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), 
+                0 3px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.reagent-bottle .dropper-cap::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 20%;
+    width: 25%;
+    height: 80%;
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 2px;
+    filter: blur(0.5px);
+}
+
+/* 3D Cylindrical Bottle Body with Light Gradient */
+.reagent-bottle .bottle-body {
+    width: 46px;
+    height: 72px;
+    border-radius: 8px;
+    font-size: 0.64rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35), 
+                inset 0 2px 3px rgba(255, 255, 255, 0.4),
+                inset -3px 0 6px rgba(0, 0, 0, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glass shine on bottle */
+.reagent-bottle .bottle-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 5px;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.reagent-bottle.blue .dropper-cap { 
+    background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 50%, #1e40af 100%); 
+}
+.reagent-bottle.blue .bottle-body { 
+    background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 40%, #2563eb 70%, #1e3a8a 100%); 
+    color: #ffffff; 
+}
+
+.reagent-bottle.yellow .dropper-cap { 
+    background: linear-gradient(90deg, #ca8a04 0%, #facc15 50%, #a16207 100%); 
+}
+.reagent-bottle.yellow .bottle-body { 
+    background: linear-gradient(90deg, #ca8a04 0%, #fde047 40%, #eab308 70%, #854d0e 100%); 
+    color: #0f172a; 
+}
+
+.reagent-bottle.colorless .dropper-cap { 
+    background: linear-gradient(90deg, #cbd5e1 0%, #f1f5f9 50%, #94a3b8 100%); 
+    border: 1px solid #94a3b8; 
+}
+.reagent-bottle.colorless .bottle-body { 
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.98) 40%, rgba(241, 245, 249, 0.85) 75%, rgba(203, 213, 225, 0.9) 100%); 
+    border: 2px solid #cbd5e1; 
+    color: #0f172a; 
+}
+
+/* 3D Isometric Acrylic Reaction Plate */
+.reaction-plate-wrapper {
+    position: relative;
+    z-index: 15;
+    background: linear-gradient(160deg, #ffffff 0%, #f8fafc 60%, #e2e8f0 100%);
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    /* Physical 3D thickness with multi-layer shadow and front edge */
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 
+                0 5px 0 #94a3b8, 
+                0 7px 0 #64748b,
+                -5px 10px 18px rgba(0, 0, 0, 0.3),
+                inset 0 2px 2px #ffffff;
+    transform: perspective(700px) rotateX(4deg);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.reaction-plate-wrapper.wells-step-target {
+    border-color: #ef4444;
+    animation: plateBloodTargetPulse 1.6s infinite ease-in-out;
+}
+
+@keyframes plateBloodTargetPulse {
+    0%, 100% {
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 5px 0 #94a3b8, 0 7px 0 #64748b, 0 0 18px rgba(239, 68, 68, 0.45);
+        border-color: #ef4444;
+    }
+    50% {
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 5px 0 #94a3b8, 0 7px 0 #64748b, 0 0 32px rgba(239, 68, 68, 0.85);
+        border-color: #f87171;
+    }
+}
+
+.well-cell.well-needs-blood .well-depression {
+    border-color: #ef4444 !important;
+    animation: wellNeedBloodPulse 1.6s infinite ease-in-out;
+}
+
+@keyframes wellNeedBloodPulse {
+    0%, 100% {
+        box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.28), 0 0 8px rgba(239, 68, 68, 0.4);
+    }
+    50% {
+        box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.28), 0 0 20px rgba(239, 68, 68, 0.85);
+    }
+}
+
+.plate-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #1e293b;
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+    padding: 3px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.plate-wells-row {
+    display: flex;
+    gap: 16px;
+}
+
+.well-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.well-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.well-badge.blue { background: #dbeafe; color: #1d4ed8; }
+.well-badge.yellow { background: #fef9c3; color: #854d0e; }
+.well-badge.purple { background: #f3e8ff; color: #6b21a8; }
+
+.well-depression {
+    width: 76px;
+    height: 76px;
+    background: radial-gradient(circle at 50% 45%, #ffffff 30%, #f1f5f9 65%, #cbd5e1 100%);
+    border: 2.5px dashed #94a3b8;
+    border-radius: 50%;
+    /* 3D Sunken cavity with deep inner wall shadows */
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.28), 
+                inset 0 -2px 4px rgba(255, 255, 255, 0.8),
+                0 2px 4px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.well-depression.drop-target {
+    border-color: #22c55e !important;
+    border-style: solid !important;
+    box-shadow: 0 0 18px rgba(34, 197, 94, 0.85), inset 0 0 12px rgba(34, 197, 94, 0.35) !important;
+    transform: scale(1.08);
+}
+
+.well-depression.reagent-added-anti_a {
+    border: 2.5px solid #2563eb;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(37, 99, 235, 0.4);
+}
+.well-depression.reagent-added-anti_b {
+    border: 2.5px solid #ca8a04;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(202, 138, 4, 0.4);
+}
+.well-depression.reagent-added-anti_d {
+    border: 2.5px solid #0284c7;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(2, 132, 199, 0.4);
+}
+
+/* Droplet animation */
+@keyframes dropletFall {
+    0% {
+        opacity: 0.9;
+        transform: translate(-50%, -36px) scale(0.6);
+    }
+    65% {
+        opacity: 1;
+        transform: translate(-50%, 0px) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, 10px) scale(1.5);
+    }
+}
+
+.reagent-droplet-anim {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 18px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    pointer-events: none;
+    z-index: 50;
+    animation: dropletFall 0.38s ease-in forwards;
+}
+
+.reagent-droplet-anim.blue {
+    background: #2563eb;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.8);
+}
+
+.reagent-droplet-anim.yellow {
+    background: #eab308;
+    box-shadow: 0 2px 8px rgba(234, 179, 8, 0.8);
+}
+
+.reagent-droplet-anim.clear {
+    background: #e0f2fe;
+    border: 1.5px solid #0284c7;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.8);
+}
+
+.reagent-droplet-anim.blood {
+    background: #b91c1c;
+    box-shadow: 0 2px 8px rgba(185, 28, 28, 0.8);
+}
+
+.well-depression canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* 3D Isometric Tools Cluster & Research Micropipette */
+.tools-cluster {
+    position: relative;
+    z-index: 15;
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    margin-bottom: 12px;
+}
+
+/* 3D Micropipette Stand Slot */
+.micropipette-slot {
+    position: relative;
+    width: 40px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+/* Pro Micropipette (3D Isometric Volumetric Styling - Vertical) */
+.micropipette-tool {
+    width: 40px;
+    height: 160px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease;
+    filter: drop-shadow(-4px 8px 14px rgba(0, 0, 0, 0.4));
+}
+
+.micropipette-tool:hover {
+    transform: scale(1.05) translateY(-8px);
+    filter: drop-shadow(-6px 14px 22px rgba(0, 0, 0, 0.5));
+}
+
+.micropipette-tool.is-dragging {
+    cursor: grabbing !important;
+    position: fixed !important;
+    z-index: 9999 !important;
+    pointer-events: none !important;
+    /* Strictly vertical positioning with tip precisely tracking pointer */
+    transform: translate(-50%, -90%) scale(1.15) !important;
+    filter: drop-shadow(-8px 24px 32px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 10px rgba(56, 189, 248, 0.4)) !important;
+    transition: none !important;
+}
+
+.micropipette-tool.in-use-hover {
+    cursor: grab;
+    pointer-events: auto !important;
+    position: fixed !important;
+    z-index: 100 !important;
+    /* Strictly vertical positioning */
+    transform: translate(-50%, -90%) scale(1.1) !important;
+    filter: drop-shadow(-8px 20px 28px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 14px rgba(56, 189, 248, 0.85)) !important;
+    transition: none !important;
+}
+
+.micropipette-tool.in-use-hover:hover {
+    cursor: grab;
+    transform: translate(-50%, -92%) scale(1.12) !important;
+    filter: drop-shadow(-10px 24px 32px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 18px rgba(56, 189, 248, 1)) !important;
+}
+
+/* 3D Plunger Top Button with Spring Stem */
+.pipette-plunger-cap {
+    width: 18px;
+    height: 13px;
+    background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 40%, #60a5fa 70%, #1e40af 100%);
+    border: 1.5px solid #1e3a8a;
+    border-radius: 5px 5px 2px 2px;
+    box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.7), 
+                0 3px 5px rgba(0, 0, 0, 0.35);
+    transition: transform 0.12s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.pipette-plunger-cap.plunged {
+    transform: translateY(7px);
+}
+
+.pipette-plunger-stem {
+    width: 7px;
+    height: 9px;
+    background: linear-gradient(90deg, #64748b 0%, #cbd5e1 35%, #ffffff 60%, #94a3b8 100%);
+    border: 1px solid #475569;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 3D Ergonomic Body with Volumetric Lighting */
+.pipette-upper-casing {
+    width: 34px;
+    height: 54px;
+    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 45%, #cbd5e1 80%, #94a3b8 100%);
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px 10px 6px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: inset -3px 0 6px rgba(0, 0, 0, 0.15),
+                inset 2px 0 4px rgba(255, 255, 255, 0.8),
+                0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Finger Rest / Hook with 3D Bevel */
+.pipette-finger-hook {
+    position: absolute;
+    top: 20px;
+    right: -11px;
+    width: 15px;
+    height: 20px;
+    background: linear-gradient(90deg, #cbd5e1, #e2e8f0 60%, #f8fafc);
+    border: 1.5px solid #94a3b8;
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+    box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Digital Volume Display */
+.pipette-display-window {
+    background: #020617;
+    color: #38bdf8;
+    font-size: 0.64rem;
+    font-weight: 800;
+    font-family: monospace;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #1e293b;
+    letter-spacing: 0.5px;
+    box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Royal Blue Accent Collar */
+.pipette-collar-blue {
+    width: 26px;
+    height: 9px;
+    background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 45%, #3b82f6 70%, #1d4ed8 100%);
+    border: 1px solid #1e3a8a;
+    border-radius: 2px;
+    margin-top: 1px;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Lower Tapered Barrel */
+.pipette-lower-barrel {
+    width: 20px;
+    height: 25px;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 55%, #cbd5e1 100%);
+    border: 1.5px solid #cbd5e1;
+    clip-path: polygon(15% 0%, 85% 0%, 68% 100%, 32% 100%);
+    box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Slim Stainless Steel Shaft with Metallic Chrome Sheen */
+.pipette-steel-shaft {
+    width: 6px;
+    height: 29px;
+    background: linear-gradient(90deg, #475569 0%, #cbd5e1 30%, #ffffff 50%, #94a3b8 75%, #334155 100%);
+    border: 0.5px solid #475569;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Disposable Conical Pipette Tip with 3D Glass Sheen */
+.pipette-cone-tip {
+    width: 8px;
+    height: 24px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.95) 40%, rgba(203, 213, 225, 0.7) 100%);
+    backdrop-filter: blur(1px);
+    border: 1px solid #94a3b8;
+    clip-path: polygon(20% 0%, 80% 0%, 55% 100%, 45% 100%);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.pipette-cone-tip.has-blood {
+    background: linear-gradient(90deg, #991b1b 0%, #ef4444 35%, #b91c1c 70%, #7f1d1d 100%) !important;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.9) !important;
+}
+
+/* Target Glow Effect for Hovered Tubes & Wells during Drag */
+.blood-tube-item.drop-target {
+    transform: translateY(-14px) scale(1.08) !important;
+    filter: drop-shadow(0 0 16px #22c55e) !important;
+}
+
+.well-depression.drop-target {
+    border-color: #0284c7 !important;
+    box-shadow: inset 0 0 12px rgba(2, 132, 199, 0.6), 0 0 20px rgba(2, 132, 199, 0.9) !important;
+    transform: scale(1.1) !important;
+    transition: all 0.15s ease;
+}
+
+/* 3D Isometric Stir Station Shelf */
+.lab-accessories-shelf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(150deg, #134e5e 0%, #0b2d37 100%);
+    border: 2px solid #226477;
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 
+                0 4px 0 #07222a, 
+                -4px 6px 12px rgba(0, 0, 0, 0.35),
+                inset 0 1.5px 0 rgba(255, 255, 255, 0.3);
+    transform: perspective(700px) rotateX(4deg);
+    position: relative;
+}
+
+.stir-stick-slot {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    padding: 2px;
+}
+
+.stir-stick-side-tag {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #e0f2fe;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #0284c7;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.biohazard-bin {
+    background: linear-gradient(145deg, #facc15 0%, #eab308 100%);
+    color: #713f12;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    border: 1.5px solid #ca8a04;
+}
+
+/* 3D Cylindrical Sterile Stir Stick */
+.stir-stick-tool {
+    width: 9px;
+    height: 102px;
+    background: linear-gradient(90deg, #f1f5f9 0%, #ffffff 40%, #cbd5e1 75%, #94a3b8 100%);
+    border-radius: 5px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    box-shadow: -2px 4px 10px rgba(0, 0, 0, 0.4), inset 1px 0 2px rgba(255, 255, 255, 0.9);
+    border: 1px solid #64748b;
+    position: relative;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.stir-stick-tool:hover {
+    transform: scale(1.1) translateY(-6px);
+    cursor: grab;
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.85));
+}
+
+.stir-stick-tool.is-dragging-stick {
+    cursor: grabbing !important;
+    position: fixed !important;
+    z-index: 9999 !important;
+    pointer-events: none !important;
+    /* 3D isometric tilt and elevated shadow */
+    transform: translate(-50%, -85%) rotate(24deg) scale(1.2) !important;
+    filter: drop-shadow(-10px 22px 28px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 10px rgba(56, 189, 248, 0.4)) !important;
+    transition: none !important;
+}
+
+.stir-stick-tool.is-stirring-anim {
+    animation: stirSwirl 0.25s ease-in-out infinite alternate !important;
+}
+
+@keyframes stirSwirl {
+    0% {
+        transform: translate(-50%, -85%) rotate(15deg) scale(1.15);
+    }
+    100% {
+        transform: translate(-50%, -85%) rotate(28deg) scale(1.15);
+    }
+}
+
+.well-depression.stir-target {
+    border-color: #f59e0b !important;
+    border-style: solid !important;
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.8), inset 0 0 12px rgba(245, 158, 11, 0.35) !important;
+    transform: scale(1.08);
+}
+
+.well-depression.stir-complete-flash {
+    animation: wellFlashGreen 0.6s ease forwards;
+}
+
+@keyframes wellFlashGreen {
+    0% {
+        box-shadow: 0 0 24px #22c55e, inset 0 0 15px #22c55e;
+    }
+    100% {
+        box-shadow: none;
+    }
+}
+
+.stir-cue-tooltip {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f172a;
+    color: #fef08a;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #f59e0b;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 60;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.15s ease;
+}
+
+@keyframes pulseCue {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.08); }
+}
+
+.biohazard-bin {
+    background: #facc15;
+    color: #713f12;
+    padding: 8px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #ca8a04;
+}
+
+/* 5. Modal / Slide-up Lab Notebook (Non-blocking & Transparent Backdrop) */
+.notebook-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.2);
+    backdrop-filter: none;
+    z-index: 100;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 35px 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.notebook-modal-backdrop.open {
+    display: flex;
+    opacity: 1;
+}
+
+.notebook-modal-window {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    width: 100%;
+    max-width: 960px;
+    max-height: 88vh;
+    overflow-y: auto;
+    border: 2px solid var(--ui-green-primary);
+    animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+    transition: opacity 0.2s ease;
+}
+
+@keyframes modalSlideUp {
+    from { transform: translateY(25px) scale(0.97); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.notebook-header-tab {
+    background: var(--ui-green-dark);
+    color: #ffffff;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: move;
+    user-select: none;
+    touch-action: none;
+}
+
+.notebook-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.drag-handle-hint {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+.notebook-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close-modal-btn {
+    background: rgba(255, 255, 255, 0.18);
+    border: none;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 3px 12px;
+    border-radius: 6px;
+    transition: background 0.2s, transform 0.15s;
+    line-height: 1;
+}
+
+.close-modal-btn:hover {
+    background: rgba(239, 68, 68, 0.85);
+    transform: scale(1.08);
+}
+
+/* Live Reaction Plate Box inside Notebook */
+.nb-live-plate-box {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+
+.nb-live-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.pulsing-live-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #22c55e;
+    animation: livePulse 1.2s infinite alternate;
+}
+
+@keyframes livePulse {
+    from { transform: scale(0.85); opacity: 0.7; }
+    to { transform: scale(1.25); opacity: 1; }
+}
+
+.nb-live-wells-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.nb-live-well-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.nb-well-preview {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1.5px dashed #94a3b8;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle, #ffffff 40%, #e2e8f0 100%);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.12);
+}
+
+.nb-well-preview canvas {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.notebook-body-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr 240px;
+    gap: 16px;
+    padding: 20px;
+}
+
+.block-title {
+    font-weight: 800;
+    color: var(--ui-green-dark);
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.notes-list {
+    list-style: square;
+    padding-right: 18px;
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.8;
+}
+
+.notebook-results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.notebook-results-table th, .notebook-results-table td {
+    padding: 8px 10px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    font-size: 0.85rem;
+}
+
+.notebook-results-table th {
+    background: #f8fafc;
+    color: #1e293b;
+    font-weight: 800;
+}
+
+.badge-reagent {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.badge-reagent.blue { background: #dbeafe; color: #1d4ed8; }
+.badge-reagent.yellow { background: #fef9c3; color: #854d0e; }
+.badge-reagent.purple { background: #f3e8ff; color: #6b21a8; }
+
+.nb-select, .nb-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    outline: none;
+    direction: rtl;
+    background: #fff;
+    color: #0f172a;
+}
+
+.nb-select:focus, .nb-input:focus {
+    border-color: var(--ui-green-primary);
+}
+
+.deduction-field {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+}
+
+.verify-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #15803d, #166534);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(22, 101, 52, 0.25);
+    transition: all 0.2s;
+}
+
+.verify-btn:hover {
+    background: linear-gradient(135deg, #166534, #14532d);
+    transform: translateY(-2px);
+}
+
+.evaluation-feedback {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: none;
+}
+
+.evaluation-feedback.success {
+    display: block;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+.evaluation-feedback.error {
+    display: block;
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+.evaluation-feedback.warning {
+    display: block;
+    background: #fef9c3;
+    color: #854d0e;
+    border: 1px solid #fde047;
+}
+
+.next-sample-btn-pro {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: #ffffff;
+    border: 1px solid #22c55e;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+    transition: all 0.2s ease;
+    margin-top: 4px;
+}
+
+.next-sample-btn-pro:hover {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.45);
+    transform: translateY(-2px);
+}
+
+.next-sample-btn-pro:active {
+    transform: translateY(0);
+}
+
+.next-sample-btn-pro.restart-mode {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    border-color: #38bdf8;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+}
+
+.next-sample-btn-pro.restart-mode:hover {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    box-shadow: 0 6px 18px rgba(14, 165, 233, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Temporary floating action hint */
+.temp-action-hint {
+    position: fixed;
+    transform: translateX(-50%);
+    background: #0f172a;
+    color: #38bdf8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #0284c7;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.temp-action-hint.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-6px);
+}
+
+/* Notebook Previous Samples History Table */
+.nb-history-section {
+    margin-top: 14px;
+    border-top: 1.5px dashed #cbd5e1;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nb-history-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nb-history-count-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #0284c7;
+    background: #e0f2fe;
+    padding: 1px 8px;
+    border-radius: 12px;
+    border: 1px solid #bae6fd;
+}
+
+.nb-history-table-wrapper {
+    max-height: 155px;
+    overflow-y: auto;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.nb-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.74rem;
+    text-align: center;
+}
+
+.nb-history-table th {
+    background: #f8fafc;
+    color: #334155;
+    padding: 5px 4px;
+    font-weight: 800;
+    border-bottom: 1.5px solid #cbd5e1;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.nb-history-table td {
+    padding: 5px 4px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.nb-history-table tr:hover {
+    background: #f8fafc;
+}
+
+.nb-history-table .sample-name-cell {
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.nb-history-table .badge-history-type {
+    display: inline-block;
+    padding: 1.5px 7px;
+    border-radius: 6px;
+    font-weight: 900;
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+.nb-history-table .badge-history-pos {
+    color: #dc2626;
+    font-weight: 800;
+}
+
+.nb-history-table .badge-history-neg {
+    color: #64748b;
+    font-weight: 700;
+}
+
+.empty-history-row td {
+    padding: 14px 6px;
+    color: #94a3b8;
+    font-style: italic;
+    text-align: center;
+}

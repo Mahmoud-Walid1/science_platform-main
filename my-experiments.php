@@ -80,6 +80,9 @@ function getExpVisuals($code_name, $title) {
             'color' => '#6d28d9'
         ];
     }
+    if (strpos($code_name, 'blood') !== false || strpos($title, 'الدم') !== false || strpos($title, 'فصائل') !== false) {
+        return ['icon' => 'fas fa-droplet', 'bg' => 'linear-gradient(135deg, #fff1f2, #ffe4e6)', 'color' => '#e11d48'];
+    }
     if (strpos($code_name, 'chemical_change') !== false || strpos($code_name, 'gas') !== false || strpos($code_name, 'vinegar') !== false || strpos($title, 'التغير الكيميائي') !== false || strpos($title, 'تكوّن غاز') !== false || strpos($title, 'الخل') !== false) {
         return ['icon' => 'fas fa-wind', 'bg' => 'linear-gradient(135deg, #e0f2fe, #7dd3fc)', 'color' => '#0284c7'];
     }
