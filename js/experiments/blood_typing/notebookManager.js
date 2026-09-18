@@ -50,9 +50,9 @@ export class NotebookManager {
                                     <td><span class="badge-reagent blue">Anti-A</span></td>
                                     <td>
                                         <select class="nb-select" id="selectResult_anti_a">
-                                            <option value="">-</option>
-                                            <option value="+">+</option>
-                                            <option value="-">-</option>
+                                            <option value="">اختر النتيجة</option>
+                                            <option value="+">(+) موجب (تكتل)</option>
+                                            <option value="-">(-) سالب (متجانس)</option>
                                         </select>
                                     </td>
                                     <td><input type="text" class="nb-input" id="obs_anti_a" placeholder="تكتل / متجانس"></td>
@@ -62,9 +62,9 @@ export class NotebookManager {
                                     <td><span class="badge-reagent yellow">Anti-B</span></td>
                                     <td>
                                         <select class="nb-select" id="selectResult_anti_b">
-                                            <option value="">-</option>
-                                            <option value="+">+</option>
-                                            <option value="-">-</option>
+                                            <option value="">اختر النتيجة</option>
+                                            <option value="+">(+) موجب (تكتل)</option>
+                                            <option value="-">(-) سالب (متجانس)</option>
                                         </select>
                                     </td>
                                     <td><input type="text" class="nb-input" id="obs_anti_b" placeholder="تكتل / متجانس"></td>
@@ -74,9 +74,9 @@ export class NotebookManager {
                                     <td><span class="badge-reagent purple">Anti-D</span></td>
                                     <td>
                                         <select class="nb-select" id="selectResult_anti_d">
-                                            <option value="">-</option>
-                                            <option value="+">+</option>
-                                            <option value="-">-</option>
+                                            <option value="">اختر النتيجة</option>
+                                            <option value="+">(+) موجب (تكتل)</option>
+                                            <option value="-">(-) سالب (متجانس)</option>
                                         </select>
                                     </td>
                                     <td><input type="text" class="nb-input" id="obs_anti_d" placeholder="تكتل / متجانس"></td>

@@ -213,9 +213,9 @@ $js_v  = file_exists('../js/experiments/blood_typing/blood_typing.js') ? filemti
                                 <td><span class="badge-reagent blue">Anti-A</span></td>
                                 <td>
                                     <select class="nb-select" id="selectResult_anti_a">
-                                        <option value="">-</option>
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
+                                        <option value="">اختر النتيجة</option>
+                                        <option value="+">(+) موجب (تكتل)</option>
+                                        <option value="-">(-) سالب (متجانس)</option>
                                     </select>
                                 </td>
                                 <td><input type="text" class="nb-input" placeholder="تكتل / متجانس"></td>
@@ -225,9 +225,9 @@ $js_v  = file_exists('../js/experiments/blood_typing/blood_typing.js') ? filemti
                                 <td><span class="badge-reagent yellow">Anti-B</span></td>
                                 <td>
                                     <select class="nb-select" id="selectResult_anti_b">
-                                        <option value="">-</option>
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
+                                        <option value="">اختر النتيجة</option>
+                                        <option value="+">(+) موجب (تكتل)</option>
+                                        <option value="-">(-) سالب (متجانس)</option>
                                     </select>
                                 </td>
                                 <td><input type="text" class="nb-input" placeholder="تكتل / متجانس"></td>
@@ -237,9 +237,9 @@ $js_v  = file_exists('../js/experiments/blood_typing/blood_typing.js') ? filemti
                                 <td><span class="badge-reagent purple">Anti-D</span></td>
                                 <td>
                                     <select class="nb-select" id="selectResult_anti_d">
-                                        <option value="">-</option>
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
+                                        <option value="">اختر النتيجة</option>
+                                        <option value="+">(+) موجب (تكتل)</option>
+                                        <option value="-">(-) سالب (متجانس)</option>
                                     </select>
                                 </td>
                                 <td><input type="text" class="nb-input" placeholder="تكتل / متجانس"></td>
@@ -256,18 +256,18 @@ $js_v  = file_exists('../js/experiments/blood_typing/blood_typing.js') ? filemti
                         <label>فصيلة الدم (ABO):</label>
                         <select class="nb-select" id="selectBloodGroup">
                             <option value="">-- اختر الفصيلة --</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="AB">AB</option>
-                            <option value="O">O</option>
+                            <option value="A">فصيلة A</option>
+                            <option value="B">فصيلة B</option>
+                            <option value="AB">فصيلة AB</option>
+                            <option value="O">فصيلة O</option>
                         </select>
                     </div>
                     <div class="deduction-field">
                         <label>عامل ريسوس (Rh):</label>
                         <select class="nb-select" id="selectRhFactor">
                             <option value="">-- اختر العامل --</option>
-                            <option value="+">موجب (+)</option>
-                            <option value="-">سالب (-)</option>
+                            <option value="+">(+) موجب</option>
+                            <option value="-">(-) سالب</option>
                         </select>
                     </div>
                     <button class="verify-btn" id="verifyDeductionBtn">

@@ -350,6 +350,16 @@
                 if (dep) {
                     dep.className = 'well-depression';
                 }
+                const c = document.getElementById(`canvas_${id}`);
+                if (c) {
+                    const ctx = c.getContext('2d');
+                    if (ctx) ctx.clearRect(0, 0, c.width, c.height);
+                }
+                const cNb = document.getElementById(`canvas_nb_${id}`);
+                if (cNb) {
+                    const ctxNb = cNb.getContext('2d');
+                    if (ctxNb) ctxNb.clearRect(0, 0, cNb.width, cNb.height);
+                }
             });
             const tip = document.getElementById('pipetteTip');
             if (tip) tip.classList.remove('has-blood');
@@ -635,7 +645,16 @@
 
                         <!-- Reaction Plate (3 Wells) -->
                         <div class="reaction-plate-wrapper" id="reactionPlate">
-                            <div class="plate-title">بطاقة التفاعل</div>
+                            <div class="plate-header-row">
+                                <div class="plate-title">بطاقة التفاعل</div>
+                                <button class="btn-clean-wells" id="btnCleanWells" type="button" title="مسح وتنظيف الآبار لإعادة التجربة على نفس العينة">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                                        <path d="M2.5 2v6h6M21.5 22v-6h-6"></path>
+                                        <path d="M22 11.5A10 10 0 0 0 3.2 7.2L2.5 8M2 12.5a10 10 0 0 0 18.8 4.3l.7-.8"></path>
+                                    </svg>
+                                    <span>مسح الآبار</span>
+                                </button>
+                            </div>
                             <div class="plate-wells-row">
                                 <div class="well-cell" data-well="anti_a">
                                     <div class="well-badge blue">Anti-A</div>
@@ -932,6 +951,17 @@
                     }
                 });
             });
+
+            // Clean Wells Button (مسح الشريحة / تنظيف الآبار)
+            const cleanBtn = document.getElementById('btnCleanWells');
+            if (cleanBtn) {
+                cleanBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    soundFx.playPipetteClick();
+                    labStore.resetWells();
+                    this.showTemporaryHint(cleanBtn, 'تم مسح وتنظيف الآبار بنجاح');
+                });
+            }
 
             // Dropper bottles direct click
             document.querySelectorAll('.reagent-bottle').forEach(bottle => {
@@ -1458,8 +1488,8 @@
                                     const timeDelta = Math.min(now - lastMotionTime, 80);
                                     lastMotionTime = now;
 
-                                    // Require exactly 3 seconds (3000ms) of continuous active stirring motion
-                                    this.stirProgressMap[wId] = (this.stirProgressMap[wId] || 0) + (timeDelta / 3000) * 100;
+                                    // Require exactly 1.2 seconds (1200ms) of continuous active stirring motion
+                                    this.stirProgressMap[wId] = (this.stirProgressMap[wId] || 0) + (timeDelta / 1200) * 100;
                                     const pct = Math.min(100, Math.floor(this.stirProgressMap[wId]));
 
                                     if (now - lastSoundTime > 190) {
@@ -1641,6 +1671,7 @@
             this.bindVerification();
             this.initDraggableModal();
             this.renderHistoryTable();
+            this.initCustomDropdowns();
         }
 
         bindModalEvents() {
@@ -1768,20 +1799,130 @@
         clearForm() {
             ['anti_a', 'anti_b', 'anti_d'].forEach(id => {
                 const sel = document.getElementById(`selectResult_${id}`);
-                if (sel) sel.value = '';
+                if (sel) {
+                    sel.value = '';
+                    sel.dispatchEvent(new Event('change'));
+                }
             });
             document.querySelectorAll('.notebook-results-table input[type="text"]').forEach(input => {
                 input.value = '';
             });
             const selGrp = document.getElementById('selectBloodGroup');
             const selRh = document.getElementById('selectRhFactor');
-            if (selGrp) selGrp.value = '';
-            if (selRh) selRh.value = '';
+            if (selGrp) {
+                selGrp.value = '';
+                selGrp.dispatchEvent(new Event('change'));
+            }
+            if (selRh) {
+                selRh.value = '';
+                selRh.dispatchEvent(new Event('change'));
+            }
             const feedback = document.getElementById('evalFeedbackBox');
             if (feedback) {
                 feedback.className = 'evaluation-feedback';
                 feedback.textContent = '';
             }
+        }
+
+        initCustomDropdowns() {
+            document.querySelectorAll('.notebook-body-grid select.nb-select').forEach(selectEl => {
+                if (selectEl.dataset.customEnhanced === 'true') return;
+                selectEl.dataset.customEnhanced = 'true';
+                selectEl.style.display = 'none';
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'custom-select-wrapper';
+
+                const trigger = document.createElement('div');
+                trigger.className = 'custom-select-trigger';
+                trigger.setAttribute('tabindex', '0');
+
+                const triggerVal = document.createElement('div');
+                triggerVal.className = 'trigger-value';
+
+                const arrow = document.createElement('div');
+                arrow.className = 'custom-select-arrow';
+                arrow.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                `;
+
+                trigger.appendChild(triggerVal);
+                trigger.appendChild(arrow);
+                wrapper.appendChild(trigger);
+
+                const menu = document.createElement('div');
+                menu.className = 'custom-select-menu';
+
+                const updateTrigger = () => {
+                    const selOpt = selectEl.options[selectEl.selectedIndex];
+                    if (!selOpt || !selOpt.value) {
+                        triggerVal.innerHTML = `<span class="trigger-placeholder">${selOpt ? selOpt.text : 'اختر...'}</span>`;
+                    } else if (selOpt.value === '+') {
+                        triggerVal.innerHTML = `<span class="opt-badge pos">+</span><span>${selOpt.text.replace('(+)', '').trim()}</span>`;
+                    } else if (selOpt.value === '-') {
+                        triggerVal.innerHTML = `<span class="opt-badge neg">-</span><span>${selOpt.text.replace('(-)', '').trim()}</span>`;
+                    } else {
+                        triggerVal.innerHTML = `<span>${selOpt.text}</span>`;
+                    }
+                };
+
+                Array.from(selectEl.options).forEach((opt, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'custom-select-option';
+                    if (idx === selectEl.selectedIndex) item.classList.add('selected');
+
+                    if (!opt.value) {
+                        item.classList.add('is-placeholder');
+                        item.innerHTML = `<span>${opt.text}</span>`;
+                    } else if (opt.value === '+') {
+                        item.innerHTML = `<span class="opt-badge pos">+</span><span>${opt.text.replace('(+)', '').trim()}</span>`;
+                    } else if (opt.value === '-') {
+                        item.innerHTML = `<span class="opt-badge neg">-</span><span>${opt.text.replace('(-)', '').trim()}</span>`;
+                    } else {
+                        item.innerHTML = `<span>${opt.text}</span>`;
+                    }
+
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectEl.selectedIndex = idx;
+                        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+                        updateTrigger();
+                        wrapper.classList.remove('open');
+                        menu.querySelectorAll('.custom-select-option').forEach((o, i) => {
+                            o.classList.toggle('selected', i === idx);
+                        });
+                    });
+
+                    menu.appendChild(item);
+                });
+
+                updateTrigger();
+                wrapper.appendChild(menu);
+
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = wrapper.classList.contains('open');
+                    document.querySelectorAll('.custom-select-wrapper.open').forEach(w => {
+                        if (w !== wrapper) w.classList.remove('open');
+                    });
+                    wrapper.classList.toggle('open', !isOpen);
+                });
+
+                selectEl.addEventListener('change', () => {
+                    updateTrigger();
+                    menu.querySelectorAll('.custom-select-option').forEach((o, i) => {
+                        o.classList.toggle('selected', i === selectEl.selectedIndex);
+                    });
+                });
+
+                selectEl.parentNode.insertBefore(wrapper, selectEl.nextSibling);
+            });
+
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.custom-select-wrapper.open').forEach(w => w.classList.remove('open'));
+            });
         }
 
         bindVerification() {

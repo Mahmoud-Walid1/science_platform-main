@@ -57,7 +57,16 @@ export class LabScene {
 
                 <!-- Reaction Tile / Well Plate -->
                 <div class="reaction-plate-wrapper" id="reactionPlate">
-                    <div class="plate-title">بطاقة التفاعل</div>
+                    <div class="plate-header-row">
+                        <div class="plate-title">بطاقة التفاعل</div>
+                        <button class="btn-clean-wells" id="btnCleanWells" type="button" title="مسح وتنظيف الآبار لإعادة التجربة على نفس العينة">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M2.5 2v6h6M21.5 22v-6h-6"></path>
+                                <path d="M22 11.5A10 10 0 0 0 3.2 7.2L2.5 8M2 12.5a10 10 0 0 0 18.8 4.3l.7-.8"></path>
+                            </svg>
+                            <span>مسح الآبار</span>
+                        </button>
+                    </div>
                     <div class="plate-wells-row">
                         <div class="well-cell" data-well="anti_a">
                             <div class="well-badge blue">Anti-A</div>
